@@ -1,0 +1,14 @@
+{
+  "languageName": "English",
+  "localizeDatas": {
+    "inspector.referencematerial": "Reference Material",
+    "inspector.referencematerial.tooltip": "Settings will be copied from the material specified here.",
+    "inspector.ignorematerials": "Ignore Materials",
+    "inspector.ignorematerials.tooltip": "The settings of the material set here will not be copied.",
+    "inspector.properties": "Properties",
+    "inspector.properties.tooltip": "The properties entered here will be copied.",
+    "inspector.savepreset": "Save Preset",
+    "inspector.loadpreset": "Load Preset",
+    "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing."
+  }
+}

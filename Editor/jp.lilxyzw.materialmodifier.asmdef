@@ -1,0 +1,42 @@
+{
+    "name": "jp.lilxyzw.materialmodifier",
+    "rootNamespace": "",
+    "references": [
+        "jp.lilxyzw.materialmodifier.runtime",
+        "nadena.dev.ndmf",
+        "nadena.dev.ndmf.runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "VRCSDKBase-Editor.dll",
+        "VRCSDKBase.dll",
+        "VRCSDK3A.dll",
+        "VRCSDK3A-Editor.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.vrchat.base",
+            "expression": "",
+            "define": "LIL_VRCSDK3"
+        },
+        {
+            "name": "com.vrchat.avatars",
+            "expression": "",
+            "define": "LIL_VRCSDK3A"
+        },
+        {
+            "name": "nadena.dev.ndmf",
+            "expression": "",
+            "define": "LIL_NDMF"
+        }
+    ],
+    "noEngineReferences": false
+}

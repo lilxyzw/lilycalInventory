@@ -1,0 +1,13 @@
+{
+  "name": "jp.lilxyzw.materialmodifier",
+  "version": "0.1.0",
+  "displayName": "lilMaterialModifier",
+  "description": "Modify material properties at build time.",
+  "unity": "2019.4",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
+  },
+  "license": "MIT",
+  "url" : "https://github.com/lilxyzw/lilMaterialModifier/releases/download/0.1.0/jp.lilxyzw.materialmodifier-0.1.0.zip?",
+  "repo" : "https://lilxyzw.github.io/vpm-repos/vpm.json"
+}

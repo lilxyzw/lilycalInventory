@@ -1,0 +1,14 @@
+{
+  "languageName": "日本語",
+  "localizeDatas": {
+    "inspector.referencematerial": "コピー元のマテリアル",
+    "inspector.referencematerial.tooltip": "ここに指定したマテリアルから設定がコピーされます。",
+    "inspector.ignorematerials": "除外するマテリアル",
+    "inspector.ignorematerials.tooltip": "ここに設定したマテリアルは設定のコピーが行われなくなります。",
+    "inspector.properties": "プロパティ",
+    "inspector.properties.tooltip": "ここに入力されているプロパティがコピーされます。",
+    "inspector.savepreset": "プリセットを保存",
+    "inspector.loadpreset": "プリセットを読込",
+    "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。"
+  }
+}
