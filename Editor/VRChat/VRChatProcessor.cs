@@ -1,4 +1,4 @@
-#if !LIL_NDMF
+#if !LIL_NDMF && LIL_VRCSDK3A
 using System;
 using System.Linq;
 using jp.lilxyzw.materialmodifier.runtime;
