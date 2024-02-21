@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using Newtonsoft.Json;
 using System.Globalization;
 using UnityEngine;
 using System.Text;
 
 namespace jp.lilxyzw.materialmodifier
 {
+    using runtime;
+
     internal class Localization
     {
         private static readonly string PATH_PREF = $"{UnityEditorInternal.InternalEditorUtility.unityPreferencesFolder}/jp.lilxyzw";
         private static readonly string FILENAME_SETTING = "materialmodifier.language.conf";
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
-        private static List<LocalizationData> languages = new List<LocalizationData>();
+        private static List<Dictionary<string, string>> languages = new List<Dictionary<string, string>>();
         private static List<string> codes = new List<string>();
         private static string[] names;
         private static int number;
@@ -26,12 +27,20 @@ namespace jp.lilxyzw.materialmodifier
             foreach(var path in paths)
             {
                 var langData = File.ReadAllText(path);
-                var lang = JsonConvert.DeserializeObject<LocalizationData>(langData);
+                var lang = JsonDictionaryParser.Deserialize<string>(langData);
                 if(lang == null) continue;
                 var code = Path.GetFileNameWithoutExtension(path).ToLower();
                 languages.Add(lang);
                 codes.Add(code);
-                tmpNames.Add(lang.languageName);
+                try
+                {
+                    var cul = new CultureInfo(code);
+                    tmpNames.Add(cul.NativeName);
+                }
+                catch
+                {
+                    tmpNames.Add(code);
+                }
             }
             names = tmpNames.ToArray();
             number = codes.IndexOf(LoadLanguageSettings());
@@ -41,18 +50,30 @@ namespace jp.lilxyzw.materialmodifier
 
         internal static string S(string key)
         {
-            return languages[number].GetValue(key);
+            return languages[number].TryGetValue(key, out string o) ? o : null;
         }
 
         internal static GUIContent G(string key)
         {
-            return new GUIContent(S(key), S($"{key}.tooltip"));
+            return new GUIContent(S(key) ?? key, S($"{key}.tooltip"));
+        }
+
+        internal static GUIContent G(SerializedProperty property)
+        {
+            return G($"inspector.{property.name}");
         }
 
         internal static void SelectLanguageGUI()
         {
             EditorGUI.BeginChangeCheck();
-            number = EditorGUILayout.Popup("Language", number, names);
+            number = EditorGUILayout.Popup("Editor Language", number, names);
+            if(EditorGUI.EndChangeCheck()) SaveLanguageSettings();
+        }
+
+        internal static void SelectLanguageGUI(Rect position)
+        {
+            EditorGUI.BeginChangeCheck();
+            number = EditorGUI.Popup(position, "Editor Language", number, names);
             if(EditorGUI.EndChangeCheck()) SaveLanguageSettings();
         }
 
@@ -67,17 +88,6 @@ namespace jp.lilxyzw.materialmodifier
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
             SafeIO.SaveFile(PATH_SETTING, codes[number]);
-        }
-    }
-
-    internal class LocalizationData
-    {
-        public string languageName;
-        public Dictionary<string, string> localizeDatas;
-        internal string GetValue(string key)
-        {
-            if(localizeDatas.ContainsKey(key)) return localizeDatas[key];
-            return string.Empty;
         }
     }
 
@@ -99,6 +109,19 @@ namespace jp.lilxyzw.materialmodifier
             {
                 return sr.ReadToEnd();
             }
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(LILLocalizeAttribute))]
+    internal class LILLocalizeDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            LILLocalizeAttribute loc = attribute as LILLocalizeAttribute;
+            if(loc.name == null)
+                EditorGUI.PropertyField(position, property, Localization.G(property));
+            else
+                EditorGUI.PropertyField(position, property, Localization.G(loc.name));
         }
     }
 }

@@ -1,5 +1,6 @@
 #if !LIL_NDMF && LIL_VRCSDK3A
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using jp.lilxyzw.materialmodifier.runtime;
 using UnityEditor;
@@ -44,7 +45,7 @@ namespace jp.lilxyzw.materialmodifier.vrchat
             }
         }
     }
-
+/*
     public class VRChatProcessor : IVRCSDKPostprocessAvatarCallback
     {
         public int callbackOrder => 0;
@@ -61,5 +62,6 @@ namespace jp.lilxyzw.materialmodifier.vrchat
             }
         }
     }
+    */
 }
 #endif
