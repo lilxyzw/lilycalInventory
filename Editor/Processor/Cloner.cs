@@ -7,7 +7,7 @@ using UnityEngine;
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal class Cloner
     {

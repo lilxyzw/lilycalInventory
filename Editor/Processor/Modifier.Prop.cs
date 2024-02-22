@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEditor.Animations;
 
@@ -11,7 +11,7 @@ using nadena.dev.ndmf;
 using VRC.SDK3.Avatars.ScriptableObjects;
 #endif
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal partial class Modifier
     {

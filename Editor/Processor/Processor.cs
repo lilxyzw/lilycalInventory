@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using jp.lilxyzw.materialmodifier;
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier;
+using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEngine;
 
 #if LIL_NDMF
@@ -8,7 +8,7 @@ using nadena.dev.ndmf;
 using nadena.dev.ndmf.builtin;
 #endif
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal static class Processor
     {

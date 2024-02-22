@@ -1,4 +1,4 @@
-lilMaterialModifier
+lilAvatarModifier
 ====
 
 # This project is under development and may be subject to breaking changes
@@ -9,14 +9,14 @@ lilMaterialModifier
 Currently this plugin can only be imported by UPM.
 
 ```
-https://github.com/lilxyzw/lilMaterialModifier.git
+https://github.com/lilxyzw/lilAvatarModifier.git
 ```
 
 This works as a plugin if NDMF is installed.
 
 ## How to use
 
-Add the prefab in `Packages/lilMaterialModifier/Prefabs` to your avatar. That's all.
+Add the prefab in `Packages/lilAvatarModifier/Prefabs` to your avatar. That's all.
 
 ## Manual setup
 

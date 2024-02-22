@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM Optimizer")]
+    [AddComponentMenu("lilAvatarModifier/lilAM MaterialOptimizer")]
     internal class MaterialOptimizer : AvatarTagComponent
     {
     }

@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-namespace jp.lilxyzw.materialmodifier.vrchat
+namespace jp.lilxyzw.avatarmodifier.vrchat
 {
     public class AvatarPreprocessor : IVRCSDKPreprocessAvatarCallback
     {
@@ -14,10 +14,6 @@ namespace jp.lilxyzw.materialmodifier.vrchat
         {
             try
             {
-                foreach(var t in avatarGameObject.GetComponentsInChildren<Transform>(true))
-                {
-                    GameObjectUtility.RemoveMonoBehavioursWithMissingScript(t.gameObject);
-                }
                 var ctx = new BuildContext(avatarGameObject);
 
                 Processor.FindComponent(ctx);

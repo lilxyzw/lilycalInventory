@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM MenuFolder")]
+    [AddComponentMenu("lilAvatarModifier/lilAM MenuFolder")]
     internal class MenuFolder : MenuBaseComponent
     {
     }

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM SmoothChanger")]
+    [AddComponentMenu("lilAvatarModifier/lilAM SmoothChanger")]
     internal class SmoothChanger : MenuBaseComponent
     {
         [LILLocalize] [Range(0,1)] public float defaultFrameValue;

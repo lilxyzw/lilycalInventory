@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM Modifier")]
+    [AddComponentMenu("lilAvatarModifier/lilAM MaterialModifier")]
     internal class MaterialModifier : AvatarTagComponent
     {
         [LILLocalize] [NotKeyable] public Material referenceMaterial;

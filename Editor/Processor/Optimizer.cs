@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal class Optimizer
     {

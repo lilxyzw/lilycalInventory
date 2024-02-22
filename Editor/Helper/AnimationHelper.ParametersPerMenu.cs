@@ -1,4 +1,4 @@
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ using UnityEngine;
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal static partial class AnimationHelper
     {

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal static class JsonDictionaryParser
     {

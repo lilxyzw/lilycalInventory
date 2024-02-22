@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM Prop")]
+    [AddComponentMenu("lilAvatarModifier/lilAM Prop")]
     internal class Prop : MenuBaseComponent
     {
         [LILLocalize] public bool isSave = true;

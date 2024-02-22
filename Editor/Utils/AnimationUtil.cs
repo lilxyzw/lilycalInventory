@@ -40,7 +40,7 @@ using VRC.SDK3.Avatars.Components;
 
 #endregion
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal static class AnimationUtil
     {

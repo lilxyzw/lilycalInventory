@@ -1,7 +1,7 @@
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     [CustomEditor(typeof(AvatarTagComponent), true)] [CanEditMultipleObjects]
     internal class BaseEditor : Editor

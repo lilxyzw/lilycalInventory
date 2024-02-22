@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal class BuildContext
     {
@@ -13,7 +13,7 @@ namespace jp.lilxyzw.materialmodifier
         internal VRC.SDK3.Avatars.Components.VRCAvatarDescriptor AvatarDescriptor;
         #endif
 
-        private const string PATH_ROOT = "Packages/jp.lilxyzw.materialmodifier";
+        private const string PATH_ROOT = "Packages/jp.lilxyzw.avatarmodifier";
         private const string PATH_GEN = "__Generated";
 
         internal BuildContext(GameObject gameObject)

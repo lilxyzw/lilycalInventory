@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM ItemToggler")]
+    [AddComponentMenu("lilAvatarModifier/lilAM ItemToggler")]
     internal class ItemToggler : MenuBaseComponent
     {
         public ParametersPerMenu parameter;

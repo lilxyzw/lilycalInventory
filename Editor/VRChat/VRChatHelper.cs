@@ -6,13 +6,13 @@ using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using UnityEditor;
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier.runtime;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal static class VRChatHelper
     {

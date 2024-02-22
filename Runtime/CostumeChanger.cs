@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilMaterialModifier/lilMM CostumeChanger")]
+    [AddComponentMenu("lilAvatarModifier/lilAM CostumeChanger")]
     internal class CostumeChanger : MenuBaseComponent
     {
         public Costume[] costumes;

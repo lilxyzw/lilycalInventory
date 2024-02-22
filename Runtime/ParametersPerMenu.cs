@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace jp.lilxyzw.materialmodifier.runtime
+namespace jp.lilxyzw.avatarmodifier.runtime
 {
     [Serializable]
     internal class Costume : LILElement

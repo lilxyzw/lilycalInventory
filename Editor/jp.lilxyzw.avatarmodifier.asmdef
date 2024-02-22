@@ -1,8 +1,8 @@
 {
-    "name": "jp.lilxyzw.materialmodifier",
+    "name": "jp.lilxyzw.avatarmodifier",
     "rootNamespace": "",
     "references": [
-        "jp.lilxyzw.materialmodifier.runtime",
+        "jp.lilxyzw.avatarmodifier.runtime",
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime"
     ],

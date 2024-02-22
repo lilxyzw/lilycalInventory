@@ -1,14 +1,14 @@
 #if LIL_NDMF
 using System.Collections.Generic;
-using jp.lilxyzw.materialmodifier;
-using jp.lilxyzw.materialmodifier.runtime;
+using jp.lilxyzw.avatarmodifier;
+using jp.lilxyzw.avatarmodifier.runtime;
 using nadena.dev.ndmf;
 using nadena.dev.ndmf.builtin;
 using UnityEngine;
 
 [assembly: ExportsPlugin(typeof(MaterialModifierPlugin))]
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     internal class MaterialModifierPlugin : Plugin<MaterialModifierPlugin>
     {
@@ -25,7 +25,7 @@ namespace jp.lilxyzw.materialmodifier
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
 
-        public override string QualifiedName => "jp.lilxyzw.materialmodifier";
+        public override string QualifiedName => "jp.lilxyzw.avatarmodifier";
         public override string DisplayName => "lilMaterialModifier";
 
         protected override void Configure()

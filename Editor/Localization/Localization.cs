@@ -5,14 +5,14 @@ using System.Globalization;
 using UnityEngine;
 using System.Text;
 
-namespace jp.lilxyzw.materialmodifier
+namespace jp.lilxyzw.avatarmodifier
 {
     using runtime;
 
     internal class Localization
     {
         private static readonly string PATH_PREF = $"{UnityEditorInternal.InternalEditorUtility.unityPreferencesFolder}/jp.lilxyzw";
-        private static readonly string FILENAME_SETTING = "materialmodifier.language.conf";
+        private static readonly string FILENAME_SETTING = "avatarmodifier.language.conf";
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
         private static List<Dictionary<string, string>> languages = new List<Dictionary<string, string>>();
         private static List<string> codes = new List<string>();
@@ -22,7 +22,7 @@ namespace jp.lilxyzw.materialmodifier
         [InitializeOnLoadMethod]
         private static void LoadDatas()
         {
-            var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath("576877b5c458c4a4f922bde6f9a89d44"), "*.json");
+            var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath("0c7d604810e251042910620b6b1d9a59"), "*.json");
             var tmpNames = new List<string>();
             foreach(var path in paths)
             {
@@ -80,7 +80,7 @@ namespace jp.lilxyzw.materialmodifier
         private static string LoadLanguageSettings()
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
-            if(!File.Exists(PATH_SETTING)) SafeIO.SaveFile(PATH_SETTING, CultureInfo.CurrentCulture.Name.ToLower());
+            if(!File.Exists(PATH_SETTING)) File.WriteAllText(PATH_SETTING, CultureInfo.CurrentCulture.Name.ToLower());
             return SafeIO.LoadFile(PATH_SETTING);
         }
 
