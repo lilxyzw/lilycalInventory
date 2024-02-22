@@ -9,12 +9,25 @@ namespace jp.lilxyzw.materialmodifier
         private const float INDENT_WIDTH = 15f;
         private static readonly float GUI_SPACE = EditorGUIUtility.standardVerticalSpacing;
         private static readonly GUIContent hideContent = new GUIContent(" ");
-        private static readonly GUIStyle placeholderStyle = new GUIStyle(EditorStyles.label)
+        private static GUIStyle placeholderStyle
         {
-            fontStyle = FontStyle.Italic,
-            padding = EditorStyles.textField.padding
-        };
+            get
+            {
+                if(m_placeholderStyle == null) InitializeGUI();
+                return m_placeholderStyle;
+            }
+        }
+        private static GUIStyle m_placeholderStyle;
         internal static readonly float propertyHeight = EditorGUIUtility.singleLineHeight;
+
+        private static void InitializeGUI()
+        {
+            m_placeholderStyle = new GUIStyle(EditorStyles.label)
+            {
+                fontStyle = FontStyle.Italic,
+                padding = EditorStyles.textField.padding
+            };
+        }
 
         private static bool Foldout(Rect position, SerializedProperty prop, GUIContent content = null)
         {

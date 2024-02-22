@@ -10,7 +10,7 @@ namespace jp.lilxyzw.materialmodifier
     {
         internal static void OptimizeMaterials(Material[] materials)
         {
-            var propMap = materials.Select(m => m.shader).Distinct().Where(s => s != null).ToDictionary(s => s, s => new ShaderPropertyContainer(s));
+            var propMap = materials.Select(m => m.shader).Distinct().Where(s => s).ToDictionary(s => s, s => new ShaderPropertyContainer(s));
             foreach(var m in materials) RemoveUnusedProperties(m, propMap);
         }
 
@@ -20,7 +20,7 @@ namespace jp.lilxyzw.materialmodifier
             so.Update();
             var savedProps = so.FindProperty("m_SavedProperties");
 
-            if(material.shader != null)
+            if(material.shader)
             {
                 var dic = propMap[material.shader];
                 DeleteUnused(savedProps.FindPropertyRelative("m_TexEnvs"), dic.textures);

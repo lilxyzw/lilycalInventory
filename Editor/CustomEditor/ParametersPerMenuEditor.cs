@@ -136,7 +136,7 @@ namespace jp.lilxyzw.materialmodifier
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var smr = property.FPR("skinnedMeshRenderer");
-            GUIHelper.FieldOnly(position.SingleLine(), smr);
+            EditorGUI.PropertyField(position.SingleLine(), smr);
             Mesh mesh = null;
             if(smr.objectReferenceValue) mesh = ((SkinnedMeshRenderer)smr.objectReferenceValue).sharedMesh;
             BlendShapeNameValueDrawer.mesh = mesh;

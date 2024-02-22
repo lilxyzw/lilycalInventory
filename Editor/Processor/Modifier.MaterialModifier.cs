@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace jp.lilxyzw.materialmodifier
 {
-    internal class Modifier
+    internal partial class Modifier
     {
-        internal static void ModifyMaterials(Material[] materials, MaterialModifier[] modifiers)
+        internal static void ApplyMaterialModifier(Material[] materials, MaterialModifier[] modifiers)
         {
             foreach(var modifier in modifiers)
             {
                 var refMaterial = modifier.referenceMaterial;
-                if(refMaterial == null || refMaterial.shader == null) continue;
+                if(!refMaterial || !refMaterial.shader) continue;
                 var materialsMod = materials.Except(modifier.ignoreMaterials).ToArray();
                 if(materialsMod.Length == 0) continue;
 

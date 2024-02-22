@@ -7,5 +7,6 @@ namespace jp.lilxyzw.materialmodifier.runtime
     , VRC.SDKBase.IEditorOnly
     #endif
     {
+        void Start(){}
     }
 }

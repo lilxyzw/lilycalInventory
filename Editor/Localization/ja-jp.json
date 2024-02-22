@@ -1,28 +1,33 @@
 {
+  "inspector.noProperty": "このコンポーネントには設定項目がありません。",
+
   "inspector.referenceMaterial": "コピー元のマテリアル",
   "inspector.referenceMaterial.tooltip": "ここに指定したマテリアルから設定がコピーされます。",
   "inspector.ignoreMaterials": "除外するマテリアル",
   "inspector.ignoreMaterials.tooltip": "ここに設定したマテリアルは設定のコピーが行われなくなります。",
   "inspector.properties": "プロパティ",
   "inspector.properties.tooltip": "ここに入力されているプロパティがコピーされます。",
-  "inspector.savepreset": "プリセットを保存",
-  "inspector.loadpreset": "プリセットを読込",
 
+  "inspector.menuName": "メニュー名",
+  "inspector.menuName.tooltip": "VRChatのメニュー上で表示される名前です。何も入力していない場合はオブジェクト名と同じになります。",
   "inspector.parentFolder": "メニューの親フォルダ",
   "inspector.parentOverride": "オーバーライド",
   "inspector.parentOverride.tooltip": "ここで指定したフォルダーの中にメニューが入ります。何も指定していない場合、親にMenuFolderコンポーネントがあればその中に、なければルートに入ります。",
   "inspector.icon": "アイコン",
+  "inspector.icon.tooltip": "VRChatのメニュー上で表示されるアイコンです。",
 
-  "inspector.costumes": "コスチューム",
-  "inspector.menuName": "メニュー名",
-  "inspector.menuName.tooltip": "VRChat上で表示されるメニューの名前です。",
+  "inspector.isSave": "有効状態を保存",
+  "inspector.isSave.tooltip": "これをオンにするとアバター読み込み直してもメニューの状態が保存されます。",
+  "inspector.isLocalOnly": "ローカルのみにする",
+  "inspector.isLocalOnly.tooltip": "これをオンにすると自分視点でのみオブジェクトのオンオフがされるようになります。",
 
   "inspector.objects": "オブジェクトのオンオフ",
   "inspector.objects.tooltip": "ここに指定したオブジェクトはメニューを有効化したときオンまたはオフになります。",
 
   "inspector.blendShapeModifiers": "BlendShapeの切り替え",
   "inspector.blendShapeModifiers.tooltip": "ここに指定したBlendShapeはメニューを有効化したときに指定した値にセットされます。",
-  "inspector.mesh": "メッシュ",
+  "inspector.skinnedMeshRenderer": "メッシュ",
+  "inspector.skinnedMeshRenderer.tooltip": "ここに指定したメッシュが操作されます。何も指定していない場合は全てのメッシュが操作されます。",
   "inspector.blendShapeNameValues": "切り替えるBlendShapeと値",
   "inspector.name": "名前",
 
@@ -33,26 +38,20 @@
   "inspector.materialPropertyModifiers": "マテリアルのプロパティ操作",
   "inspector.materialPropertyModifiers.tooltip": "ここに指定したマテリアルのプロパティはメニューを有効化したときに指定した値にセットされます。",
   "inspector.renderers": "メッシュ・レンダラー",
-  "inspector.renderers.tooltip": "TODO",
+  "inspector.renderers.tooltip": "ここに指定したメッシュが操作されます。",
   "inspector.floatModifiers": "操作するFloatプロパティ",
-  "inspector.floatModifiers.tooltip": "TODO",
   "inspector.vectorModifiers": "操作するVectorプロパティ",
-  "inspector.vectorModifiers.tooltip": "TODO",
   "inspector.propertyName": "プロパティ名",
   "inspector.value": "値",
 
-  "inspector.isSave": "有効状態を保存",
-  "inspector.isSave.tooltip": "これをオンにするとアバター読み込みを挟んでも設定が保存されるようになります。",
+  "inspector.costumes": "コスチューム",
 
-  "inspector.isLocalOnly": "ローカルのみにする",
-  "inspector.isLocalOnly.tooltip": "これをオンにすると自分視点でのみオブジェクトのオンオフがされるようになります。",
-
-  "inspector.frame": "フレーム",
-  "inspector.frame.tooltip": "TODO",
-
-  "inspector.delete": "削除",
-
-  "inspector.noProperty": "このコンポーネントには設定項目がありません。",
+  "inspector.defaultFrameValue": "フレームの初期値",
+  "inspector.defaultFrameValue.tooltip": "アバターを初期化したときにフレームの値がここに設定した値になります。",
+  "inspector.frames": "フレーム",
+  "inspector.frames.tooltip": "Radial Puppetで操作するプロパティを設定します。間のフレームは補間されます。",
+  "inspector.frameValue": "フレーム値",
+  "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき1になります。",
 
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。"
 }

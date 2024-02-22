@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
 #if LIL_NDMF
 using nadena.dev.ndmf;
 #endif
@@ -10,10 +11,11 @@ namespace jp.lilxyzw.materialmodifier
 {
     internal class Cloner
     {
-        internal static Material[] DeepCloneMaterials(BuildContext context)
+        internal static Material[] DeepCloneAssets(BuildContext context)
         {
             CloneAnimatorControllers(context);
             AnimationUtil.CloneAllControllers(context);
+            CloneAssetForPlatform(context);
             return CloneAllMaterials(context);
         }
 
@@ -25,7 +27,7 @@ namespace jp.lilxyzw.materialmodifier
             for(int i = 0; i < animators.Length; i++)
             {
                 var animator = animators[i];
-                if(animator.runtimeAnimatorController != null && !context.IsTemporaryAsset(animator.runtimeAnimatorController))
+                if(animator.runtimeAnimatorController && !context.IsTemporaryAsset(animator.runtimeAnimatorController))
                     animator.runtimeAnimatorController = AnimationUtil.DeepCloneAnimator(context, animator.runtimeAnimatorController);
             }
         }
@@ -36,7 +38,7 @@ namespace jp.lilxyzw.materialmodifier
             CloneRendererMaterials(materialMap, context);
             CloneAnimationClipMaterials(materialMap, context);
 
-            return materialMap.Select(m => m.Value).Distinct().Where(m => m != null).ToArray();
+            return materialMap.Select(m => m.Value).Distinct().Where(m => m).ToArray();
         }
 
         private static void CloneRendererMaterials(Dictionary<Material,Material> materialMap, BuildContext context)
@@ -64,9 +66,9 @@ namespace jp.lilxyzw.materialmodifier
                 controllers.UnionWith(descriptor.baseAnimationLayers.Select(a => a.animatorController));
             #endif
 
-            controllers.RemoveWhere(c => c == null);
+            controllers.RemoveWhere(c => !c);
 
-            var clips = controllers.SelectMany(c => c.animationClips).Where(c => c != null).ToArray();
+            var clips = controllers.SelectMany(c => c.animationClips).Where(c => c).ToArray();
 
 
             for(int i = 0; i < clips.Length; i++)
@@ -110,11 +112,29 @@ namespace jp.lilxyzw.materialmodifier
 
         private static Material CloneMaterial(Material material, BuildContext context, Dictionary<Material,Material> materialMap)
         {
-            if(material == null || context.IsTemporaryAsset(material)) return material;
+            if(!material || context.IsTemporaryAsset(material)) return material;
             if(materialMap.ContainsKey(material)) return materialMap[material];
             var clone = Object.Instantiate(material); // new Material(material) is slow
             AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
             return materialMap[material] = clone;
+        }
+
+        private static Object CloneObject(Object obj, BuildContext context, Dictionary<Object,Object> map)
+        {
+            if(!obj || context.IsTemporaryAsset(obj)) return obj;
+            if(map.ContainsKey(obj)) return map[obj];
+            var clone = Object.Instantiate(obj);
+            AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
+            return map[obj] = clone;
+        }
+
+        private static void CloneAssetForPlatform(BuildContext context)
+        {
+            #if LIL_VRCSDK3A
+                var map = new Dictionary<Object,Object>();
+                context.AvatarDescriptor.expressionParameters = (VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionParameters)CloneObject(context.AvatarDescriptor.expressionParameters, context, map);
+                context.AvatarDescriptor.expressionsMenu = (VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu)CloneObject(context.AvatarDescriptor.expressionsMenu, context, map);
+            #endif
         }
     }
 }

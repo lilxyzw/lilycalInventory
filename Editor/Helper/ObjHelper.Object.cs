@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -56,6 +57,11 @@ namespace jp.lilxyzw.materialmodifier
         internal static string GetPathInAvatar(this Component component)
         {
             return component.gameObject.GetPathInAvatar();
+        }
+
+        internal static T[] GetActiveComponents<T>(this Component[] components) where T : MonoBehaviour
+        {
+            return components.Select(c => c as T).Where(c => c && c.enabled).ToArray();
         }
     }
 }

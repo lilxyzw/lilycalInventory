@@ -14,7 +14,7 @@ namespace jp.lilxyzw.materialmodifier.runtime
     [Serializable]
     internal class Frame : LILElement
     {
-        [LILLocalize] public float frameValue;
+        [LILLocalize] [Range(0,1)] public float frameValue;
         public ParametersPerMenu parametersPerMenu;
     }
 
@@ -41,8 +41,9 @@ namespace jp.lilxyzw.materialmodifier.runtime
     [Serializable]
     internal class BlendShapeModifier
     {
-        public SkinnedMeshRenderer skinnedMeshRenderer;
+        [LILLocalize] public SkinnedMeshRenderer skinnedMeshRenderer;
         public BlendShapeNameValue[] blendShapeNameValues;
+        [NonSerialized] internal bool applyToAll = false;
     }
 
     [Serializable]

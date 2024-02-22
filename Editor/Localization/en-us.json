@@ -1,28 +1,33 @@
 {
+  "inspector.noProperty": "This component has no properties.",
+
   "inspector.referenceMaterial": "Reference Material",
   "inspector.referenceMaterial.tooltip": "Settings will be copied from the material specified here.",
   "inspector.ignoreMaterials": "Ignore Materials",
   "inspector.ignoreMaterials.tooltip": "The settings of the material set here will not be copied.",
   "inspector.properties": "Properties",
   "inspector.properties.tooltip": "The properties entered here will be copied.",
-  "inspector.savepreset": "Save Preset",
-  "inspector.loadpreset": "Load Preset",
 
+  "inspector.menuName": "Menu Name",
+  "inspector.menuName.tooltip": "This is the name of the menu displayed on VRChat.",
   "inspector.parentFolder": "Parent folder",
   "inspector.parentOverride": "Override",
   "inspector.parentOverride.tooltip": "The menu will be placed in the folder specified here. If nothing is specified, the menu will be placed in the parent MenuFolder component if it exists, or in the root if not.",
   "inspector.icon": "Icon",
+  "inspector.icon.tooltip": "This is the icon displayed on the VRChat menu.",
 
-  "inspector.costumes": "Costumes",
-  "inspector.menuName": "Menu Name",
-  "inspector.menuName.tooltip": "This is the name of the menu displayed on VRChat.",
+  "inspector.isSave": "Save state",
+  "inspector.isSave.tooltip": "If you turn this on, the state will be saved even if the avatar is loaded.",
+  "inspector.isLocalOnly": "Local only",
+  "inspector.isLocalOnly.tooltip": "If you turn this on, objects will only be turned on and off from your perspective.",
 
   "inspector.objects": "Object to toggle",
   "inspector.objects.tooltip": "The object specified here will be turned on or off when the menu is activated.",
 
   "inspector.blendShapeModifiers": "BlendShape Modifier",
   "inspector.blendShapeModifiers.tooltip": "The BlendShape specified here will be set to the specified value when the menu is activated.",
-  "inspector.mesh": "Mesh",
+  "inspector.skinnedMeshRenderer": "Mesh",
+  "inspector.skinnedMeshRenderer.tooltip": "The mesh specified here will be controlled. If nothing is specified, all meshes will be controlled.",
   "inspector.blendShapeNameValues": "BlendShape to modify",
   "inspector.name": "Name",
 
@@ -31,28 +36,22 @@
   "inspector.replaceTo": "Replace (Don't replace when empty)",
 
   "inspector.materialPropertyModifiers": "Material Property Modifiers",
-  "inspector.materialPropertyModifiers.tooltip": "ここに指定したマテリアルのプロパティはメニューを有効化したときに指定した値にセットされます。",
+  "inspector.materialPropertyModifiers.tooltip": "The material properties specified here will be set to the specified values when the menu is activated.",
   "inspector.renderers": "Mesh and Renderer",
-  "inspector.renderers.tooltip": "TODO",
+  "inspector.renderers.tooltip": "The mesh specified here will be controlled.",
   "inspector.floatModifiers": "Float Modifiers",
-  "inspector.floatModifiers.tooltip": "TODO",
   "inspector.vectorModifiers": "Vector Modifiers",
-  "inspector.vectorModifiers.tooltip": "TODO",
   "inspector.propertyName": "Property Name",
   "inspector.value": "Value",
 
-  "inspector.isSave": "Save state",
-  "inspector.isSave.tooltip": "If you turn this on, the state will be saved even if the avatar is loaded.",
+  "inspector.costumes": "Costumes",
 
-  "inspector.isLocalOnly": "Local only",
-  "inspector.isLocalOnly.tooltip": "If you turn this on, objects will only be turned on and off from your perspective.",
-
-  "inspector.frame": "Frame",
-  "inspector.frame.tooltip": "TODO",
-
-  "inspector.delete": "Delete",
-
-  "inspector.noProperty": "This component has no properties.",
+  "inspector.defaultFrameValue": "Default Frame Value",
+  "inspector.defaultFrameValue.tooltip": "When you reset your avatar, the frame value will be the value you set here.",
+  "inspector.frames": "Frames",
+  "inspector.frames.tooltip": "Set the properties to be manipulated with Radial Puppet. Frames in between are interpolated.",
+  "inspector.frameValue": "Frame Value",
+  "inspector.frameValue.tooltip": "Keyframe value. 0 when Radial Puppet is at its minimum, 1 when it is at its maximum.",
 
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing."
 }
