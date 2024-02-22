@@ -55,17 +55,23 @@ namespace jp.lilxyzw.avatarmodifier
                 if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
 
                 var costumeMenu = AddFolder(ctx, changer, menu, dic);
-                for(int i = 0; i < clipChangeds.Length; i++)
+                int index = 0;
+                int size = clipChangeds.Length;
+                if(size > 8)
                 {
-                    var control = new VRCExpressionsMenu.Control
+                    for(int j = 0; j < 8; j++)
                     {
-                        icon = changer.costumes[i].icon,
-                        name = changer.costumes[i].menuName,
-                        parameter = new VRCExpressionsMenu.Control.Parameter{name = name},
-                        type = VRCExpressionsMenu.Control.ControlType.Toggle,
-                        value = i
-                    };
-                    costumeMenu.controls.Add(control);
+                        var menuChild = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
+                        menuChild.name = $"Page {j+1}";
+                        AssetDatabase.AddObjectToAsset(menuChild, ctx.AssetContainer);
+                        costumeMenu.AddMenu(menuChild);
+                        AddMenu(menuChild, changer, name, size, ref index);
+                        if(index >= size) break;
+                    }
+                }
+                else
+                {
+                    AddMenu(costumeMenu, changer, name, size, ref index);
                 }
                 parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave);
                 #endif
@@ -106,6 +112,23 @@ namespace jp.lilxyzw.avatarmodifier
         }
 
         #if LIL_VRCSDK3A
+        private static void AddMenu(VRCExpressionsMenu costumeMenu, CostumeChanger changer, string name, int size, ref int i)
+        {
+            for(int j = 0; j < 8 && i < size; j++)
+            {
+                var control = new VRCExpressionsMenu.Control
+                {
+                    icon = changer.costumes[i].icon,
+                    name = changer.costumes[i].menuName,
+                    parameter = new VRCExpressionsMenu.Control.Parameter{name = name},
+                    type = VRCExpressionsMenu.Control.ControlType.Toggle,
+                    value = i
+                };
+                costumeMenu.controls.Add(control);
+                i++;
+            }
+        }
+
         private static VRCExpressionsMenu AddFolder(BuildContext ctx, CostumeChanger changer, VRCExpressionsMenu root, Dictionary<MenuFolder, VRCExpressionsMenu> dic)
         {
             var parentMenu = root;
