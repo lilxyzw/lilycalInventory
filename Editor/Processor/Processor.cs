@@ -25,8 +25,6 @@ namespace jp.lilxyzw.avatarmodifier
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
 
-        
-
         internal static void FindComponent(BuildContext ctx)
         {
             var components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>();

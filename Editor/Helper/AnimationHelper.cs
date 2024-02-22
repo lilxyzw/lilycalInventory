@@ -42,7 +42,7 @@ namespace jp.lilxyzw.avatarmodifier
             return new EditorCurveBinding
             {
                 path = renderer.GetPathInAvatar(),
-                propertyName = $"material.{name}]",
+                propertyName = $"material.{name}",
                 type = typeof(Renderer)
             };
         }

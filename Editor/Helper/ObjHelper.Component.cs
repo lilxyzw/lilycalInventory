@@ -51,12 +51,8 @@ namespace jp.lilxyzw.avatarmodifier
 
         private static void CheckApplyToAll(this ParametersPerMenu parameters)
         {
-            foreach(var modifier in parameters.blendShapeModifiers) modifier.CheckApplyToAll();
-        }
-
-        private static void CheckApplyToAll(this BlendShapeModifier modifier)
-        {
-            modifier.applyToAll = !modifier.skinnedMeshRenderer;
+            foreach(var blendShapeModifier in parameters.blendShapeModifiers) 
+                blendShapeModifier.applyToAll = !blendShapeModifier.skinnedMeshRenderer;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
@@ -58,6 +59,9 @@ namespace jp.lilxyzw.avatarmodifier
 
             foreach(var modifier in parameter.materialPropertyModifiers)
             {
+                if(modifier.renderers.Length == 0)
+                    modifier.renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true).ToArray();
+
                 modifier.ToClipDefault(clipOff);
                 modifier.ToClip(clipOn);
             }
