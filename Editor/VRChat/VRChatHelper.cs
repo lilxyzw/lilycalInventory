@@ -119,7 +119,7 @@ namespace jp.lilxyzw.avatarmodifier
             }
         }
 
-        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2)
+        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, Texture2D icon = null)
         {
             if(menu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
                 throw new Exception("Menu Over!!!!!!!");
@@ -127,11 +127,17 @@ namespace jp.lilxyzw.avatarmodifier
             menu.controls.Add(
                 new VRCExpressionsMenu.Control
                 {
+                    icon = icon,
                     name = menu2.name,
                     subMenu = menu2,
                     type = VRCExpressionsMenu.Control.ControlType.SubMenu
                 }
             );
+        }
+
+        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, MenuBaseComponent component)
+        {
+            menu.AddMenu(menu2, component.icon);
         }
 
         internal static void AddParameter(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, float defaultValue, VRCExpressionParameters.ValueType type)

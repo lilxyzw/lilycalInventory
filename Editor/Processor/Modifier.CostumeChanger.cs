@@ -64,7 +64,7 @@ namespace jp.lilxyzw.avatarmodifier
                         var menuChild = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
                         menuChild.name = $"Page {j+1}";
                         AssetDatabase.AddObjectToAsset(menuChild, ctx.AssetContainer);
-                        costumeMenu.AddMenu(menuChild);
+                        costumeMenu.AddMenu(menuChild, changer);
                         AddMenu(menuChild, changer, name, size, ref index);
                         if(index >= size) break;
                     }
@@ -140,7 +140,7 @@ namespace jp.lilxyzw.avatarmodifier
             var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
             menu.name = changer.menuName;
             AssetDatabase.AddObjectToAsset(menu, ctx.AssetContainer);
-            parentMenu.AddMenu(menu);
+            parentMenu.AddMenu(menu, changer);
             return menu;
         }
         #endif
