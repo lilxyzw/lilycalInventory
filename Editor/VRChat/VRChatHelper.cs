@@ -32,10 +32,9 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 if(descriptor.baseAnimationLayers[i].type != VRCAvatarDescriptor.AnimLayerType.FX) continue;
                 var layer = descriptor.baseAnimationLayers[i];
-                if(layer.isDefault || !layer.isEnabled)
+                if(layer.isDefault)
                 {
                     layer.isDefault = false;
-                    layer.isEnabled = true;
                     layer.animatorController = null;
                 }
                 if(layer.animatorController) return (AnimatorController)layer.animatorController;
@@ -50,7 +49,6 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 animatorController = newcontroller,
                 isDefault = false,
-                isEnabled = true,
                 type = VRCAvatarDescriptor.AnimLayerType.FX
             };
             descriptor.baseAnimationLayers[descriptor.baseAnimationLayers.Length - 1] = newlayer;
