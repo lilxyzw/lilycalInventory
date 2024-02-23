@@ -43,7 +43,7 @@ namespace jp.lilxyzw.avatarmodifier
             var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
             menu.name = folder.menuName;
             AssetDatabase.AddObjectToAsset(menu, ctx.AssetContainer);
-            parentMenu.AddMenu(menu);
+            parentMenu.AddMenu(menu, folder);
             return dic[folder] = menu;
         }
         #endif
