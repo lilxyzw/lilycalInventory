@@ -152,11 +152,13 @@ namespace jp.lilxyzw.avatarmodifier
                     UpdateBlendShapes(mesh);
                     EditorUtility.DisplayCustomMenu(new Rect(Event.current.mousePosition, Vector2.one), GUIHelper.CreateContents(blendShapes[mesh]), -1, (userData, options, selected) =>
                     {
+                        var blendShapeNameValues = (((SerializedProperty,Mesh))userData).Item1;
+                        var mesh = (((SerializedProperty,Mesh))userData).Item2;
                         blendShapeNameValues.arraySize++;
                         var p = blendShapeNameValues.GetArrayElementAtIndex(blendShapeNameValues.arraySize - 1);
                         p.FPR("name").stringValue = blendShapes[mesh][selected];
                         blendShapeNameValues.serializedObject.ApplyModifiedProperties();
-                    }, null);
+                    }, (blendShapeNameValues,mesh));
                 }
             );
         }
