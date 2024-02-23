@@ -37,12 +37,7 @@ namespace jp.lilxyzw.avatarmodifier
             var parentMenu = root;
             var parent = folder.GetMenuParent();
             if(parent) parentMenu = TryGetMenuFolder(ctx, parent, root, dic);
-            if(parentMenu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                throw new System.Exception("Menu Over!!!!!!!");
-
-            var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
-            menu.name = folder.menuName;
-            AssetDatabase.AddObjectToAsset(menu, ctx.AssetContainer);
+            var menu = VRChatHelper.CreateMenu(ctx, folder.menuName);
             parentMenu.AddMenu(menu, folder);
             return dic[folder] = menu;
         }

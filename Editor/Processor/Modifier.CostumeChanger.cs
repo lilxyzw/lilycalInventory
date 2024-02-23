@@ -55,23 +55,17 @@ namespace jp.lilxyzw.avatarmodifier
                 if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
 
                 var costumeMenu = AddFolder(ctx, changer, menu, dic);
-                int index = 0;
-                int size = clipChangeds.Length;
-                if(size > 8)
+                for(int i = 0; i < clipChangeds.Length; i++)
                 {
-                    for(int j = 0; j < 8; j++)
+                    var control = new VRCExpressionsMenu.Control
                     {
-                        var menuChild = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
-                        menuChild.name = $"Page {j+1}";
-                        AssetDatabase.AddObjectToAsset(menuChild, ctx.AssetContainer);
-                        costumeMenu.AddMenu(menuChild, changer);
-                        AddMenu(menuChild, changer, name, size, ref index);
-                        if(index >= size) break;
-                    }
-                }
-                else
-                {
-                    AddMenu(costumeMenu, changer, name, size, ref index);
+                        icon = changer.costumes[i].icon,
+                        name = changer.costumes[i].menuName,
+                        parameter = new VRCExpressionsMenu.Control.Parameter{name = name},
+                        type = VRCExpressionsMenu.Control.ControlType.Toggle,
+                        value = i
+                    };
+                    costumeMenu.controls.Add(control);
                 }
                 parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave);
                 #endif
@@ -112,34 +106,12 @@ namespace jp.lilxyzw.avatarmodifier
         }
 
         #if LIL_VRCSDK3A
-        private static void AddMenu(VRCExpressionsMenu costumeMenu, CostumeChanger changer, string name, int size, ref int i)
-        {
-            for(int j = 0; j < 8 && i < size; j++)
-            {
-                var control = new VRCExpressionsMenu.Control
-                {
-                    icon = changer.costumes[i].icon,
-                    name = changer.costumes[i].menuName,
-                    parameter = new VRCExpressionsMenu.Control.Parameter{name = name},
-                    type = VRCExpressionsMenu.Control.ControlType.Toggle,
-                    value = i
-                };
-                costumeMenu.controls.Add(control);
-                i++;
-            }
-        }
-
         private static VRCExpressionsMenu AddFolder(BuildContext ctx, CostumeChanger changer, VRCExpressionsMenu root, Dictionary<MenuFolder, VRCExpressionsMenu> dic)
         {
             var parentMenu = root;
             var parent = changer.GetMenuParent();
             if(parent) parentMenu = dic[parent];
-            if(parentMenu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                throw new System.Exception("Menu Over!!!!!!!");
-
-            var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
-            menu.name = changer.menuName;
-            AssetDatabase.AddObjectToAsset(menu, ctx.AssetContainer);
+            var menu = VRChatHelper.CreateMenu(ctx, changer.menuName);
             parentMenu.AddMenu(menu, changer);
             return menu;
         }

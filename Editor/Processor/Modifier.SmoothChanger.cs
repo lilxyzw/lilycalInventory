@@ -55,9 +55,6 @@ namespace jp.lilxyzw.avatarmodifier
                 var parentMenu = menu;
                 var parent = changer.GetMenuParent();
                 if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
-
-                if(parentMenu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                    throw new Exception("Menu Over!!!!!!!");
                 parentMenu.controls.Add(changer.GetMenuControlRadialPuppet());
                 parameters.AddParameterFloat(name, changer.isLocalOnly, changer.isSave, changer.defaultFrameValue);
                 #endif

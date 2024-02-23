@@ -16,6 +16,16 @@ namespace jp.lilxyzw.avatarmodifier
 {
     internal static class VRChatHelper
     {
+        private static Texture2D m_IconNext;
+        private static Texture2D iconNext
+        {
+            get
+            {
+                if(!m_IconNext) m_IconNext = ObjHelper.LoadAssetByGUID<Texture2D>("10ced5db8cc27ee42a4c57b206fdd1f7");
+                return m_IconNext;
+            }
+        }
+
         internal static AnimatorController TryGetFXAnimatorController(this VRCAvatarDescriptor descriptor, BuildContext ctx)
         {
             AnimatorController CreateFXController()
@@ -55,7 +65,7 @@ namespace jp.lilxyzw.avatarmodifier
             return newcontroller;
         }
 
-        internal static void MergeParameters(this VRCAvatarDescriptor descriptor, VRCExpressionsMenu menu, VRCExpressionParameters parameters)
+        internal static void MergeParameters(this VRCAvatarDescriptor descriptor, VRCExpressionsMenu menu, VRCExpressionParameters parameters, BuildContext ctx)
         {
             if(!descriptor.customExpressions)
             {
@@ -65,22 +75,40 @@ namespace jp.lilxyzw.avatarmodifier
             }
             if(descriptor.expressionsMenu) descriptor.expressionsMenu.Merge(menu);
             else descriptor.expressionsMenu = menu;
+            descriptor.expressionsMenu.ResolveOver(ctx);
+
             if(descriptor.expressionParameters) descriptor.expressionParameters.Merge(parameters);
             else descriptor.expressionParameters = parameters;
         }
 
-        internal static VRCExpressionsMenu CreateMenu(BuildContext ctx)
+        private static void ResolveOver(this VRCExpressionsMenu menu, BuildContext ctx)
+        {
+            if(menu.controls.Count > VRCExpressionsMenu.MAX_CONTROLS)
+            {
+                int last = VRCExpressionsMenu.MAX_CONTROLS - 1;
+                int count = menu.controls.Count - last;
+                var menuNext = CreateMenu(ctx, $"{menu.name}_Next");
+                menuNext.controls = menu.controls.GetRange(last, count);
+                menu.controls.RemoveRange(last, count);
+                menu.AddMenu(menuNext, iconNext, "Next");
+            }
+
+            foreach(var child in menu.controls)
+                if(child.subMenu) child.subMenu.ResolveOver(ctx);
+        }
+
+        internal static VRCExpressionsMenu CreateMenu(BuildContext ctx, string name = "AvatarModifier")
         {
             var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
-            menu.name = "AvatarModifier";
+            menu.name = name;
             AssetDatabase.AddObjectToAsset(menu, ctx.AssetContainer);
             return menu;
         }
 
-        internal static VRCExpressionParameters CreateParameters(BuildContext ctx)
+        internal static VRCExpressionParameters CreateParameters(BuildContext ctx, string name = "AvatarModifierParameters")
         {
             var parameter = ScriptableObject.CreateInstance<VRCExpressionParameters>();
-            parameter.name = "AvatarModifierParameters";
+            parameter.name = name;
             parameter.parameters = new VRCExpressionParameters.Parameter[0];
             AssetDatabase.AddObjectToAsset(parameter, ctx.AssetContainer);
             return parameter;
@@ -88,22 +116,7 @@ namespace jp.lilxyzw.avatarmodifier
 
         internal static void Merge(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2)
         {
-            if(menu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                throw new Exception("Menu Over!!!!!!!");
-            if(menu.controls.Count + menu2.controls.Count <= VRCExpressionsMenu.MAX_CONTROLS)
-                menu.controls.AddRange(menu2.controls);
-            else
-            {
-                menu.controls.Add(
-                    new VRCExpressionsMenu.Control
-                    {
-                        name = menu2.name,
-                        subMenu = menu2,
-                        type = VRCExpressionsMenu.Control.ControlType.SubMenu
-                    }
-                );
-                return;
-            }
+            menu.controls.AddRange(menu2.controls);
         }
 
         internal static void Merge(this VRCExpressionParameters parameters, VRCExpressionParameters parameters2)
@@ -119,16 +132,13 @@ namespace jp.lilxyzw.avatarmodifier
             }
         }
 
-        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, Texture2D icon = null)
+        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, Texture2D icon = null, string name = null)
         {
-            if(menu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                throw new Exception("Menu Over!!!!!!!");
-
             menu.controls.Add(
                 new VRCExpressionsMenu.Control
                 {
                     icon = icon,
-                    name = menu2.name,
+                    name = name ?? menu2.name,
                     subMenu = menu2,
                     type = VRCExpressionsMenu.Control.ControlType.SubMenu
                 }

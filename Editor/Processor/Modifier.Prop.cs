@@ -33,9 +33,6 @@ namespace jp.lilxyzw.avatarmodifier
                 var parentMenu = menu;
                 var parent = prop.GetMenuParent();
                 if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
-
-                if(parentMenu.controls.Count >= VRCExpressionsMenu.MAX_CONTROLS)
-                    throw new System.Exception("Menu Over!!!!!!!");
                 parentMenu.controls.Add(prop.GetMenuControlToggle());
                 parameters.AddParameterToggle(name, prop.isLocalOnly, prop.isSave);
                 #endif

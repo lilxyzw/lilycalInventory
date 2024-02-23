@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using jp.lilxyzw.avatarmodifier;
 using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEngine;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
-using nadena.dev.ndmf.builtin;
 #endif
 
 namespace jp.lilxyzw.avatarmodifier
@@ -62,7 +60,7 @@ namespace jp.lilxyzw.avatarmodifier
             Modifier.ApplyProp(ctx, controller, hasWriteDefaultsState, props, menu, parameters, menuDic);
             Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, menu, parameters, menuDic);
             Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, menu, parameters, menuDic);
-            ctx.AvatarDescriptor.MergeParameters(menu, parameters);
+            ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
             #else
             // Not supported
             #endif

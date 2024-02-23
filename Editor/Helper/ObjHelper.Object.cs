@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
@@ -62,6 +63,11 @@ namespace jp.lilxyzw.avatarmodifier
         internal static T[] GetActiveComponents<T>(this Component[] components) where T : MonoBehaviour
         {
             return components.Select(c => c as T).Where(c => c && c.enabled).ToArray();
+        }
+
+        internal static T LoadAssetByGUID<T>(string guid) where T : Object
+        {
+            return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
         }
     }
 }
