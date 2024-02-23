@@ -14,7 +14,9 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 var refMaterial = modifier.referenceMaterial;
                 if(!refMaterial || !refMaterial.shader) continue;
-                var materialsMod = materials.Except(modifier.ignoreMaterials).ToArray();
+                
+                var ignoreMaterials = modifier.ignoreMaterials.Where(m => m && Cloner.materialMap.ContainsKey(m)).Select(m => Cloner.materialMap[m]);
+                var materialsMod = materials.Except(ignoreMaterials).ToArray();
                 if(materialsMod.Length == 0) continue;
 
                 var textureOverride = new Dictionary<string,Object>();

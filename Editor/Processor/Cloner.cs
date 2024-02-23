@@ -11,8 +11,10 @@ namespace jp.lilxyzw.avatarmodifier
 {
     internal class Cloner
     {
+        internal static Dictionary<Material,Material> materialMap;
         internal static Material[] DeepCloneAssets(BuildContext context)
         {
+            materialMap = new Dictionary<Material, Material>();
             CloneAnimatorControllers(context);
             AnimationUtil.CloneAllControllers(context);
             CloneAssetForPlatform(context);
@@ -34,27 +36,26 @@ namespace jp.lilxyzw.avatarmodifier
 
         private static Material[] CloneAllMaterials(BuildContext context)
         {
-            var materialMap = new Dictionary<Material,Material>();
-            CloneRendererMaterials(materialMap, context);
-            CloneAnimationClipMaterials(materialMap, context);
+            CloneRendererMaterials(context);
+            CloneAnimationClipMaterials(context);
 
             return materialMap.Select(m => m.Value).Distinct().Where(m => m).ToArray();
         }
 
-        private static void CloneRendererMaterials(Dictionary<Material,Material> materialMap, BuildContext context)
+        private static void CloneRendererMaterials(BuildContext context)
         {
             var renderers = context.AvatarRootObject.GetComponentsInChildren<Renderer>(true);
             for(int i = 0; i < renderers.Length; i++)
             {
                 var sharedMaterials = renderers[i].sharedMaterials;
                 for(int j = 0; j < sharedMaterials.Length; j++)
-                    sharedMaterials[j] = CloneMaterial(sharedMaterials[j], context, materialMap);
+                    sharedMaterials[j] = CloneMaterial(sharedMaterials[j], context);
 
                 renderers[i].sharedMaterials = sharedMaterials;
             }
         }
 
-        private static void CloneAnimationClipMaterials(Dictionary<Material,Material> materialMap, BuildContext context)
+        private static void CloneAnimationClipMaterials(BuildContext context)
         {
             var controllers = new HashSet<RuntimeAnimatorController>();
             controllers.UnionWith(context.AvatarRootObject.GetComponentsInChildren<Animator>(true).Select(a => a.runtimeAnimatorController));
@@ -89,7 +90,7 @@ namespace jp.lilxyzw.avatarmodifier
 
                 for(int j = 0; j < frames.Length; j++)
                     for(int k = 0; k < frames[j].Length; k++)
-                        if(frames[j][k].value is Material m) frames[j][k].value = CloneMaterial(m, context, materialMap);
+                        if(frames[j][k].value is Material m) frames[j][k].value = CloneMaterial(m, context);
 
                 #if UNITY_2020_1_OR_NEWER
                 AnimationUtility.SetObjectReferenceCurves(clip, bindings, frames);
@@ -104,13 +105,13 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 var sharedMaterials = renderers[i].sharedMaterials;
                 for(int j = 0; j < sharedMaterials.Length; j++)
-                    sharedMaterials[j] = CloneMaterial(sharedMaterials[j], context, materialMap);
+                    sharedMaterials[j] = CloneMaterial(sharedMaterials[j], context);
 
                 renderers[i].sharedMaterials = sharedMaterials;
             }
         }
 
-        private static Material CloneMaterial(Material material, BuildContext context, Dictionary<Material,Material> materialMap)
+        private static Material CloneMaterial(Material material, BuildContext context)
         {
             if(!material || context.IsTemporaryAsset(material)) return material;
             if(materialMap.ContainsKey(material)) return materialMap[material];
