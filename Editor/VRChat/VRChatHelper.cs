@@ -122,7 +122,7 @@ namespace jp.lilxyzw.avatarmodifier
         internal static void Merge(this VRCExpressionParameters parameters, VRCExpressionParameters parameters2)
         {
             if(parameters.CalcTotalCost() + parameters2.CalcTotalCost() >= VRCExpressionParameters.MAX_PARAMETER_COST)
-                throw new Exception("Parameter Over!!!!!!!");
+                ErrorHelper.Report("dialog.error.parameterover");
 
             var size = parameters.parameters.Length;
             Array.Resize(ref parameters.parameters, parameters.parameters.Length + parameters2.parameters.Length);

@@ -20,7 +20,7 @@ namespace jp.lilxyzw.avatarmodifier
         private static int number;
 
         [InitializeOnLoadMethod]
-        private static void LoadDatas()
+        internal static void LoadDatas()
         {
             var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath("0c7d604810e251042910620b6b1d9a59"), "*.json");
             var tmpNames = new List<string>();
@@ -43,14 +43,40 @@ namespace jp.lilxyzw.avatarmodifier
                 }
             }
             names = tmpNames.ToArray();
-            number = codes.IndexOf(LoadLanguageSettings());
-            if(number == -1) number = codes.IndexOf("en-us");
-            if(number == -1) number = 0;
+            number = GetIndexByCode(LoadLanguageSettings());
+        }
+
+        internal static string[] GetCodes()
+        {
+            return codes.ToArray();
+        }
+
+        private static int GetIndexByCode(string code)
+        {
+            var index = codes.IndexOf(code);
+            if(index == -1) index = codes.IndexOf("en-us");
+            if(index == -1) number = 0;
+            return index;
+        }
+
+        private static string S(string key, int index)
+        {
+            return languages[index].TryGetValue(key, out string o) ? o : null;
+        }
+
+        internal static string S(string key, string code)
+        {
+            return S(key, GetIndexByCode(code));
         }
 
         internal static string S(string key)
         {
-            return languages[number].TryGetValue(key, out string o) ? o : null;
+            return S(key, number);
+        }
+
+        internal static string SorKey(string key)
+        {
+            return languages[number].TryGetValue(key, out string o) ? o : key;
         }
 
         internal static GUIContent G(string key)
