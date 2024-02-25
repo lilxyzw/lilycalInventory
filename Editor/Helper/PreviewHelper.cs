@@ -14,9 +14,8 @@ namespace jp.lilxyzw.avatarmodifier
     {
         private static Component target;
         private static ParametersPerMenu m_Parameters;
-        private static GUIContent[] previewLabel = {new GUIContent("Preview"), new GUIContent("Stop")};
-        internal static bool doPreview = true;
-        internal static int previewIndex = 0;
+        private static bool doPreview = true;
+        private static int previewIndex = 0;
 
         [SerializeField] private AnimationModeDriver driver;
         private AnimationModeDriver Driver => driver ? driver : driver = CreateDriver();
@@ -109,7 +108,7 @@ namespace jp.lilxyzw.avatarmodifier
         private void TogglePreview()
         {
             EditorGUI.BeginChangeCheck();
-            doPreview = GUILayout.Toolbar(doPreview ? 0 : 1, previewLabel) == 0;
+            doPreview = GUILayout.Toolbar(doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
             if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
         }
 
@@ -124,10 +123,10 @@ namespace jp.lilxyzw.avatarmodifier
             }
         }
 
-        private void DrawIndex(int size)
+        private void DrawIndex(int size, string key)
         {
             EditorGUI.BeginChangeCheck();
-            previewIndex = EditorGUILayout.IntSlider(previewIndex, 0, size - 1);
+            previewIndex = EditorGUILayout.IntSlider(Localization.G(key), previewIndex, 0, size - 1);
             if(EditorGUI.EndChangeCheck()) StopPreview();
         }
 
@@ -136,8 +135,8 @@ namespace jp.lilxyzw.avatarmodifier
             if(!obj) return;
             switch(obj)
             {
-                case CostumeChanger c: if(c.costumes != null) DrawIndex(c.costumes.Length); return;
-                case SmoothChanger c: if(c.frames != null) DrawIndex(c.frames.Length); break;
+                case CostumeChanger c: if(c.costumes != null) DrawIndex(c.costumes.Length, "inspector.previewCostume"); return;
+                case SmoothChanger c: if(c.frames != null) DrawIndex(c.frames.Length, "inspector.previewFrame"); break;
             }
         }
 

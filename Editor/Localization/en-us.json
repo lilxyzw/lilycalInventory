@@ -53,6 +53,11 @@
   "inspector.frameValue": "Frame Value",
   "inspector.frameValue.tooltip": "Keyframe value. 0 when Radial Puppet is at its minimum, 1 when it is at its maximum.",
 
+  "inspector.preview": "Preview",
+  "inspector.previewStop": "Stop",
+  "inspector.previewCostume": "Preview Costume",
+  "inspector.previewFrame": "Preview Frame",
+
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing.",
   "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations."
 }
