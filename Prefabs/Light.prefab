@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1233503733561093227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1723765483312665857}
+  - component: {fileID: 2295627625268606733}
+  m_Layer: 0
+  m_Name: Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1723765483312665857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233503733561093227}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.1186671, y: -0.96096945, z: 0.11127904}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2295627625268606733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233503733561093227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2116367a0fed543a5282904a120a00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuName: 
+  parentOverride: {fileID: 0}
+  icon: {fileID: 2800000, guid: 910e811963a22b647b550ff68159affd, type: 3}
+  defaultFrameValue: 0
+  frames:
+  - frameValue: 0
+    parametersPerMenu:
+      objects: []
+      blendShapeModifiers: []
+      materialReplacers: []
+      materialPropertyModifiers:
+      - renderers: []
+        floatModifiers:
+        - propertyName: _AsUnlit
+          value: 0
+        - propertyName: _LightMinLimit
+          value: 0.05
+        - propertyName: _LightMaxLimit
+          value: 1
+        vectorModifiers: []
+  - frameValue: 0.02
+    parametersPerMenu:
+      objects: []
+      blendShapeModifiers: []
+      materialReplacers: []
+      materialPropertyModifiers:
+      - renderers: []
+        floatModifiers:
+        - propertyName: _AsUnlit
+          value: 0
+        - propertyName: _LightMinLimit
+          value: 0
+        - propertyName: _LightMaxLimit
+          value: 0
+        vectorModifiers: []
+  - frameValue: 0.5
+    parametersPerMenu:
+      objects: []
+      blendShapeModifiers: []
+      materialReplacers: []
+      materialPropertyModifiers:
+      - renderers: []
+        floatModifiers:
+        - propertyName: _AsUnlit
+          value: 0
+        - propertyName: _LightMinLimit
+          value: 0.05
+        - propertyName: _LightMaxLimit
+          value: 1
+        vectorModifiers: []
+  - frameValue: 1
+    parametersPerMenu:
+      objects: []
+      blendShapeModifiers: []
+      materialReplacers: []
+      materialPropertyModifiers:
+      - renderers: []
+        floatModifiers:
+        - propertyName: _AsUnlit
+          value: 1
+        - propertyName: _LightMinLimit
+          value: 0.05
+        - propertyName: _LightMaxLimit
+          value: 1
+        vectorModifiers: []
+  isSave: 1
+  isLocalOnly: 0
