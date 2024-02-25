@@ -13,8 +13,8 @@ namespace jp.lilxyzw.avatarmodifier
         internal VRC.SDK3.Avatars.Components.VRCAvatarDescriptor AvatarDescriptor;
         #endif
 
-        private const string PATH_ROOT = "Packages/jp.lilxyzw.avatarmodifier";
-        private const string PATH_GEN = "__Generated";
+        private const string PATH_ROOT = "Assets";
+        private const string PATH_GEN = "__Generated_lilAvatarModifier";
 
         internal BuildContext(GameObject gameObject)
         {
