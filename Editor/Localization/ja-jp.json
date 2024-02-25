@@ -53,6 +53,7 @@
   "inspector.frameValue": "フレーム値",
   "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき1になります。",
 
+  "inspector.previewAnimation": "アニメーションのプレビュー",
   "inspector.preview": "プレビュー",
   "inspector.previewStop": "ストップ",
   "inspector.previewCostume": "プレビューするコスチューム",

@@ -105,22 +105,23 @@ namespace jp.lilxyzw.avatarmodifier
             if(!target) StopPreview();
         }
 
-        private void TogglePreview()
+        internal bool ChechTargetHasPreview(Object obj)
+        {
+            if(!obj) return false;
+            switch(obj)
+            {
+                case ItemToggler _: return true;
+                case CostumeChanger _: return true;
+                case SmoothChanger _: return true;
+            }
+            return false;
+        }
+
+        internal void TogglePreview()
         {
             EditorGUI.BeginChangeCheck();
             doPreview = GUILayout.Toolbar(doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
             if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
-        }
-
-        internal void TogglePreview(Object obj)
-        {
-            if(!obj) return;
-            switch(obj)
-            {
-                case ItemToggler _: TogglePreview(); return;
-                case CostumeChanger _: TogglePreview(); return;
-                case SmoothChanger _: TogglePreview(); return;
-            }
         }
 
         private void DrawIndex(int size, string key)

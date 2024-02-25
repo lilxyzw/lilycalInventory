@@ -17,10 +17,13 @@ namespace jp.lilxyzw.avatarmodifier
             Localization.SelectLanguageGUI();
             var hasProperty = false;
 
-            if(targets.Length == 1)
+            if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
             {
-                PreviewHelper.instance.TogglePreview(target);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.LabelField(Localization.G("inspector.previewAnimation"));
                 PreviewHelper.instance.DrawIndex(target);
+                PreviewHelper.instance.TogglePreview();
+                EditorGUILayout.EndVertical();
             }
 
             serializedObject.UpdateIfRequiredOrScript();
