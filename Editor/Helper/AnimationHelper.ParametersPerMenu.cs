@@ -1,9 +1,8 @@
+using System;
 using System.Linq;
 using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.UIElements;
-
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -262,8 +261,7 @@ namespace jp.lilxyzw.avatarmodifier
             parameter.blendShapeModifiers = parameter1.blendShapeModifiers.Union(parameter2.blendShapeModifiers.Where(m => !smrs.Contains(m.skinnedMeshRenderer))).ToArray();
             var rs = parameter1.materialReplacers.Select(m => m.renderer);
             parameter.materialReplacers = parameter1.materialReplacers.Union(parameter2.materialReplacers.Where(m => !rs.Contains(m.renderer))).ToArray();
-            var mms = parameter1.materialPropertyModifiers.Select(m => m.renderers);
-            parameter.materialPropertyModifiers = parameter1.materialPropertyModifiers.Union(parameter2.materialPropertyModifiers.Where(m => !mms.Contains(m.renderers))).ToArray();
+            parameter.materialPropertyModifiers = (MaterialPropertyModifier[])parameter1.materialPropertyModifiers.Clone();
             return parameter;
         }
     }

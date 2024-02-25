@@ -84,7 +84,7 @@ namespace jp.lilxyzw.avatarmodifier
 
         internal void StartPreview(Object obj)
         {
-            if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode()) return;
+            if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot()) return;
             target = (Component)obj;
             switch(obj)
             {
@@ -215,7 +215,38 @@ namespace jp.lilxyzw.avatarmodifier
                 if(modified) replacer.renderer.sharedMaterials = materials;
             }
 
-            // TODO: MaterialPropertyModifier
+            // MaterialPropertyModifier as replacer
+            foreach(var modifier in m_Parameters.materialPropertyModifiers)
+            {
+                var renderers = modifier.renderers;
+                if(renderers.Length == 0)
+                    renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
+
+                foreach(var renderer in renderers)
+                {
+                    if(!renderer) continue;
+                    var materials = renderer.sharedMaterials;
+                    for(int i = 0; i < materials.Length; i++)
+                    {
+                        if(!materials[i]) continue;
+                        var binding = AnimationHelper.CreateMaterialReplaceBinding(renderer, i);
+                        AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                            propertyPath = new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath,
+                            target = renderer,
+                            objectReference = renderer.sharedMaterials[i]
+                        }, true);
+
+                        var material = new Material(materials[i]);
+                        foreach(var floatModifier in modifier.floatModifiers)
+                            material.SetFloat(floatModifier.propertyName, floatModifier.value);
+                        foreach(var vectorModifier in modifier.vectorModifiers)
+                            material.SetVector(vectorModifier.propertyName, vectorModifier.value);
+                        
+                        materials[i] = material;
+                    }
+                    renderer.sharedMaterials = materials;
+                }
+            }
         }
     }
 }

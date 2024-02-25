@@ -1,7 +1,5 @@
-using System;
 using System.Linq;
 using jp.lilxyzw.avatarmodifier.runtime;
-using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
