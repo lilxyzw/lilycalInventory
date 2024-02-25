@@ -1,12 +1,11 @@
 #if LIL_VRCSDK3A
 using System;
 using System.Linq;
+using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
-using UnityEditor;
-using jp.lilxyzw.avatarmodifier.runtime;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -14,6 +13,8 @@ using nadena.dev.ndmf;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal static class VRChatHelper
     {
         private static Texture2D m_IconNext;

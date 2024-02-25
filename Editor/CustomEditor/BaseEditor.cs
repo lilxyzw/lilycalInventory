@@ -1,8 +1,9 @@
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     [CustomEditor(typeof(AvatarTagComponent), true)] [CanEditMultipleObjects]
     internal class BaseEditor : Editor
     {

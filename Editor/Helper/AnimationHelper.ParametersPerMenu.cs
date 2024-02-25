@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +9,8 @@ using nadena.dev.ndmf;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal static partial class AnimationHelper
     {
         internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)

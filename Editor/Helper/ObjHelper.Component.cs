@@ -1,8 +1,9 @@
 using System.Linq;
-using jp.lilxyzw.avatarmodifier.runtime;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal static partial class ObjHelper
     {
         private static string GetMenuName(this MenuBaseComponent component)
@@ -40,7 +41,7 @@ namespace jp.lilxyzw.avatarmodifier
                 foreach(var costume in changer.costumes)
                     costume.menuName = costume.GetMenuName(changer);
 
-            var objs = changers.Where(c => c.costumes.Any(c => string.IsNullOrEmpty(c.menuName)));
+            var objs = changers.Where(c => c.costumes.Any(d => string.IsNullOrEmpty(d.menuName)));
             if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menunameEmpty", objs.ToArray());
         }
 

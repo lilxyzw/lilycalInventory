@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -18,6 +16,8 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal partial class Modifier
     {
         internal static void ApplySmoothChanger(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, SmoothChanger[] changers

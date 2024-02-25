@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using jp.lilxyzw.avatarmodifier.runtime;
-using UnityEditor;
-using UnityEngine;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -13,6 +10,8 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal partial class Modifier
     {
         internal static void ApplyMenuFolder(BuildContext ctx, MenuFolder[] folders

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEditor.Animations;
 
@@ -13,6 +12,8 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal partial class Modifier
     {
         internal static void ApplyItemToggler(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers

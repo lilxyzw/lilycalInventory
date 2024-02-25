@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal partial class Modifier
     {
         internal static void ApplyMaterialModifier(Material[] materials, MaterialModifier[] modifiers)

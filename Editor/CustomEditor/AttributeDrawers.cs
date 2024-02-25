@@ -1,9 +1,10 @@
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     [CustomPropertyDrawer(typeof(MenuFolderOverrideAttribute))]
     internal class MenuFolderOverrideDrawer : PropertyDrawer
     {

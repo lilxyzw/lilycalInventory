@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     [CustomPropertyDrawer(typeof(LILElement), true)]
     internal class LILElementDrawer : PropertyDrawer
     {

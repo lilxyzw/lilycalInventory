@@ -1,6 +1,6 @@
 {
     "name": "jp.lilxyzw.avatarmodifier.runtime",
-    "rootNamespace": "",
+    "rootNamespace": "jp.lilxyzw.avatarmodifier.runtime",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

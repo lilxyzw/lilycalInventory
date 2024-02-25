@@ -1,9 +1,10 @@
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal static partial class AnimationHelper
     {
         internal static (AnimationClip,AnimationClip) CreateClip(this Prop prop, string name)

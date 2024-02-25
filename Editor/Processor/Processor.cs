@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEngine;
 
 #if LIL_NDMF
@@ -8,6 +7,8 @@ using nadena.dev.ndmf;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal static class Processor
     {
         // Common

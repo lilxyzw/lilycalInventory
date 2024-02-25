@@ -1,6 +1,6 @@
 {
     "name": "jp.lilxyzw.avatarmodifier",
-    "rootNamespace": "",
+    "rootNamespace": "jp.lilxyzw.avatarmodifier",
     "references": [
         "jp.lilxyzw.avatarmodifier.runtime",
         "nadena.dev.ndmf",

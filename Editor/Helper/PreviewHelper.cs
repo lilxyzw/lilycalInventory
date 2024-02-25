@@ -2,7 +2,6 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
-using jp.lilxyzw.avatarmodifier.runtime;
 using System.Globalization;
 #if !UNITY_2020_1_OR_NEWER
 using AnimationModeDriver = UnityEngine.Object;
@@ -10,6 +9,8 @@ using AnimationModeDriver = UnityEngine.Object;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using runtime;
+
     internal class PreviewHelper : ScriptableSingleton<PreviewHelper>
     {
         private static Component target;
