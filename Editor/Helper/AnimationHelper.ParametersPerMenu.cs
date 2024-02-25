@@ -2,6 +2,8 @@ using System.Linq;
 using jp.lilxyzw.avatarmodifier.runtime;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.UIElements;
+
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -11,7 +13,7 @@ namespace jp.lilxyzw.avatarmodifier
 {
     internal static partial class AnimationHelper
     {
-        internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
+        internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
         {
             var clipOff = new AnimationClip();
             var clipOn = new AnimationClip();
@@ -29,7 +31,7 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 if(modifier.applyToAll)
                 {
-                    var renderers = ctx.AvatarRootObject.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                    var renderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>(true);
                     foreach(var renderer in renderers)
                     {
                         if(!renderer || !renderer.sharedMesh) continue;
@@ -60,12 +62,17 @@ namespace jp.lilxyzw.avatarmodifier
             foreach(var modifier in parameter.materialPropertyModifiers)
             {
                 if(modifier.renderers.Length == 0)
-                    modifier.renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true).ToArray();
+                    modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
 
                 modifier.ToClipDefault(clipOff);
                 modifier.ToClip(clipOn);
             }
             return (clipOff, clipOn);
+        }
+
+        internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
+        {
+            return parameter.CreateClip(ctx.AvatarRootObject, name);
         }
 
         // ObjectToggler
@@ -194,6 +201,70 @@ namespace jp.lilxyzw.avatarmodifier
                     AnimationUtility.SetEditorCurve(clip, bindingW, curveW);
                 }
             }
+        }
+
+        internal static ParametersPerMenu CreateDefaultParameters(this ParametersPerMenu[] parameters)
+        {
+            var parameter = new ParametersPerMenu();
+            parameter.objects = parameters.SelectMany(p => p.objects).Select(o => o.obj).Distinct().Select(o => new ObjectToggler{obj = o, value = false}).ToArray();
+
+            var blendShapeModifiers = parameters.SelectMany(p => p.blendShapeModifiers).Where(b => b.skinnedMeshRenderer && b.skinnedMeshRenderer.sharedMesh).Select(b => new BlendShapeModifier{skinnedMeshRenderer = b.skinnedMeshRenderer, blendShapeNameValues = b.blendShapeNameValues});
+            foreach(var b in blendShapeModifiers)
+            {
+                b.blendShapeNameValues.Select(v => {
+                    var index = b.skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(v.name);
+                    if(index != -1) v.value = b.skinnedMeshRenderer.GetBlendShapeWeight(index);
+                    return v;
+                });
+            }
+            parameter.blendShapeModifiers = blendShapeModifiers.ToArray();
+
+            parameter.materialReplacers = parameters.SelectMany(p => p.materialReplacers).Where(m => m.renderer).Select(m => new MaterialReplacer{renderer = m.renderer, replaceTo = m.renderer.sharedMaterials}).ToArray();
+            var materialPropertyModifiers = parameters.SelectMany(p => p.materialPropertyModifiers);
+            foreach(var modifier in materialPropertyModifiers)
+            foreach(var renderer in modifier.renderers)
+            {
+                if(!renderer) continue;
+                foreach(var floatModifier in modifier.floatModifiers)
+                {
+                    float value = 0;
+                    foreach(var material in renderer.sharedMaterials)
+                    {
+                        if(!material.HasProperty(floatModifier.propertyName)) continue;
+                        value = material.GetFloat(floatModifier.propertyName);
+                        break;
+                    }
+                    floatModifier.value = value;
+                }
+                foreach(var vectorModifier in modifier.vectorModifiers)
+                {
+                    Vector4 value = Vector4.zero;
+                    foreach(var material in renderer.sharedMaterials)
+                    {
+                        if(!material.HasProperty(vectorModifier.propertyName)) continue;
+                        value = material.GetVector(vectorModifier.propertyName);
+                        break;
+                    }
+                    vectorModifier.value = value;
+                }
+            }
+            parameter.materialPropertyModifiers = materialPropertyModifiers.ToArray();
+
+            return parameter;
+        }
+
+        internal static ParametersPerMenu Merge(this ParametersPerMenu parameter1, ParametersPerMenu parameter2)
+        {
+            var parameter = new ParametersPerMenu();
+            var objs = parameter1.objects.Select(o => o.obj);
+            parameter.objects = parameter1.objects.Union(parameter2.objects.Where(t => !objs.Contains(t.obj))).ToArray();
+            var smrs = parameter1.blendShapeModifiers.Select(m => m.skinnedMeshRenderer);
+            parameter.blendShapeModifiers = parameter1.blendShapeModifiers.Union(parameter2.blendShapeModifiers.Where(m => !smrs.Contains(m.skinnedMeshRenderer))).ToArray();
+            var rs = parameter1.materialReplacers.Select(m => m.renderer);
+            parameter.materialReplacers = parameter1.materialReplacers.Union(parameter2.materialReplacers.Where(m => !rs.Contains(m.renderer))).ToArray();
+            var mms = parameter1.materialPropertyModifiers.Select(m => m.renderers);
+            parameter.materialPropertyModifiers = parameter1.materialPropertyModifiers.Union(parameter2.materialPropertyModifiers.Where(m => !mms.Contains(m.renderers))).ToArray();
+            return parameter;
         }
     }
 }

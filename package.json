@@ -1,10 +1,10 @@
 {
   "name": "jp.lilxyzw.avatarmodifier",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "displayName": "lilAvatarModifier",
   "description": "Modify avatar at build time.",
   "unity": "2019.4",
   "license": "MIT",
-  "url" : "https://github.com/lilxyzw/lilAvatarModifier/releases/download/0.2.1/jp.lilxyzw.avatarmodifier-0.2.1.zip?",
+  "url" : "https://github.com/lilxyzw/lilAvatarModifier/releases/download/0.2.2/jp.lilxyzw.avatarmodifier-0.2.2.zip?",
   "repo" : "https://lilxyzw.github.io/vpm-repos/vpm.json"
 }

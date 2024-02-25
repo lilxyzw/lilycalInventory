@@ -7,7 +7,7 @@ namespace jp.lilxyzw.avatarmodifier
 {
     internal static partial class AnimationHelper
     {
-        private static EditorCurveBinding CreateBlendShapeBinding(SkinnedMeshRenderer renderer, string blendShape)
+        internal static EditorCurveBinding CreateBlendShapeBinding(SkinnedMeshRenderer renderer, string blendShape)
         {
             return new EditorCurveBinding
             {
@@ -17,7 +17,7 @@ namespace jp.lilxyzw.avatarmodifier
             };
         }
 
-        private static EditorCurveBinding CreateToggleBinding(GameObject gameObject)
+        internal static EditorCurveBinding CreateToggleBinding(GameObject gameObject)
         {
             return new EditorCurveBinding
             {
@@ -27,7 +27,7 @@ namespace jp.lilxyzw.avatarmodifier
             };
         }
 
-        private static EditorCurveBinding CreateMaterialReplaceBinding(Renderer renderer, int slot)
+        internal static EditorCurveBinding CreateMaterialReplaceBinding(Renderer renderer, int slot)
         {
             return new EditorCurveBinding
             {
@@ -37,7 +37,7 @@ namespace jp.lilxyzw.avatarmodifier
             };
         }
 
-        private static EditorCurveBinding CreateMaterialPropertyBinding(Renderer renderer, string name)
+        internal static EditorCurveBinding CreateMaterialPropertyBinding(Renderer renderer, string name)
         {
             return new EditorCurveBinding
             {

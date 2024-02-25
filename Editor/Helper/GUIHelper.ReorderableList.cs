@@ -50,6 +50,9 @@ namespace jp.lilxyzw.avatarmodifier
                 {
                     draggable = true,
                     headerHeight = 0,
+                    #if UNITY_2021_1_OR_NEWER
+                    multiSelect = true,
+                    #endif
                     elementHeightCallback = index => EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(index)),
                     onAddCallback = list => property.ResizeArray(property.arraySize + 1, initializeFunction),
                     drawElementCallback = (rect, index, isActive, isFocused) =>

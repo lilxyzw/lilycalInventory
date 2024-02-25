@@ -33,6 +33,9 @@ namespace jp.lilxyzw.avatarmodifier
             #if LIL_VRCSDK3A
                 var descriptor = gameObject.GetComponentInParentInRoot<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>(null);
                 if(descriptor) return descriptor.transform;
+            #else
+                var animator = gameObject.GetComponentInParentInRoot<Animator>(null);
+                if(animator) return animator.transform;
             #endif
             return null;
         }
