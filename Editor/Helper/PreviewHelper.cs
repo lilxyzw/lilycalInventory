@@ -219,7 +219,7 @@ namespace jp.lilxyzw.avatarmodifier
             {
                 var renderers = modifier.renderers;
                 if(renderers.Length == 0)
-                    renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
+                    renderers = gameObject.GetComponentsInChildren<Renderer>(false).ToArray(); // Slows down when there are a large number of costumes, so false 
 
                 foreach(var renderer in renderers)
                 {
