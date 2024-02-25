@@ -6,7 +6,7 @@ namespace jp.lilxyzw.avatarmodifier.runtime
     [Serializable]
     internal class Costume : LILElement
     {
-        [LILLocalize] public string menuName;
+        [CostumeName] public string menuName;
         [LILLocalize] public Texture2D icon;
         public ParametersPerMenu parametersPerMenu;
     }

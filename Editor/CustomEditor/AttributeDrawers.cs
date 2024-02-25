@@ -66,4 +66,32 @@ namespace jp.lilxyzw.avatarmodifier
             GUIHelper.TextField(position, Localization.G(property), property, property.serializedObject.targetObject.name);
         }
     }
+
+    [CustomPropertyDrawer(typeof(CostumeNameAttribute))]
+    internal class CostumeNameDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            if(string.IsNullOrEmpty(property.stringValue))
+            {
+                var copy = property.Copy();
+                copy.Next(false);
+                copy.Next(false);
+                var togglers = copy.FPR("objects");
+                string name = null;
+                for(int i = 0; i < togglers.arraySize; i++)
+                {
+                    var obj = togglers.GetArrayElementAtIndex(i).FPR("obj").objectReferenceValue;
+                    if(!obj) continue;
+                    name = obj.name;
+                    break;
+                }
+                GUIHelper.TextField(position, Localization.G(property), property, name);
+            }
+            else
+            {
+                GUIHelper.AutoField(position, property);
+            }
+        }
+    }
 }

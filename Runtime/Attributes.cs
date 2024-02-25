@@ -16,6 +16,9 @@ namespace jp.lilxyzw.avatarmodifier.runtime
     internal class MenuNameAttribute : PropertyAttribute {}
 
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    internal class CostumeNameAttribute : PropertyAttribute {}
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     internal class LILLocalizeAttribute : PropertyAttribute
     {
         public readonly string name;
