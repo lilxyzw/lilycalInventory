@@ -1,13 +1,15 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilAvatarModifier/lilAM SmoothChanger")]
+    [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(SmoothChanger))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(SmoothChanger))]
     internal class SmoothChanger : MenuBaseComponent
     {
-        [LILLocalize] [Range(0,1)] public float defaultFrameValue;
-        public Frame[] frames;
-        [LILLocalize] public bool isSave = true;
-        [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [Range(0,1)] public float defaultFrameValue;
+        [NotKeyable] public Frame[] frames;
+        [NotKeyable] [LILLocalize] public bool isSave = true;
+        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }
 }

@@ -69,12 +69,12 @@ https://github.com/lilxyzw/lilAvatarModifier.git
 
 ### アバターの明るさ調整
 
+lilToonの場合はPrefabsフォルダ内のLightをアバターに追加するだけで完了です。他シェーダーの場合は手動でプロパティを設定してください。
+
 1. Hierarchyで右クリックし`Create Empty`でアバター内に新しいオブジェクトを作成
 2. そのオブジェクトに`lilAM SmoothChanger`コンポーネントを追加
 3. フレームの+ボタンを押し、フレーム値を0に設定し`マテリアルのプロパティ操作`に操作するメッシュとプロパティを指定（メッシュが未指定であれば全メッシュを操作）
 4. フレームの+ボタンを押し、フレーム値を1に設定し3の手順同様に設定
-
-例えばlilToonの場合は`_AsUnlit`、`_LightMinLimit`、`_LightMaxLimit`を指定します。
 
 ### 作成したメニューの整理
 

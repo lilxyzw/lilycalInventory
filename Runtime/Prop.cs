@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilAvatarModifier/lilAM Prop")]
+    [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Prop))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(Prop))]
     internal class Prop : MenuBaseComponent
     {
-        [LILLocalize] public bool isSave = true;
-        [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] public bool isSave = true;
+        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }
 }

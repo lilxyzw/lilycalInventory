@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace jp.lilxyzw.avatarmodifier.runtime
 {
+    [DisallowMultipleComponent]
     internal abstract class MenuBaseComponent : AvatarTagComponent
     {
-        [MenuName] public string menuName;
-        [MenuFolderOverride] public MenuFolder parentOverride;
-        [LILLocalize] public Texture2D icon;
+        [NotKeyable] [MenuName] public string menuName;
+        [NotKeyable] [MenuFolderOverride] public MenuFolder parentOverride;
+        [NotKeyable] [LILLocalize] public Texture2D icon;
     }
 }

@@ -1,12 +1,14 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilAvatarModifier/lilAM ItemToggler")]
+    [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(ItemToggler))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(ItemToggler))]
     internal class ItemToggler : MenuBaseComponent
     {
-        public ParametersPerMenu parameter;
-        [LILLocalize] public bool isSave = true;
-        [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] public ParametersPerMenu parameter;
+        [NotKeyable] [LILLocalize] public bool isSave = true;
+        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }
 }

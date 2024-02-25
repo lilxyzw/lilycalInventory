@@ -1,12 +1,14 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace jp.lilxyzw.avatarmodifier.runtime
 {
-    [AddComponentMenu("lilAvatarModifier/lilAM CostumeChanger")]
+    [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(CostumeChanger))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(CostumeChanger))]
     internal class CostumeChanger : MenuBaseComponent
     {
-        public Costume[] costumes;
-        [LILLocalize] public bool isSave = true;
-        [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] public Costume[] costumes;
+        [NotKeyable] [LILLocalize] public bool isSave = true;
+        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }
 }
