@@ -12,11 +12,20 @@ namespace jp.lilxyzw.avatarmodifier
             return name;
         }
 
-        private static string GetMenuName(this Costume costume)
+        private static string GetMenuName(this Costume costume, CostumeChanger changer)
         {
             if(!string.IsNullOrEmpty(costume.menuName)) return costume.menuName;
-            string name = costume.parametersPerMenu.objects.Select(o => o.obj).First(o => o && !string.IsNullOrEmpty(o.name)).name;
-            return name;
+            var obj = costume.parametersPerMenu.objects.Select(o => o.obj).FirstOrDefault(o => o && !string.IsNullOrEmpty(o.name));
+            if(obj && !string.IsNullOrEmpty(obj.name)) return obj.name;
+            var shape = costume.parametersPerMenu.blendShapeModifiers.SelectMany(m => m.blendShapeNameValues).Select(v => v.name).FirstOrDefault(n => !string.IsNullOrEmpty(n));
+            if(!string.IsNullOrEmpty(shape)) return shape;
+            var material = costume.parametersPerMenu.materialReplacers.SelectMany(r => r.replaceTo).FirstOrDefault(m => m && !string.IsNullOrEmpty(m.name));
+            if(material && !string.IsNullOrEmpty(material.name)) return material.name;
+            var nameF = costume.parametersPerMenu.materialPropertyModifiers.SelectMany(m => m.floatModifiers).Select(m => m.propertyName).FirstOrDefault(n => !string.IsNullOrEmpty(n));
+            if(!string.IsNullOrEmpty(nameF)) return nameF;
+            var nameV = costume.parametersPerMenu.materialPropertyModifiers.SelectMany(m => m.vectorModifiers).Select(m => m.propertyName).FirstOrDefault(n => !string.IsNullOrEmpty(n));
+            if(!string.IsNullOrEmpty(nameV)) return nameF;
+            return null;
         }
 
         internal static void ResolveMenuName(this MenuBaseComponent[] components)
@@ -29,7 +38,10 @@ namespace jp.lilxyzw.avatarmodifier
         {
             foreach(var changer in changers)
                 foreach(var costume in changer.costumes)
-                    costume.menuName = costume.GetMenuName();
+                    costume.menuName = costume.GetMenuName(changer);
+
+            var objs = changers.Where(c => c.costumes.Any(c => string.IsNullOrEmpty(c.menuName)));
+            if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menunameEmpty", objs.ToArray());
         }
 
         internal static MenuFolder GetMenuParent(this MenuBaseComponent component)

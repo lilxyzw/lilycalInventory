@@ -10,6 +10,7 @@
 
   "inspector.menuName": "メニュー名",
   "inspector.menuName.tooltip": "VRChatのメニュー上で表示される名前です。何も入力していない場合はオブジェクト名と同じになります。",
+  "inspector.menuNameEmpty": "メニュー名を入力してください。",
   "inspector.parentFolder": "メニューの親フォルダ",
   "inspector.parentOverride": "オーバーライド",
   "inspector.parentOverride.tooltip": "ここで指定したフォルダーの中にメニューが入ります。何も指定していない場合、親にMenuFolderコンポーネントがあればその中に、なければルートに入ります。",
@@ -60,5 +61,6 @@
   "inspector.previewFrame": "プレビューするフレーム",
 
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
-  "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。"
+  "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
+  "dialog.error.menunameEmpty": "メニュー名が空になっています。名前を設定してください。"
 }

@@ -72,26 +72,99 @@ namespace jp.lilxyzw.avatarmodifier
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if(string.IsNullOrEmpty(property.stringValue))
+            var copy = property.Copy();
+            copy.Next(false);
+            copy.Next(false);
+            string name = property.stringValue;
+
+            if(string.IsNullOrEmpty(name))
             {
-                var copy = property.Copy();
-                copy.Next(false);
-                copy.Next(false);
                 var togglers = copy.FPR("objects");
-                string name = null;
                 for(int i = 0; i < togglers.arraySize; i++)
                 {
                     var obj = togglers.GetArrayElementAtIndex(i).FPR("obj").objectReferenceValue;
-                    if(!obj) continue;
+                    if(!obj || string.IsNullOrEmpty(obj.name)) continue;
                     name = obj.name;
                     break;
                 }
-                GUIHelper.TextField(position, Localization.G(property), property, name);
             }
-            else
+
+            if(string.IsNullOrEmpty(name))
             {
-                GUIHelper.AutoField(position, property);
+                var modifiers = copy.FPR("blendShapeModifiers");
+                for(int i = 0; i < modifiers.arraySize; i++)
+                {
+                    var nv = modifiers.GetArrayElementAtIndex(i).FPR("blendShapeNameValues");
+                    for(int j = 0; j < nv.arraySize; j++)
+                    {
+                        var nameTemp = nv.GetArrayElementAtIndex(j).FPR("name").stringValue;
+                        if(string.IsNullOrEmpty(nameTemp)) continue;
+                        name = nameTemp;
+                        break;
+                    }
+                    if(!string.IsNullOrEmpty(name)) break;
+                }
             }
+
+            if(string.IsNullOrEmpty(name))
+            {
+                var replacers = copy.FPR("materialReplacers");
+                for(int i = 0; i < replacers.arraySize; i++)
+                {
+                    var t = replacers.GetArrayElementAtIndex(i).FPR("replaceTo");
+                    for(int j = 0; j < t.arraySize; j++)
+                    {
+                        var m = t.GetArrayElementAtIndex(j).objectReferenceValue;
+                        if(!m || string.IsNullOrEmpty(m.name)) continue;
+                        name = m.name;
+                        break;
+                    }
+                    if(!string.IsNullOrEmpty(name)) break;
+                }
+            }
+
+            if(string.IsNullOrEmpty(name))
+            {
+                var replacers = copy.FPR("materialPropertyModifiers");
+                for(int i = 0; i < replacers.arraySize; i++)
+                {
+                    var m = replacers.GetArrayElementAtIndex(i).FPR("floatModifiers");
+                    for(int j = 0; j < m.arraySize; j++)
+                    {
+                        var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;
+                        if(string.IsNullOrEmpty(n)) continue;
+                        name = n;
+                        break;
+                    }
+                    if(!string.IsNullOrEmpty(name)) break;
+                }
+            }
+
+            if(string.IsNullOrEmpty(name))
+            {
+                var replacers = copy.FPR("materialPropertyModifiers");
+                for(int i = 0; i < replacers.arraySize; i++)
+                {
+                    var m = replacers.GetArrayElementAtIndex(i).FPR("vectorModifiers");
+                    for(int j = 0; j < m.arraySize; j++)
+                    {
+                        var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;
+                        if(string.IsNullOrEmpty(n)) continue;
+                        name = n;
+                        break;
+                    }
+                    if(!string.IsNullOrEmpty(name)) break;
+                }
+            }
+
+            if(string.IsNullOrEmpty(name))
+            {
+                name = Localization.S("inspector.menuNameEmpty");
+            }
+
+            if(!string.IsNullOrEmpty(property.stringValue)) name = " ";
+
+            GUIHelper.TextField(position, Localization.G(property), property, name);
         }
     }
 }

@@ -10,6 +10,7 @@
 
   "inspector.menuName": "Menu Name",
   "inspector.menuName.tooltip": "This is the name of the menu displayed on VRChat.",
+  "inspector.menuNameEmpty": "Please enter the menu name.",
   "inspector.parentFolder": "Parent folder",
   "inspector.parentOverride": "Override",
   "inspector.parentOverride.tooltip": "The menu will be placed in the folder specified here. If nothing is specified, the menu will be placed in the parent MenuFolder component if it exists, or in the root if not.",
@@ -60,5 +61,6 @@
   "inspector.previewFrame": "Preview Frame",
 
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing.",
-  "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations."
+  "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations.",
+  "dialog.error.menunameEmpty": "The menu name is empty. Please set a name."
 }
