@@ -64,7 +64,9 @@
 
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
-  "dialog.error.menunameEmpty": "メニュー名が空になっています。名前を設定してください。",
+  "dialog.error.menuNameEmpty": "メニュー名が空になっています。名前を設定してください。",
+  "dialog.error.menuNameDuplication": "メニュー名が重複しています。名前を変更してください。",
+  "dialog.error.parameterDuplication": "パラメーター名が重複しています。名前を変更してください。",
   "dialog.error.defaultDuplication": "複数のオブジェクトがオンになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.allObjectOff": "以下の全てのオブジェクトがオフになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。"

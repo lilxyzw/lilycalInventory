@@ -64,7 +64,9 @@
 
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing.",
   "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations.",
-  "dialog.error.menunameEmpty": "The menu name is empty. Please set a name.",
+  "dialog.error.menuNameEmpty": "The menu name is empty. Please set a name.",
+  "dialog.error.menuNameDuplication": "Duplicate menu name. Please change the name.",
+  "dialog.error.parameterDuplication": "Duplicate parameter name. Please change the name.",
   "dialog.error.defaultDuplication": "Multiple objects are turned on. Please check only one so that the tool can set the initial value.",
   "dialog.error.allObjectOff": "All objects below are turned off. Please check only one so that the tool can set the initial value.初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.avatarRootNofFound": "Avatar root object not found. Make sure that the object is inside the avatar and that the avatar has an AvatarDescriptor attached."

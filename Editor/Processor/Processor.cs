@@ -18,13 +18,15 @@ namespace jp.lilxyzw.avatarmodifier
         private static MaterialModifier[] modifiers;
         private static MaterialOptimizer[] optimizers;
         // Menu
-        private static MenuFolder[] folders;
+        private static AvatarTagComponent[] components;
         private static AutoDresser[] dressers;
+        private static MenuFolder[] folders;
         private static ItemToggler[] togglers;
         private static Prop[] props;
         private static CostumeChanger[] costumeChangers;
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
+        private static HashSet<string> parameterNames;
 
         internal static void FindComponent(BuildContext ctx)
         {
@@ -33,7 +35,7 @@ namespace jp.lilxyzw.avatarmodifier
             dressers.ResolveMenuName();
             dressers.DresserToChanger();
 
-            var components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true).Where(c => c.enabled).ToArray();
+            components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true).Where(c => c.enabled).ToArray();
             modifiers = components.GetActiveComponents<MaterialModifier>();
             optimizers = components.GetActiveComponents<MaterialOptimizer>();
             folders = components.GetActiveComponents<MenuFolder>();
@@ -63,6 +65,13 @@ namespace jp.lilxyzw.avatarmodifier
             var menu = VRChatHelper.CreateMenu(ctx);
             var parameters = VRChatHelper.CreateParameters(ctx);
             var menuDic = new Dictionary<MenuFolder, VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu>();
+
+            parameterNames = new HashSet<string>();
+            if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
+            if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
+            var parameterDuplicates = components.GetActiveComponents<MenuBaseComponent>().Where(c => !(c is MenuFolder) && !(c is AutoDresser) && parameterNames.Contains(c.menuName)).ToArray();
+            if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
+
             Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
             Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, menu, parameters, menuDic);
             Modifier.ApplyProp(ctx, controller, hasWriteDefaultsState, props, menu, parameters, menuDic);

@@ -35,6 +35,8 @@ namespace jp.lilxyzw.avatarmodifier
         {
             foreach(var component in components)
                 component.menuName = component.GetMenuName();
+            var duplicates = components.Where(c => !(c is MenuFolder)).GroupBy(c => c.menuName).Where(g => g.Count() > 1).SelectMany(g => g).ToArray();
+            if(duplicates.Length > 0) ErrorHelper.Report("dialog.error.menuNameDuplication", duplicates);
         }
 
         internal static void ResolveMenuName(this CostumeChanger[] changers)
@@ -44,7 +46,7 @@ namespace jp.lilxyzw.avatarmodifier
                     costume.menuName = costume.GetMenuName(changer);
 
             var objs = changers.Where(c => c.costumes.Any(d => string.IsNullOrEmpty(d.menuName)));
-            if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menunameEmpty", objs.ToArray());
+            if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menuNameEmpty", objs.ToArray());
         }
 
         internal static MenuFolder GetMenuParent(this MenuBaseComponent component)
