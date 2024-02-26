@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 

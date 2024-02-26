@@ -7,7 +7,7 @@ using System.Globalization;
 using AnimationModeDriver = UnityEngine.Object;
 #endif
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 

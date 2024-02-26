@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier.runtime
+namespace jp.lilxyzw.lilycalinventory.runtime
 {
     internal abstract class AvatarTagComponent : MonoBehaviour
     #if LIL_VRCSDK3

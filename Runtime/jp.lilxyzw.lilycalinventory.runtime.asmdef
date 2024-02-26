@@ -1,6 +1,6 @@
 {
-    "name": "jp.lilxyzw.avatarmodifier.runtime",
-    "rootNamespace": "jp.lilxyzw.avatarmodifier.runtime",
+    "name": "jp.lilxyzw.lilycalinventory.runtime",
+    "rootNamespace": "jp.lilxyzw.lilycalinventory.runtime",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

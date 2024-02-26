@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     internal static partial class AnimationHelper
     {

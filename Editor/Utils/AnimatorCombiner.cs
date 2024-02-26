@@ -39,7 +39,7 @@ using Object = UnityEngine.Object;
 
 #endregion
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     internal class AnimatorCombiner
     {

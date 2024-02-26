@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier.runtime
+namespace jp.lilxyzw.lilycalinventory.runtime
 {
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     internal class MenuFolderOverrideAttribute : PropertyAttribute {}

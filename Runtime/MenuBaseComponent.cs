@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace jp.lilxyzw.avatarmodifier.runtime
+namespace jp.lilxyzw.lilycalinventory.runtime
 {
     [DisallowMultipleComponent]
     internal abstract class MenuBaseComponent : AvatarTagComponent

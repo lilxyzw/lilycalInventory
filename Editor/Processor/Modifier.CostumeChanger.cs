@@ -12,7 +12,7 @@ using nadena.dev.ndmf;
 using VRC.SDK3.Avatars.ScriptableObjects;
 #endif
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 

@@ -40,7 +40,7 @@ using VRC.SDK3.Avatars.Components;
 
 #endregion
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     internal static class AnimationUtil
     {

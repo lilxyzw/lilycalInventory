@@ -1,8 +1,8 @@
 {
-    "name": "jp.lilxyzw.avatarmodifier",
-    "rootNamespace": "jp.lilxyzw.avatarmodifier",
+    "name": "jp.lilxyzw.lilycalinventory",
+    "rootNamespace": "jp.lilxyzw.lilycalinventory",
     "references": [
-        "jp.lilxyzw.avatarmodifier.runtime",
+        "jp.lilxyzw.lilycalinventory.runtime",
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime"
     ],
@@ -35,6 +35,11 @@
             "name": "nadena.dev.ndmf",
             "expression": "",
             "define": "LIL_NDMF"
+        },
+        {
+            "name": "jp.lilxyzw.avatarmodifier",
+            "expression": "",
+            "define": "LIL_AVATAR_MODIFIER"
         }
     ],
     "noEngineReferences": false

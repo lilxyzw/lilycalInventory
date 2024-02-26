@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace jp.lilxyzw.avatarmodifier.runtime
+namespace jp.lilxyzw.lilycalinventory.runtime
 {
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Prop))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(Prop))]

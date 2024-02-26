@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 

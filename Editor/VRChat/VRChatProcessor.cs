@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-namespace jp.lilxyzw.avatarmodifier.vrchat
+namespace jp.lilxyzw.lilycalinventory.vrchat
 {
     public class AvatarPreprocessor : IVRCSDKPreprocessAvatarCallback
     {
@@ -27,7 +27,7 @@ namespace jp.lilxyzw.avatarmodifier.vrchat
             }
             catch(Exception e)
             {
-                EditorUtility.DisplayDialog("lilMaterialModifier", $"{Localization.S("dialog.error.processfailed")}\r\n{e}", "OK");
+                EditorUtility.DisplayDialog(ConstantValues.TOOL_NAME, $"{Localization.S("dialog.error.processfailed")}\r\n{e}", "OK");
                 return false;
             }
         }

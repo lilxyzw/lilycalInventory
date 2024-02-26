@@ -1,2 +1,2 @@
 using System.Runtime.CompilerServices;
-[assembly:InternalsVisibleTo("jp.lilxyzw.avatarmodifier")]
+[assembly:InternalsVisibleTo("jp.lilxyzw.lilycalinventory")]

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
-    using System.Linq;
     using runtime;
 
     internal static class Processor

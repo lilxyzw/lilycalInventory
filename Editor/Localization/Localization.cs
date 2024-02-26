@@ -5,14 +5,14 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
     internal class Localization
     {
         private static readonly string PATH_PREF = $"{UnityEditorInternal.InternalEditorUtility.unityPreferencesFolder}/jp.lilxyzw";
-        private static readonly string FILENAME_SETTING = "avatarmodifier.language.conf";
+        private static readonly string FILENAME_SETTING = ConstantValues.PACKAGE_NAME + ".language.conf";
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
         private static List<Dictionary<string, string>> languages = new List<Dictionary<string, string>>();
         private static List<string> codes = new List<string>();
@@ -22,7 +22,7 @@ namespace jp.lilxyzw.avatarmodifier
         [InitializeOnLoadMethod]
         internal static void LoadDatas()
         {
-            var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath("0c7d604810e251042910620b6b1d9a59"), "*.json");
+            var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath(ConstantValues.GUID_LOCALIZATION), "*.json");
             var tmpNames = new List<string>();
             foreach(var path in paths)
             {

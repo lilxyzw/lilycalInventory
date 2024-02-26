@@ -6,7 +6,7 @@ using nadena.dev.ndmf.localization;
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     internal static class ErrorHelper
     {

@@ -3,8 +3,10 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
+    using runtime;
+
     internal class BuildContext
     {
         internal GameObject AvatarRootObject;
@@ -14,7 +16,7 @@ namespace jp.lilxyzw.avatarmodifier
         #endif
 
         private const string PATH_ROOT = "Assets";
-        private const string PATH_GEN = "__Generated_lilAvatarModifier";
+        private const string PATH_GEN = "__Generated_" + ConstantValues.TOOL_NAME;
 
         internal BuildContext(GameObject gameObject)
         {

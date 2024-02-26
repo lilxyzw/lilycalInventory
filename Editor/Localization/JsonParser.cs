@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     internal static class JsonDictionaryParser
     {

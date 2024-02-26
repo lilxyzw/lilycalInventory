@@ -11,7 +11,7 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 using nadena.dev.ndmf;
 #endif
 
-namespace jp.lilxyzw.avatarmodifier
+namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
@@ -22,7 +22,7 @@ namespace jp.lilxyzw.avatarmodifier
         {
             get
             {
-                if(!m_IconNext) m_IconNext = ObjHelper.LoadAssetByGUID<Texture2D>("10ced5db8cc27ee42a4c57b206fdd1f7");
+                if(!m_IconNext) m_IconNext = ObjHelper.LoadAssetByGUID<Texture2D>(ConstantValues.GUID_ICON_NEXT);
                 return m_IconNext;
             }
         }
@@ -98,7 +98,7 @@ namespace jp.lilxyzw.avatarmodifier
                 if(child.subMenu) child.subMenu.ResolveOver(ctx);
         }
 
-        internal static VRCExpressionsMenu CreateMenu(BuildContext ctx, string name = "AvatarModifier")
+        internal static VRCExpressionsMenu CreateMenu(BuildContext ctx, string name = ConstantValues.TOOL_NAME)
         {
             var menu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
             menu.name = name;
@@ -106,7 +106,7 @@ namespace jp.lilxyzw.avatarmodifier
             return menu;
         }
 
-        internal static VRCExpressionParameters CreateParameters(BuildContext ctx, string name = "AvatarModifierParameters")
+        internal static VRCExpressionParameters CreateParameters(BuildContext ctx, string name = ConstantValues.TOOL_NAME + "Parameters")
         {
             var parameter = ScriptableObject.CreateInstance<VRCExpressionParameters>();
             parameter.name = name;
