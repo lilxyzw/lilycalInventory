@@ -33,6 +33,7 @@ https://github.com/lilxyzw/lilAvatarModifier.git
 |lilAM ItemToggler|オブジェクトのオンオフ、BlendShapeの切り替え、マテリアルの置き換え・プロパティ操作を行うコンポーネントです。Boolパラメーターが生成されます。|
 |lilAM CostumeChanger|複数衣装の着替えを想定したコンポーネントで、排他的に動作します。各衣装でItemTogglerと同じような操作ができます。Intパラメーターが生成されます。|
 |lilAM SmoothChanger|アバターの明るさ調整や体型調整を想定したコンポーネントです。無段階でオブジェクトの操作ができます。Floatパラメーターが生成されます。|
+|lilAM AutoDresser|複数衣装の着替えを想定したコンポーネントです。`lilAM CostumeChanger`同様に動作しますが、こちらは各衣装のルートにつけるだけで動作します。Intパラメーターが生成されます。|
 
 ## その他コンポーネント
 
@@ -55,10 +56,8 @@ https://github.com/lilxyzw/lilAvatarModifier.git
 
 ### 複数衣装の切り替え（排他）
 
-1. Hierarchyで右クリックし`Create Empty`でアバター内に新しいオブジェクトを作成
-2. そのオブジェクトに`lilAM CostumeChanger`コンポーネントを追加
-3. コスチュームの+ボタンを押し、`オブジェクトのオンオフ`にオンオフするオブジェクトを指定
-4. 衣装ごとに3の手順を繰り返す
+1. 各衣装のルートに`lilAM AutoDresser`コンポーネントを追加
+2. （アバター標準衣装などオブジェクトがまとまっていない場合のみ）衣装のメイン部分に`lilAM AutoDresser`コンポーネントを追加し、`一緒に操作するパラメーター`の`オブジェクトのオンオフ`に衣装の他部分を追加
 
 ### アバターの体型調整
 
