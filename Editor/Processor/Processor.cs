@@ -7,6 +7,7 @@ using nadena.dev.ndmf;
 
 namespace jp.lilxyzw.avatarmodifier
 {
+    using System.Linq;
     using runtime;
 
     internal static class Processor
@@ -18,6 +19,7 @@ namespace jp.lilxyzw.avatarmodifier
         private static MaterialOptimizer[] optimizers;
         // Menu
         private static MenuFolder[] folders;
+        private static AutoDresser[] dressers;
         private static ItemToggler[] togglers;
         private static Prop[] props;
         private static CostumeChanger[] costumeChangers;
@@ -26,7 +28,12 @@ namespace jp.lilxyzw.avatarmodifier
 
         internal static void FindComponent(BuildContext ctx)
         {
-            var components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>();
+            // Resolve Dresser
+            dressers = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
+            dressers.ResolveMenuName();
+            dressers.DresserToChanger();
+
+            var components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true).Where(c => c.enabled).ToArray();
             modifiers = components.GetActiveComponents<MaterialModifier>();
             optimizers = components.GetActiveComponents<MaterialOptimizer>();
             folders = components.GetActiveComponents<MenuFolder>();

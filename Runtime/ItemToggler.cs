@@ -7,7 +7,7 @@ namespace jp.lilxyzw.avatarmodifier.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(ItemToggler))]
     internal class ItemToggler : MenuBaseComponent
     {
-        [NotKeyable] public ParametersPerMenu parameter;
+        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }

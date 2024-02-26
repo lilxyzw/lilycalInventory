@@ -7,7 +7,7 @@ namespace jp.lilxyzw.avatarmodifier.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(CostumeChanger))]
     internal class CostumeChanger : MenuBaseComponent
     {
-        [NotKeyable] public Costume[] costumes;
+        [NotKeyable] public Costume[] costumes = new Costume[]{};
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
     }

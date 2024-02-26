@@ -168,4 +168,26 @@ namespace jp.lilxyzw.avatarmodifier
             GUIHelper.TextField(position, Localization.G(property), property, name);
         }
     }
+
+    [CustomPropertyDrawer(typeof(LILBoxAttribute))]
+    internal class LILBoxDrawer : PropertyDrawer
+    {
+        ParametersPerMenuDrawer parametersPerMenuDrawer;
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            GUI.BeginGroup(position, EditorStyles.helpBox);
+            position = EditorStyles.helpBox.padding.Remove(position);
+            position = EditorStyles.helpBox.padding.Remove(position);
+            position.Indent(1);
+            GUI.EndGroup();
+            if(parametersPerMenuDrawer == null) parametersPerMenuDrawer = new ParametersPerMenuDrawer();
+            parametersPerMenuDrawer.OnGUI(position, property, label);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            if(parametersPerMenuDrawer == null) parametersPerMenuDrawer = new ParametersPerMenuDrawer();
+            return parametersPerMenuDrawer.GetPropertyHeight(property, label) + EditorStyles.helpBox.padding.vertical * 2;
+        }
+    }
 }

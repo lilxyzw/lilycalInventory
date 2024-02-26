@@ -8,23 +8,23 @@ namespace jp.lilxyzw.avatarmodifier.runtime
     {
         [CostumeName] public string menuName;
         [LILLocalize] public Texture2D icon;
-        public ParametersPerMenu parametersPerMenu;
+        public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 
     [Serializable]
     internal class Frame : LILElement
     {
-        [LILLocalize] [Range(0,1)] public float frameValue;
-        public ParametersPerMenu parametersPerMenu;
+        [LILLocalize] [Range(0,1)] public float frameValue = 0;
+        public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 
     [Serializable]
     internal class ParametersPerMenu
     {
-        public ObjectToggler[] objects;
-        public BlendShapeModifier[] blendShapeModifiers;
-        public MaterialReplacer[] materialReplacers;
-        public MaterialPropertyModifier[] materialPropertyModifiers;
+        public ObjectToggler[] objects = new ObjectToggler[]{};
+        public BlendShapeModifier[] blendShapeModifiers = new BlendShapeModifier[]{};
+        public MaterialReplacer[] materialReplacers = new MaterialReplacer[]{};
+        public MaterialPropertyModifier[] materialPropertyModifiers = new MaterialPropertyModifier[]{};
         public const string N_objects = nameof(objects);
         public const string N_blendShapeModifiers = nameof(blendShapeModifiers);
         public const string N_materialReplacers = nameof(materialReplacers);

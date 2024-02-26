@@ -54,6 +54,8 @@
   "inspector.frameValue": "フレーム値",
   "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき1になります。",
 
+  "inspector.parametersWith": "一緒に操作するパラメーター",
+
   "inspector.previewAnimation": "アニメーションのプレビュー",
   "inspector.preview": "プレビュー",
   "inspector.previewStop": "ストップ",
@@ -62,5 +64,8 @@
 
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
-  "dialog.error.menunameEmpty": "メニュー名が空になっています。名前を設定してください。"
+  "dialog.error.menunameEmpty": "メニュー名が空になっています。名前を設定してください。",
+  "dialog.error.defaultDuplication": "複数のオブジェクトがオンになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
+  "dialog.error.allObjectOff": "以下の全てのオブジェクトがオフになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
+  "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。"
 }

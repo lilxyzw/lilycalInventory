@@ -150,4 +150,14 @@ namespace jp.lilxyzw.avatarmodifier
                 EditorGUI.PropertyField(position, property, Localization.G(loc.name));
         }
     }
+
+    [CustomPropertyDrawer(typeof(LILLocalizeHeaderAttribute))]
+    internal class LILLocalizeHeaderDrawer : DecoratorDrawer
+    {
+        public override void OnGUI(Rect position)
+        {
+            LILLocalizeHeaderAttribute loc = attribute as LILLocalizeHeaderAttribute;
+            EditorGUI.LabelField(position, Localization.G(loc.name));
+        }
+    }
 }

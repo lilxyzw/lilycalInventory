@@ -59,11 +59,13 @@ namespace jp.lilxyzw.avatarmodifier
             SampleParameters();
         }
 
-        private void StartPreview(ParametersPerMenu[] parameters)
+        private void StartPreview(ParametersPerMenu[] parameters, int index)
         {
             var def = parameters.CreateDefaultParameters();
-            StartPreview(parameters[previewIndex].Merge(def));
+            StartPreview(parameters[index].Merge(def));
         }
+
+        private void StartPreview(ParametersPerMenu[] parameters) => StartPreview(parameters, previewIndex);
 
         private void StartPreview(ItemToggler toggler)
         {
@@ -82,6 +84,16 @@ namespace jp.lilxyzw.avatarmodifier
             StartPreview(changer.frames.Select(c => c.parametersPerMenu).ToArray());
         }
 
+        private void StartPreview(AutoDresser dresser)
+        {
+            var gameObject = target.gameObject.GetAvatarRoot().gameObject;
+
+            var dressers = gameObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
+            var parameters = dressers.DresserToCostumes(out Transform avatarRoot, dresser).Select(c => c.parametersPerMenu).ToArray();
+
+            StartPreview(parameters, 0);
+        }
+
         internal void StartPreview(Object obj)
         {
             if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot()) return;
@@ -91,6 +103,7 @@ namespace jp.lilxyzw.avatarmodifier
                 case ItemToggler c: if(c.parameter != null) StartPreview(c); break;
                 case CostumeChanger c: if(c.costumes != null) StartPreview(c); break;
                 case SmoothChanger c: if(c.frames != null) StartPreview(c); break;
+                case AutoDresser c: if(c.parameter != null) StartPreview(c); break;
             }
         }
 
@@ -111,9 +124,11 @@ namespace jp.lilxyzw.avatarmodifier
             if(!obj) return false;
             switch(obj)
             {
-                case ItemToggler _: return true;
-                case CostumeChanger _: return true;
-                case SmoothChanger _: return true;
+                case ItemToggler _:
+                case CostumeChanger _:
+                case SmoothChanger _:
+                case AutoDresser _:
+                    return true;
             }
             return false;
         }

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace jp.lilxyzw.avatarmodifier
 {
@@ -64,6 +66,64 @@ namespace jp.lilxyzw.avatarmodifier
         {
             foreach(var blendShapeModifier in parameters.blendShapeModifiers) 
                 blendShapeModifier.applyToAll = !blendShapeModifier.skinnedMeshRenderer;
+        }
+
+        private static ParametersPerMenu Clone(this ParametersPerMenu parameters)
+        {
+            var p = new ParametersPerMenu();
+            if(parameters != null)
+            {
+                if(parameters.objects != null) p.objects = (ObjectToggler[])parameters.objects.Clone();
+                if(parameters.blendShapeModifiers != null) p.blendShapeModifiers = (BlendShapeModifier[])parameters.blendShapeModifiers.Clone();
+                if(parameters.materialReplacers != null) p.materialReplacers = (MaterialReplacer[])parameters.materialReplacers.Clone();
+                if(parameters.materialPropertyModifiers != null) p.materialPropertyModifiers = (MaterialPropertyModifier[])parameters.materialPropertyModifiers.Clone();
+            }
+            if(p.objects == null) p.objects = new ObjectToggler[]{};
+            if(p.blendShapeModifiers == null) p.blendShapeModifiers = new BlendShapeModifier[]{};
+            if(p.materialReplacers == null) p.materialReplacers = new MaterialReplacer[]{};
+            if(p.materialPropertyModifiers == null) p.materialPropertyModifiers = new MaterialPropertyModifier[]{};
+            return p;
+        }
+
+        internal static Costume[] DresserToCostumes(this AutoDresser[] dressers, out Transform avatarRoot, AutoDresser dresserDefOverride = null)
+        {
+            avatarRoot = null;
+            if(dressers == null || dressers.Length == 0) return null;
+            Costume def = null;
+            var costumes = new List<Costume>();
+            foreach(var dresser in dressers)
+            {
+                var obj = dresser.gameObject;
+                if(avatarRoot == null) avatarRoot = obj.GetAvatarRoot();
+                var cos = new Costume{
+                    menuName = dresser.menuName,
+                    icon = dresser.icon,
+                    parametersPerMenu = dresser.parameter.Clone()
+                };
+                cos.parametersPerMenu.objects = cos.parametersPerMenu.objects.Append(new ObjectToggler{obj = obj, value = true}).ToArray();
+                if(dresserDefOverride && dresser == dresserDefOverride) def = cos;
+                else if(!dresserDefOverride && obj.activeSelf)
+                {
+                    if(def == null) def = cos;
+                    else ErrorHelper.Report("dialog.error.defaultDuplication", dressers);
+                }
+                else costumes.Add(cos);
+            }
+            if(def == null) ErrorHelper.Report("dialog.error.allObjectOff", dressers);
+            if(!avatarRoot) ErrorHelper.Report("dialog.error.avatarRootNofFound", dressers);
+            costumes.Insert(0, def);
+            return costumes.ToArray();
+        }
+
+        internal static CostumeChanger DresserToChanger(this AutoDresser[] dressers)
+        {
+            if(dressers == null || dressers.Length == 0) return null;
+            var newObj = new GameObject(nameof(AutoDresser));
+            var changer = newObj.AddComponent<CostumeChanger>();
+            changer.menuName = nameof(AutoDresser);
+            changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+            newObj.transform.parent = avatarRoot;
+            return changer;
         }
     }
 }
