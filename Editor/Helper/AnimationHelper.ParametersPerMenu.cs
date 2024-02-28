@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -76,7 +77,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // ObjectToggler
-        private static void ToClipDefault(this ObjectToggler toggler, AnimationClip clip)
+        internal static void ToClipDefault(this ObjectToggler toggler, AnimationClip clip)
         {
             var binding = CreateToggleBinding(toggler.obj);
             var curve = SimpleCurve(!toggler.value);
@@ -84,7 +85,7 @@ namespace jp.lilxyzw.lilycalinventory
             toggler.obj.SetActive(!toggler.value);
         }
 
-        private static void ToClip(this ObjectToggler toggler, AnimationClip clip)
+        internal static void ToClip(this ObjectToggler toggler, AnimationClip clip)
         {
             var binding = CreateToggleBinding(toggler.obj);
             var curve = SimpleCurve(toggler.value);
@@ -264,6 +265,41 @@ namespace jp.lilxyzw.lilycalinventory
             parameter.materialReplacers = parameter1.materialReplacers.Union(parameter2.materialReplacers.Where(m => !rs.Contains(m.renderer))).ToArray();
             parameter.materialPropertyModifiers = (MaterialPropertyModifier[])parameter1.materialPropertyModifiers.Clone();
             return parameter;
+        }
+
+        // TODO: Support other than toggler
+        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<string>> dic)
+        {
+            foreach(var itemToggler in itemTogglers)
+                foreach(var toggler in itemToggler.parameter.objects)
+                    dic.GetOrAdd(toggler.obj).Add(itemToggler.menuName);
+        }
+
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, Dictionary<string, HashSet<(int,bool)>>> dic)
+        {
+            foreach(var costumeChanger in costumeChangers)
+            {
+                for(int i = 0; i < costumeChanger.costumes.Length; i++)
+                {
+                    var parameter = costumeChanger.costumes[i].parametersPerMenu;
+                    foreach(var toggler in parameter.objects)
+                    {
+                        dic.GetOrAdd(toggler.obj).GetOrAdd(costumeChanger.menuName).Add((i, toggler.value));
+                    }
+                }
+            }
+        }
+
+        internal static Dictionary<TValue,TValue2> GetOrAdd<TKey,TValue,TValue2>(this Dictionary<TKey,Dictionary<TValue,TValue2>> dic, TKey key)
+        {
+            if(!dic.ContainsKey(key)) dic[key] = new Dictionary<TValue,TValue2>();
+            return dic[key];
+        }
+
+        internal static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
+        {
+            if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
+            return dic[key];
         }
     }
 }

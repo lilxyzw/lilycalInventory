@@ -34,13 +34,16 @@ namespace jp.lilxyzw.lilycalinventory
             dressers = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
             dressers.ResolveMenuName();
             dressers.DresserToChanger();
+            // Resolve Prop
+            props = ctx.AvatarRootObject.GetComponentsInChildren<Prop>(true).Where(c => c.enabled).ToArray();
+            props.ResolveMenuName();
+            props.PropToToggler();
 
             components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true).Where(c => c.enabled).ToArray();
             modifiers = components.GetActiveComponents<MaterialModifier>();
             optimizers = components.GetActiveComponents<MaterialOptimizer>();
             folders = components.GetActiveComponents<MenuFolder>();
             togglers = components.GetActiveComponents<ItemToggler>();
-            props = components.GetActiveComponents<Prop>();
             costumeChangers = components.GetActiveComponents<CostumeChanger>();
             smoothChangers = components.GetActiveComponents<SmoothChanger>();
             shouldModify = components.Length != 0;
@@ -48,6 +51,7 @@ namespace jp.lilxyzw.lilycalinventory
             components.GetActiveComponents<MenuBaseComponent>().ResolveMenuName();
             components.GetActiveComponents<CostumeChanger>().ResolveMenuName();
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
+            ObjHelper.CheckUseless(togglers);
         }
 
         internal static void Clone(BuildContext ctx)
@@ -72,9 +76,9 @@ namespace jp.lilxyzw.lilycalinventory
             var parameterDuplicates = components.GetActiveComponents<MenuBaseComponent>().Where(c => !(c is MenuFolder) && !(c is AutoDresser) && parameterNames.Contains(c.menuName)).ToArray();
             if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
+            Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers);
             Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
             Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, menu, parameters, menuDic);
-            Modifier.ApplyProp(ctx, controller, hasWriteDefaultsState, props, menu, parameters, menuDic);
             Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, menu, parameters, menuDic);
             Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, menu, parameters, menuDic);
             ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);

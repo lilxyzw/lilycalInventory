@@ -9,5 +9,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     {
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [LILLocalizeHeader("inspector.parametersWith", 0)]
+        [NotKeyable] [LILBox] public ParametersPerMenu parameter = new ParametersPerMenu();
     }
 }

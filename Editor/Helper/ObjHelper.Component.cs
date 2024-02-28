@@ -70,6 +70,16 @@ namespace jp.lilxyzw.lilycalinventory
                 blendShapeModifier.applyToAll = !blendShapeModifier.skinnedMeshRenderer;
         }
 
+        internal static void CheckUseless(ItemToggler[] togglers)
+        {
+            foreach(var toggler in togglers) toggler.parameter.CheckUseless();
+        }
+
+        private static void CheckUseless(this ParametersPerMenu parameters)
+        {
+            parameters.objects = parameters.objects.Where(t => t.obj.activeSelf != t.value).ToArray();
+        }
+
         private static ParametersPerMenu Clone(this ParametersPerMenu parameters)
         {
             var p = new ParametersPerMenu();
@@ -117,15 +127,38 @@ namespace jp.lilxyzw.lilycalinventory
             return costumes.ToArray();
         }
 
-        internal static CostumeChanger DresserToChanger(this AutoDresser[] dressers)
+        internal static void DresserToChanger(this AutoDresser[] dressers)
         {
-            if(dressers == null || dressers.Length == 0) return null;
+            if(dressers == null || dressers.Length == 0) return;
             var newObj = new GameObject(nameof(AutoDresser));
             var changer = newObj.AddComponent<CostumeChanger>();
             changer.menuName = nameof(AutoDresser);
             changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
             newObj.transform.parent = avatarRoot;
-            return changer;
+        }
+
+        internal static void PropToToggler(this Prop[] props)
+        {
+            if(props == null || props.Length == 0) return;
+            foreach(var prop in props)
+            {
+                var obj = prop.gameObject;
+                var toggler = new ItemToggler{
+                    menuName = prop.menuName,
+                    icon = prop.icon,
+                    isSave = prop.isSave,
+                    isLocalOnly = prop.isLocalOnly,
+                    parameter = prop.parameter
+                };
+                toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
+                Object.DestroyImmediate(prop);
+                var toggler2 = obj.AddComponent<ItemToggler>();
+                toggler2.menuName = toggler.menuName;
+                toggler2.icon = toggler.icon;
+                toggler2.isSave = toggler.isSave;
+                toggler2.isLocalOnly = toggler.isLocalOnly;
+                toggler2.parameter = toggler.parameter;
+            }
         }
     }
 }
