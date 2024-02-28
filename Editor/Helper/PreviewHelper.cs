@@ -72,6 +72,11 @@ namespace jp.lilxyzw.lilycalinventory
             StartPreview(toggler.parameter);
         }
 
+        private void StartPreview(Prop prop)
+        {
+            StartPreview(prop.PropToToggler().parameter);
+        }
+
         private void StartPreview(CostumeChanger changer)
         {
             if(previewIndex >= changer.costumes.Length) return;
@@ -96,10 +101,11 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal void StartPreview(Object obj)
         {
-            if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot()) return;
+            if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot() || !((Component)obj).gameObject.scene.IsValid()) return;
             target = (Component)obj;
             switch(obj)
             {
+                case Prop c: if(c.parameter != null) StartPreview(c); break;
                 case ItemToggler c: if(c.parameter != null) StartPreview(c); break;
                 case CostumeChanger c: if(c.costumes != null) StartPreview(c); break;
                 case SmoothChanger c: if(c.frames != null) StartPreview(c); break;
@@ -121,9 +127,10 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal bool ChechTargetHasPreview(Object obj)
         {
-            if(!obj) return false;
+            if(!obj || !((Component)obj).gameObject.scene.IsValid()) return false;
             switch(obj)
             {
+                case Prop _:
                 case ItemToggler _:
                 case CostumeChanger _:
                 case SmoothChanger _:
@@ -133,11 +140,13 @@ namespace jp.lilxyzw.lilycalinventory
             return false;
         }
 
-        internal void TogglePreview()
+        internal void TogglePreview(Object obj)
         {
             EditorGUI.BeginChangeCheck();
             doPreview = GUILayout.Toolbar(doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
             if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
+            if(doPreview && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
+                EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);
         }
 
         private void DrawIndex(int size, string key)

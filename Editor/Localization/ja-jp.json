@@ -59,6 +59,7 @@
   "inspector.previewAnimation": "アニメーションのプレビュー",
   "inspector.preview": "プレビュー",
   "inspector.previewStop": "ストップ",
+  "inspector.previewWarn": "このコンポーネントを付けたオブジェクト本体をオンオフしたい場合はプレビューを停止してください。",
   "inspector.previewCostume": "プレビューするコスチューム",
   "inspector.previewFrame": "プレビューするフレーム",
 

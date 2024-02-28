@@ -59,6 +59,7 @@
   "inspector.previewAnimation": "Preview Animation",
   "inspector.preview": "Preview",
   "inspector.previewStop": "Stop",
+  "inspector.previewWarn": "If you want to turn the object attached to this component on or off, please stop the preview.",
   "inspector.previewCostume": "Preview Costume",
   "inspector.previewFrame": "Preview Frame",
 

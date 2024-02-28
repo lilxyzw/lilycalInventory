@@ -143,14 +143,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var prop in props)
             {
                 var obj = prop.gameObject;
-                var toggler = new ItemToggler{
-                    menuName = prop.menuName,
-                    icon = prop.icon,
-                    isSave = prop.isSave,
-                    isLocalOnly = prop.isLocalOnly,
-                    parameter = prop.parameter
-                };
-                toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
+                var toggler = prop.PropToToggler();
                 Object.DestroyImmediate(prop);
                 var toggler2 = obj.AddComponent<ItemToggler>();
                 toggler2.menuName = toggler.menuName;
@@ -159,6 +152,20 @@ namespace jp.lilxyzw.lilycalinventory
                 toggler2.isLocalOnly = toggler.isLocalOnly;
                 toggler2.parameter = toggler.parameter;
             }
+        }
+
+        internal static ItemToggler PropToToggler(this Prop prop)
+        {
+            var obj = prop.gameObject;
+            var toggler = new ItemToggler{
+                menuName = prop.menuName,
+                icon = prop.icon,
+                isSave = prop.isSave,
+                isLocalOnly = prop.isLocalOnly,
+                parameter = prop.parameter
+            };
+            toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
+            return toggler;
         }
     }
 }

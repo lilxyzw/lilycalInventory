@@ -23,7 +23,7 @@ namespace jp.lilxyzw.lilycalinventory
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 EditorGUILayout.LabelField(Localization.G("inspector.previewAnimation"));
                 PreviewHelper.instance.DrawIndex(target);
-                PreviewHelper.instance.TogglePreview();
+                PreviewHelper.instance.TogglePreview(target);
                 EditorGUILayout.EndVertical();
             }
 
