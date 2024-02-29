@@ -162,7 +162,7 @@ namespace jp.lilxyzw.lilycalinventory
                 icon = prop.icon,
                 isSave = prop.isSave,
                 isLocalOnly = prop.isLocalOnly,
-                parameter = prop.parameter
+                parameter = prop.parameter.Clone()
             };
             toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
             return toggler;
