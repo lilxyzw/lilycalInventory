@@ -172,7 +172,6 @@ namespace jp.lilxyzw.lilycalinventory
                 foreach(var floatModifier in modifier.floatModifiers)
                 {
                     var binding = CreateMaterialPropertyBinding(renderer, floatModifier.propertyName);
-                    var curve = SimpleCurve(floatModifier.value);
                     clip.Add(binding, floatModifier.value);
                 }
                 foreach(var vectorModifier in modifier.vectorModifiers)
@@ -275,19 +274,19 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal static Dictionary<TValue,TValue2> GetOrAdd<TKey,TValue,TValue2>(this Dictionary<TKey,Dictionary<TValue,TValue2>> dic, TKey key)
+        private static Dictionary<TValue,TValue2> GetOrAdd<TKey,TValue,TValue2>(this Dictionary<TKey,Dictionary<TValue,TValue2>> dic, TKey key)
         {
             if(!dic.ContainsKey(key)) dic[key] = new Dictionary<TValue,TValue2>();
             return dic[key];
         }
 
-        internal static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
+        private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
         {
             if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
             return dic[key];
         }
 
-        internal static (int,HashSet<TValue>) GetOrAdd<TKey,TValue>(this Dictionary<TKey,(int,HashSet<TValue>)> dic, TKey key, int value)
+        private static (int,HashSet<TValue>) GetOrAdd<TKey,TValue>(this Dictionary<TKey,(int,HashSet<TValue>)> dic, TKey key, int value)
         {
             if(!dic.ContainsKey(key)) dic[key] = (value,new HashSet<TValue>());
             return dic[key];
