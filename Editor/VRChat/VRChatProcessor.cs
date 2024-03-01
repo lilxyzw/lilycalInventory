@@ -6,6 +6,8 @@ using VRC.SDKBase.Editor.BuildPipeline;
 
 namespace jp.lilxyzw.lilycalinventory.vrchat
 {
+    using runtime;
+
     public class AvatarPreprocessor : IVRCSDKPreprocessAvatarCallback
     {
         public int callbackOrder => -1100;

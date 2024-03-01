@@ -157,7 +157,7 @@ namespace jp.lilxyzw.lilycalinventory
             int loops = 1;
             for(int i = 0; i < ints.Length; i++)
             {
-                var newInts = ints[i].Item3.Where(p => p.Item2).Select(p => p.Item1).ToHashSet();
+                var newInts = new HashSet<int>(ints[i].Item3.Where(p => p.Item2).Select(p => p.Item1));
                 var inv = ints[i].Item3.Where(p => !p.Item2).Select(p => p.Item1);
                 if(inv.Count() > 0) newInts.UnionWith(Enumerable.Range(0,ints[i].Item2).Except(inv));
                 layer = new BlendTree

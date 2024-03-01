@@ -88,9 +88,9 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
                 Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
-                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, menu, parameters, menuDic, tree);
-                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, menu, parameters, menuDic, tree);
-                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, menu, parameters, menuDic, tree);
+                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, menu, parameters, menuDic);
+                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, menu, parameters, menuDic);
+                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, menu, parameters, menuDic);
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
                 ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
             }
