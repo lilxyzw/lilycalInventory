@@ -122,9 +122,12 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void SaveFile(string path, string content)
         {
             using(var fs = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
-            using(var sw = new StreamWriter(fs, Encoding.UTF8))
             {
-                sw.Write(content);
+                fs.SetLength(0);
+                using(var sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(content);
+                }
             }
         }
 
