@@ -34,14 +34,14 @@ namespace jp.lilxyzw.lilycalinventory
         private static ToolSettings Load()
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
-            if(!File.Exists(PATH_SETTING)) File.WriteAllText(PATH_SETTING, JsonUtility.ToJson(new ToolSettings()));
+            if(!File.Exists(PATH_SETTING)) File.WriteAllText(PATH_SETTING, JsonUtility.ToJson(new ToolSettings(), true));
             return JsonUtility.FromJson<ToolSettings>(SafeIO.LoadFile(PATH_SETTING));
         }
 
         private static void Save()
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
-            SafeIO.SaveFile(PATH_SETTING, JsonUtility.ToJson(instance));
+            SafeIO.SaveFile(PATH_SETTING, JsonUtility.ToJson(instance, true));
         }
     }
 }
