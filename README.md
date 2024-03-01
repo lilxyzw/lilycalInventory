@@ -81,3 +81,7 @@ lilToonの場合はPrefabsフォルダ内のLightChangerをアバターに追加
 |-|-|
 |LI MaterialModifier|アバターのライティングの統一などを想定した、マテリアルの設定を指定したマテリアルに統一するコンポーネントです。|
 |LI MaterialOptimizer|マテリアルから自動的に不要なプロパティを削除するコンポーネントです。|
+
+## Direct Blend Treeを使用した最適化
+
+`Tools/lilycalInventory/Use Direct Blend Tree`がオンのときに`Direct Blend Tree`を用いてこのツールで生成されるAnimatorControllerレイヤーを1つに統合します。ただしこちらの機能は[ExpressionParametersとAnimatorControllerでパラメーターの型が異なっても動作する](https://justsleightly.notion.site/Expression-Parameter-Mismatching-2fc0f34adabd4f4eb047867005e168df)ことを利用しており、VRChatの仕様変更で正常動作しなくなる可能性があるためデフォルトではオフになっています。
