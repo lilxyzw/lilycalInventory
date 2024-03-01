@@ -62,7 +62,7 @@ namespace jp.lilxyzw.lilycalinventory
             materials = Cloner.DeepCloneAssets(ctx);
         }
 
-        internal static void Modify(BuildContext ctx)
+        internal static void ModifyPreProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
             #if LIL_VRCSDK3A
@@ -97,6 +97,11 @@ namespace jp.lilxyzw.lilycalinventory
             #else
             // Not supported
             #endif
+        }
+
+        internal static void ModifyPostProcess(BuildContext ctx)
+        {
+            if(!shouldModify) return;
             Modifier.ApplyMaterialModifier(materials, modifiers);
         }
 

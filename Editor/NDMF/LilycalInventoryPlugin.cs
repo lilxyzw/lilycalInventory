@@ -16,15 +16,19 @@ namespace jp.lilxyzw.lilycalinventory
         protected override void Configure()
         {
             InPhase(BuildPhase.Resolving).BeforePlugin("com.anatawa12.avatar-optimizer")
-            .Run($"[{ConstantValues.TOOL_NAME}] Find and remove components", ctx => Processor.FindComponent(ctx))
+            .Run("Find components", ctx => Processor.FindComponent(ctx))
             .BeforePass(RemoveEditorOnlyPass.Instance);
 
             var Transforming = InPhase(BuildPhase.Transforming).BeforePlugin("nadena.dev.modular-avatar");
-            Transforming.Run($"[{ConstantValues.TOOL_NAME}] Clone", ctx => Processor.Clone(ctx));
-            Transforming.Run($"[{ConstantValues.TOOL_NAME}] Modify", ctx => Processor.Modify(ctx));
-            Transforming.Run($"[{ConstantValues.TOOL_NAME}] Remove Component", ctx => Processor.RemoveComponent(ctx));
+            Transforming.Run("Clone", ctx => Processor.Clone(ctx));
+            Transforming.Run("ModifyPreProcess", ctx => Processor.ModifyPreProcess(ctx));
 
-            InPhase(BuildPhase.Optimizing).Run($"[{ConstantValues.TOOL_NAME}] Optimize", ctx => Processor.Optimize(ctx));
+            var TransformingPostProcess = InPhase(BuildPhase.Transforming).AfterPlugin("nadena.dev.modular-avatar");
+            TransformingPostProcess.Run("ClonePostProcess", ctx => Processor.Clone(ctx));
+            TransformingPostProcess.Run("ModifyPostProcess", ctx => Processor.ModifyPostProcess(ctx));
+            TransformingPostProcess.Run("Remove Component", ctx => Processor.RemoveComponent(ctx));
+
+            InPhase(BuildPhase.Optimizing).Run("Optimize", ctx => Processor.Optimize(ctx));
         }
     }
 }

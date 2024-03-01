@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 133158e040b575f489ec70d00bae871e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  referenceMaterial: {fileID: 2100000, guid: 360a4c162f2ea204390d32eb50c7aa93, type: 2}
+  referenceMaterial: {fileID: 2100000, guid: dca4608fbd70c2e4eb267fd1871120c7, type: 2}
   ignoreMaterials: []
   properties:
   - _DistanceFadeColor

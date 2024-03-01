@@ -27,9 +27,10 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var changer in changers)
             {
                 if(changer.frames.Length == 0) continue;
+
                 var name = changer.menuName;
-                var clipDefaults = new AnimationClip[changer.frames.Length];
-                var clipChangeds = new AnimationClip[changer.frames.Length];
+                var clipDefaults = new InternalClip[changer.frames.Length];
+                var clipChangeds = new InternalClip[changer.frames.Length];
                 var frames = new float[changer.frames.Length];
                 for(int i = 0; i < changer.frames.Length; i++)
                 {
@@ -40,16 +41,18 @@ namespace jp.lilxyzw.lilycalinventory
                     clipChangeds[i] = clip2.Item2;
                     frames[i] = frameValue;
                 }
-                var clipDefault = AnimationHelper.MergeClips(clipDefaults);
+
+                var clipDefault = InternalClip.MergeAndCreate(clipDefaults);
+                var clips = new AnimationClip[clipChangeds.Length];
                 for(int i = 0; i < clipChangeds.Length; i++)
                 {
-                    clipChangeds[i] = AnimationHelper.MergeAndCreate(clipChangeds[i], clipDefault);
+                    clipChangeds[i] = InternalClip.MergeAndCreate(clipChangeds[i], clipDefault);
                     clipChangeds[i].name = $"{name}_{i}_Merged";
-                    AssetDatabase.AddObjectToAsset(clipChangeds[i], ctx.AssetContainer);
+                    clips[i] = clipChangeds[i].ToClip();
+                    AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
                 }
-                if(root) AnimationHelper.AddSmoothChangerTree(controller, clipChangeds, frames, name, root);
-                else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clipChangeds, frames, name, changer);
-                
+                if(root) AnimationHelper.AddSmoothChangerTree(controller, clips, frames, name, root);
+                else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clips, frames, name, changer);
 
                 #if LIL_VRCSDK3A
                 var parentMenu = menu;

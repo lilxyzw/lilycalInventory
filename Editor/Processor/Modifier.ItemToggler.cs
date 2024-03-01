@@ -30,10 +30,11 @@ namespace jp.lilxyzw.lilycalinventory
                 if(toggler.parameter.objects.Length + toggler.parameter.blendShapeModifiers.Length + toggler.parameter.materialReplacers.Length + toggler.parameter.materialPropertyModifiers.Length > 0)
                 {
                     var clips = toggler.parameter.CreateClip(ctx, name);
-                    AssetDatabase.AddObjectToAsset(clips.Item1, ctx.AssetContainer);
-                    AssetDatabase.AddObjectToAsset(clips.Item2, ctx.AssetContainer);
-                    if(root) AnimationHelper.AddSimpleTree(controller, clips.Item1, clips.Item2, name, root);
-                    else AnimationHelper.AddSimpleLayer(controller, hasWriteDefaultsState, clips.Item1, clips.Item2, name);
+                    var clips2 = (clips.Item1.ToClip(), clips.Item2.ToClip());
+                    AssetDatabase.AddObjectToAsset(clips2.Item1, ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(clips2.Item2, ctx.AssetContainer);
+                    if(root) AnimationHelper.AddSimpleTree(controller, clips2.Item1, clips2.Item2, name, root);
+                    else AnimationHelper.AddSimpleLayer(controller, hasWriteDefaultsState, clips2.Item1, clips2.Item2, name);
                 }
                 if(!root && !controller.parameters.Any(p => p.name == name))
                     controller.AddParameter(name, AnimatorControllerParameterType.Bool);

@@ -38,9 +38,13 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void DeleteUnused(SerializedProperty props, List<string> names)
         {
-            for(int i = props.arraySize - 1; i >= 0; i--)
-                if(!names.Contains(props.GetArrayElementAtIndex(i).FindPropertyRelative("first").stringValue))
-                    props.DeleteArrayElementAtIndex(i);
+            if(props.arraySize == 0) return;
+            var ints = new List<int>();
+            props.DoAllElements((p,i) => {
+                if(!names.Contains(p.FPR("first").stringValue)) ints.Add(i);
+            });
+            ints.Reverse();
+            foreach(var a in ints) props.DeleteArrayElementAtIndex(a);
         }
 
         private static void DeleteAll(SerializedProperty props)

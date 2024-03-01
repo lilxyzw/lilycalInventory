@@ -18,7 +18,8 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
 
                 Processor.FindComponent(ctx);
                 Processor.Clone(ctx);
-                Processor.Modify(ctx);
+                Processor.ModifyPreProcess(ctx);
+                Processor.ModifyPostProcess(ctx);
                 Processor.RemoveComponent(ctx);
                 Processor.Optimize(ctx);
 

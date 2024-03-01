@@ -38,32 +38,23 @@ namespace jp.lilxyzw.lilycalinventory
             so.Update();
             var savedProps = so.FindProperty("m_SavedProperties");
 
-            var textures = savedProps.FindPropertyRelative("m_TexEnvs");
-            for(int i = 0; i < textures.arraySize; i++)
-            {
-                var item = textures.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(modifier.properties.Contains(name))
-                    textureOverride[name] = item.FindPropertyRelative("second.m_Texture").objectReferenceValue;
-            }
+                    textureOverride[name] = p.FindPropertyRelative("second.m_Texture").objectReferenceValue;
+            });
 
-            var floats = savedProps.FindPropertyRelative("m_Floats");
-            for(int i = 0; i < floats.arraySize; i++)
-            {
-                var item = floats.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(modifier.properties.Contains(name))
-                    floatOverride[name] = item.FindPropertyRelative("second").floatValue;
-            }
+                    floatOverride[name] = p.FindPropertyRelative("second").floatValue;
+            });
 
-            var vectors = savedProps.FindPropertyRelative("m_Colors");
-            for(int i = 0; i < vectors.arraySize; i++)
-            {
-                var item = vectors.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(modifier.properties.Contains(name))
-                    vectorOverride[name] = item.FindPropertyRelative("second").colorValue;
-            }
+                    vectorOverride[name] = p.FindPropertyRelative("second").colorValue;
+            });
         }
 
         private static void ModifyProperties(Material material, Dictionary<string,Object> textureOverride, Dictionary<string,float> floatOverride, Dictionary<string,Vector4> vectorOverride)
@@ -72,32 +63,23 @@ namespace jp.lilxyzw.lilycalinventory
             so.Update();
             var savedProps = so.FindProperty("m_SavedProperties");
 
-            var textures = savedProps.FindPropertyRelative("m_TexEnvs");
-            for(int i = 0; i < textures.arraySize; i++)
-            {
-                var item = textures.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(textureOverride.ContainsKey(name))
-                    item.FindPropertyRelative("second.m_Texture").objectReferenceValue = textureOverride[name];
-            }
+                    p.FindPropertyRelative("second.m_Texture").objectReferenceValue = textureOverride[name];
+            });
 
-            var floats = savedProps.FindPropertyRelative("m_Floats");
-            for(int i = 0; i < floats.arraySize; i++)
-            {
-                var item = floats.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(floatOverride.ContainsKey(name))
-                    item.FindPropertyRelative("second").floatValue = floatOverride[name];
-            }
+                    p.FindPropertyRelative("second").floatValue = floatOverride[name];
+            });
 
-            var vectors = savedProps.FindPropertyRelative("m_Colors");
-            for(int i = 0; i < vectors.arraySize; i++)
-            {
-                var item = vectors.GetArrayElementAtIndex(i);
-                var name = item.FindPropertyRelative("first").stringValue;
+            savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
+                var name = p.FPR("first").stringValue;
                 if(vectorOverride.ContainsKey(name))
-                    item.FindPropertyRelative("second").colorValue = vectorOverride[name];
-            }
+                    p.FindPropertyRelative("second").colorValue = vectorOverride[name];
+            });
 
             so.ApplyModifiedProperties();
         }

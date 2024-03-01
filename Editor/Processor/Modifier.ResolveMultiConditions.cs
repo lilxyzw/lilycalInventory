@@ -64,8 +64,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var ints = c.Key.Item2;
 
                 var name = c.Value.ElementAt(0).name;
-                var clipOff = new AnimationClip();
-                var clipOn = new AnimationClip();
+                var clipOff = new InternalClip();
+                var clipOn = new InternalClip();
                 clipOff.name = $"{name}_Off";
                 clipOn.name = $"{name}_On";
                 foreach(var o in c.Value)
@@ -78,11 +78,13 @@ namespace jp.lilxyzw.lilycalinventory
                     toggler.ToClipDefault(clipOff);
                     toggler.ToClip(clipOn);
                 }
+                var clipOff2 = clipOff.ToClip();
+                var clipOn2 = clipOn.ToClip();
 
-                AssetDatabase.AddObjectToAsset(clipOff, ctx.AssetContainer);
-                AssetDatabase.AddObjectToAsset(clipOn, ctx.AssetContainer);
-                if(root) AnimationHelper.AddMultiConditionTree(controller, clipOff, clipOn, bools, ints, root, c.Key.Item3);
-                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipOff, clipOn, name, bools, ints, c.Key.Item3);
+                AssetDatabase.AddObjectToAsset(clipOff2, ctx.AssetContainer);
+                AssetDatabase.AddObjectToAsset(clipOn2, ctx.AssetContainer);
+                if(root) AnimationHelper.AddMultiConditionTree(controller, clipOff2, clipOn2, bools, ints, root, c.Key.Item3);
+                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipOff2, clipOn2, name, bools, ints, c.Key.Item3);
             }
         }
 

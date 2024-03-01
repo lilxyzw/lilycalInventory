@@ -28,8 +28,8 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(changer.costumes.Length == 0) continue;
                 var name = changer.menuName;
-                var clipDefaults = new AnimationClip[changer.costumes.Length];
-                var clipChangeds = new AnimationClip[changer.costumes.Length];
+                var clipDefaults = new InternalClip[changer.costumes.Length];
+                var clipChangeds = new InternalClip[changer.costumes.Length];
                 for(int i = 0; i < changer.costumes.Length; i++)
                 {
                     var costume = changer.costumes[i];
@@ -41,15 +41,17 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(toggler.obj) toggler.obj.SetActive(toggler.value);
                 }
-                var clipDefault = AnimationHelper.MergeClips(clipDefaults);
+                var clipDefault = InternalClip.MergeAndCreate(clipDefaults);
+                var clips = new AnimationClip[clipChangeds.Length];
                 for(int i = 0; i < clipChangeds.Length; i++)
                 {
-                    clipChangeds[i] = AnimationHelper.MergeAndCreate(clipChangeds[i], clipDefault);
+                    clipChangeds[i] = InternalClip.MergeAndCreate(clipChangeds[i], clipDefault);
                     clipChangeds[i].name = $"{changer.costumes[i].menuName}_Merged";
-                    AssetDatabase.AddObjectToAsset(clipChangeds[i], ctx.AssetContainer);
+                    clips[i] = clipChangeds[i].ToClip();
+                    AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
                 }
-                if(root) AnimationHelper.AddCostumeChangerTree(controller, clipChangeds, name, root);
-                else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clipChangeds, name);
+                if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, name, root);
+                else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, name);
 
                 #if LIL_VRCSDK3A
                 var parentMenu = menu;

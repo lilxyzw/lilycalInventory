@@ -35,6 +35,20 @@ namespace jp.lilxyzw.lilycalinventory
             return names.ToArray();
         }
 
+        internal static void DoAllElements(this SerializedProperty property, Action<SerializedProperty,int> function)
+        {
+            if(property.arraySize == 0) return;
+            int i = 0;
+            var prop = property.GetArrayElementAtIndex(0);
+            var end = property.GetEndProperty();
+            function.Invoke(prop,i);
+            while(prop.NextVisible(false) && !SerializedProperty.EqualContents(prop, end))
+            {
+                i++;
+                function.Invoke(prop,i);
+            }
+        }
+
         #if LIL_AVATAR_MODIFIER
         [MenuItem("Tools/lilycalInventory/Migrate From lilAvatarModifier")]
         private static void Test()

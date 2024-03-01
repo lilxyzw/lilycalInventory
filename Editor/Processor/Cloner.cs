@@ -113,8 +113,9 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static Material CloneMaterial(Material material, BuildContext context)
         {
-            if(!material || context.IsTemporaryAsset(material)) return material;
+            if(!material) return material;
             if(materialMap.ContainsKey(material)) return materialMap[material];
+            if(context.IsTemporaryAsset(material)) return materialMap[material] = material;
             var clone = Object.Instantiate(material); // new Material(material) is slow
             AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
             return materialMap[material] = clone;

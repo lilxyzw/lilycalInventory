@@ -14,10 +14,10 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class AnimationHelper
     {
-        internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
+        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
         {
-            var clipOff = new AnimationClip();
-            var clipOn = new AnimationClip();
+            var clipOff = new InternalClip();
+            var clipOn = new InternalClip();
             clipOff.name = $"{name}_Off";
             clipOn.name = $"{name}_On";
 
@@ -71,68 +71,62 @@ namespace jp.lilxyzw.lilycalinventory
             return (clipOff, clipOn);
         }
 
-        internal static (AnimationClip,AnimationClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
+        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
         {
             return parameter.CreateClip(ctx.AvatarRootObject, name);
         }
 
         // ObjectToggler
-        internal static void ToClipDefault(this ObjectToggler toggler, AnimationClip clip)
+        internal static void ToClipDefault(this ObjectToggler toggler, InternalClip clip)
         {
             var binding = CreateToggleBinding(toggler.obj);
-            var curve = SimpleCurve(!toggler.value);
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
+            clip.Add(binding, !toggler.value);
             toggler.obj.SetActive(!toggler.value);
         }
 
-        internal static void ToClip(this ObjectToggler toggler, AnimationClip clip)
+        internal static void ToClip(this ObjectToggler toggler, InternalClip clip)
         {
             var binding = CreateToggleBinding(toggler.obj);
-            var curve = SimpleCurve(toggler.value);
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
+            clip.Add(binding, toggler.value);
         }
 
         // BlendShapeModifier
-        private static void ToClipDefault(this BlendShapeNameValue namevalue, AnimationClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
+        private static void ToClipDefault(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
         {
             var binding = CreateBlendShapeBinding(skinnedMeshRenderer, namevalue.name);
             var value = skinnedMeshRenderer.GetBlendShapeWeight(skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(namevalue.name));
-            var curve = SimpleCurve(value);
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
+            clip.Add(binding, value);
         }
 
-        private static void ToClip(this BlendShapeNameValue namevalue, AnimationClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
+        private static void ToClip(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
         {
             var binding = CreateBlendShapeBinding(skinnedMeshRenderer, namevalue.name);
-            var curve = SimpleCurve(namevalue.value);
-            AnimationUtility.SetEditorCurve(clip, binding, curve);
+            clip.Add(binding, namevalue.value);
         }
 
         // MaterialReplacer
-        private static void ToClipDefault(this MaterialReplacer replacer, AnimationClip clip)
+        private static void ToClipDefault(this MaterialReplacer replacer, InternalClip clip)
         {
             for(int i = 0; i < replacer.replaceTo.Length; i++)
             {
                 if(!replacer.replaceTo[i]) continue;
                 var binding = CreateMaterialReplaceBinding(replacer.renderer, i);
-                var curve = SimpleCurve(replacer.renderer.sharedMaterials[i]);
-                AnimationUtility.SetObjectReferenceCurve(clip, binding, curve);
+                clip.Add(binding, replacer.renderer.sharedMaterials[i]);
             }
         }
 
-        private static void ToClip(this MaterialReplacer replacer, AnimationClip clip)
+        private static void ToClip(this MaterialReplacer replacer, InternalClip clip)
         {
             for(int i = 0; i < replacer.replaceTo.Length; i++)
             {
                 if(!replacer.replaceTo[i]) continue;
                 var binding = CreateMaterialReplaceBinding(replacer.renderer, i);
-                var curve = SimpleCurve(replacer.replaceTo[i]);
-                AnimationUtility.SetObjectReferenceCurve(clip, binding, curve);
+                clip.Add(binding, replacer.replaceTo[i]);
             }
         }
 
         // MaterialPropertyModifier
-        private static void ToClipDefault(this MaterialPropertyModifier modifier, AnimationClip clip)
+        private static void ToClipDefault(this MaterialPropertyModifier modifier, InternalClip clip)
         {
             foreach(var renderer in modifier.renderers)
             {
@@ -147,8 +141,7 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetFloat(floatModifier.propertyName);
                         break;
                     }
-                    var curve = SimpleCurve(value);
-                    AnimationUtility.SetEditorCurve(clip, binding, curve);
+                    clip.Add(binding, value);
                 }
                 foreach(var vectorModifier in modifier.vectorModifiers)
                 {
@@ -163,19 +156,15 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
-                    var curveX = SimpleCurve(value.x);
-                    var curveY = SimpleCurve(value.y);
-                    var curveZ = SimpleCurve(value.z);
-                    var curveW = SimpleCurve(value.w);
-                    AnimationUtility.SetEditorCurve(clip, bindingX, curveX);
-                    AnimationUtility.SetEditorCurve(clip, bindingY, curveY);
-                    AnimationUtility.SetEditorCurve(clip, bindingZ, curveZ);
-                    AnimationUtility.SetEditorCurve(clip, bindingW, curveW);
+                    clip.Add(bindingX, value.x);
+                    clip.Add(bindingY, value.y);
+                    clip.Add(bindingZ, value.z);
+                    clip.Add(bindingW, value.w);
                 }
             }
         }
 
-        private static void ToClip(this MaterialPropertyModifier modifier, AnimationClip clip)
+        private static void ToClip(this MaterialPropertyModifier modifier, InternalClip clip)
         {
             foreach(var renderer in modifier.renderers)
             {
@@ -184,7 +173,7 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     var binding = CreateMaterialPropertyBinding(renderer, floatModifier.propertyName);
                     var curve = SimpleCurve(floatModifier.value);
-                    AnimationUtility.SetEditorCurve(clip, binding, curve);
+                    clip.Add(binding, floatModifier.value);
                 }
                 foreach(var vectorModifier in modifier.vectorModifiers)
                 {
@@ -192,14 +181,10 @@ namespace jp.lilxyzw.lilycalinventory
                     var bindingY = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.y");
                     var bindingZ = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.z");
                     var bindingW = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.w");
-                    var curveX = SimpleCurve(vectorModifier.value.x);
-                    var curveY = SimpleCurve(vectorModifier.value.y);
-                    var curveZ = SimpleCurve(vectorModifier.value.z);
-                    var curveW = SimpleCurve(vectorModifier.value.w);
-                    AnimationUtility.SetEditorCurve(clip, bindingX, curveX);
-                    AnimationUtility.SetEditorCurve(clip, bindingY, curveY);
-                    AnimationUtility.SetEditorCurve(clip, bindingZ, curveZ);
-                    AnimationUtility.SetEditorCurve(clip, bindingW, curveW);
+                    clip.Add(bindingX, vectorModifier.value.x);
+                    clip.Add(bindingY, vectorModifier.value.y);
+                    clip.Add(bindingZ, vectorModifier.value.z);
+                    clip.Add(bindingW, vectorModifier.value.w);
                 }
             }
         }
