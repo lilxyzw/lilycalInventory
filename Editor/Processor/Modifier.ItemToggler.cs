@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
+using UnityEngine;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -18,17 +20,23 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void ApplyItemToggler(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers
         #if LIL_VRCSDK3A
-        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic
+        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic, BlendTree root
         #endif
         )
         {
             foreach(var toggler in togglers)
             {
                 var name = toggler.menuName;
-                var clips = toggler.parameter.CreateClip(ctx, name);
-                AssetDatabase.AddObjectToAsset(clips.Item1, ctx.AssetContainer);
-                AssetDatabase.AddObjectToAsset(clips.Item2, ctx.AssetContainer);
-                AnimationHelper.AddSimpleLayer(controller, hasWriteDefaultsState, clips.Item1, clips.Item2, name);
+                if(toggler.parameter.objects.Length + toggler.parameter.blendShapeModifiers.Length + toggler.parameter.materialReplacers.Length + toggler.parameter.materialPropertyModifiers.Length > 0)
+                {
+                    var clips = toggler.parameter.CreateClip(ctx, name);
+                    AssetDatabase.AddObjectToAsset(clips.Item1, ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(clips.Item2, ctx.AssetContainer);
+                    if(root) AnimationHelper.AddSimpleTree(controller, clips.Item1, clips.Item2, name, root);
+                    else AnimationHelper.AddSimpleLayer(controller, hasWriteDefaultsState, clips.Item1, clips.Item2, name);
+                }
+                if(!root && !controller.parameters.Any(p => p.name == name))
+                    controller.AddParameter(name, AnimatorControllerParameterType.Bool);
 
                 #if LIL_VRCSDK3A
                 var parentMenu = menu;

@@ -9,6 +9,8 @@ using nadena.dev.ndmf;
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
+    using UnityEditor;
+    using UnityEditor.Animations;
 
     internal static class Processor
     {
@@ -64,24 +66,34 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(!shouldModify) return;
             #if LIL_VRCSDK3A
-            var controller = ctx.AvatarDescriptor.TryGetFXAnimatorController(ctx);
-            var hasWriteDefaultsState = controller.HasWriteDefaultsState();
-            var menu = VRChatHelper.CreateMenu(ctx);
-            var parameters = VRChatHelper.CreateParameters(ctx);
-            var menuDic = new Dictionary<MenuFolder, VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu>();
+            if(togglers.Length + costumeChangers.Length + smoothChangers.Length > 0)
+            {
+                var controller = ctx.AvatarDescriptor.TryGetFXAnimatorController(ctx);
+                var hasWriteDefaultsState = controller.HasWriteDefaultsState();
+                var menu = VRChatHelper.CreateMenu(ctx);
+                var parameters = VRChatHelper.CreateParameters(ctx);
+                var menuDic = new Dictionary<MenuFolder, VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu>();
 
-            parameterNames = new HashSet<string>();
-            if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
-            if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
-            var parameterDuplicates = components.GetActiveComponents<MenuBaseComponent>().Where(c => !(c is MenuFolder) && !(c is AutoDresser) && parameterNames.Contains(c.menuName)).ToArray();
-            if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
+                parameterNames = new HashSet<string>();
+                if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
+                if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
+                var parameterDuplicates = components.GetActiveComponents<MenuBaseComponent>().Where(c => !(c is MenuFolder) && !(c is AutoDresser) && parameterNames.Contains(c.menuName)).ToArray();
+                if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
-            Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers);
-            Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
-            Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, menu, parameters, menuDic);
-            Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, menu, parameters, menuDic);
-            Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, menu, parameters, menuDic);
-            ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
+                BlendTree tree = null;
+                if(ToolSettings.instance.useDirectBlendTree)
+                {
+                    AnimationHelper.CreateLayer(controller, out tree);
+                    AssetDatabase.AddObjectToAsset(tree, ctx.AssetContainer);
+                }
+                Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
+                Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
+                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, menu, parameters, menuDic, tree);
+                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, menu, parameters, menuDic, tree);
+                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, menu, parameters, menuDic, tree);
+                if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
+                ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
+            }
             #else
             // Not supported
             #endif

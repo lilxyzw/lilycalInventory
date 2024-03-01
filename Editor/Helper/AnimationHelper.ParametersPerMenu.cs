@@ -275,7 +275,7 @@ namespace jp.lilxyzw.lilycalinventory
                     dic.GetOrAdd(toggler.obj).Add(itemToggler.menuName);
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, Dictionary<string, HashSet<(int,bool)>>> dic)
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, Dictionary<string, (int,HashSet<(int,bool)>)>> dic)
         {
             foreach(var costumeChanger in costumeChangers)
             {
@@ -284,7 +284,7 @@ namespace jp.lilxyzw.lilycalinventory
                     var parameter = costumeChanger.costumes[i].parametersPerMenu;
                     foreach(var toggler in parameter.objects)
                     {
-                        dic.GetOrAdd(toggler.obj).GetOrAdd(costumeChanger.menuName).Add((i, toggler.value));
+                        dic.GetOrAdd(toggler.obj).GetOrAdd(costumeChanger.menuName, costumeChanger.costumes.Length).Item2.Add((i, toggler.value));
                     }
                 }
             }
@@ -299,6 +299,12 @@ namespace jp.lilxyzw.lilycalinventory
         internal static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
         {
             if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
+            return dic[key];
+        }
+
+        internal static (int,HashSet<TValue>) GetOrAdd<TKey,TValue>(this Dictionary<TKey,(int,HashSet<TValue>)> dic, TKey key, int value)
+        {
+            if(!dic.ContainsKey(key)) dic[key] = (value,new HashSet<TValue>());
             return dic[key];
         }
     }

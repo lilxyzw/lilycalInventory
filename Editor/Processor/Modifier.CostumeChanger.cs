@@ -20,7 +20,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void ApplyCostumeChanger(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, CostumeChanger[] changers
         #if LIL_VRCSDK3A
-        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic
+        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic, BlendTree root
         #endif
         )
         {
@@ -48,7 +48,8 @@ namespace jp.lilxyzw.lilycalinventory
                     clipChangeds[i].name = $"{changer.costumes[i].menuName}_Merged";
                     AssetDatabase.AddObjectToAsset(clipChangeds[i], ctx.AssetContainer);
                 }
-                AddCostumeChangerLayer(controller, hasWriteDefaultsState, clipChangeds, name);
+                if(root) AnimationHelper.AddCostumeChangerTree(controller, clipChangeds, name, root);
+                else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clipChangeds, name);
 
                 #if LIL_VRCSDK3A
                 var parentMenu = menu;
@@ -71,39 +72,6 @@ namespace jp.lilxyzw.lilycalinventory
                 parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave);
                 #endif
             }
-        }
-
-        private static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name)
-        {
-            var stateMachine = new AnimatorStateMachine();
-
-            for(int i = 0; i < clips.Length; i++)
-            {
-                var clip = clips[i];
-                var state = new AnimatorState
-                {
-                    motion = clip,
-                    name = clip.name,
-                    writeDefaultValues = hasWriteDefaultsState
-                };
-                stateMachine.AddState(state, stateMachine.entryPosition + new Vector3(200,clips.Length*25-i*50,0));
-                stateMachine.AddEntryTransition(state).AddCondition(AnimatorConditionMode.Equals, i, name);
-                var toExit = state.AddExitTransition();
-                toExit.AddCondition(AnimatorConditionMode.NotEqual, i, name);
-                toExit.duration = 0;
-            }
-
-            var layer = new AnimatorControllerLayer
-            {
-                blendingMode = AnimatorLayerBlendingMode.Override,
-                defaultWeight = 1,
-                name = name,
-                stateMachine = stateMachine
-            };
-
-            controller.AddLayer(layer);
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Int);
         }
 
         #if LIL_VRCSDK3A
