@@ -4,7 +4,8 @@
     "references": [
         "jp.lilxyzw.lilycalinventory.runtime",
         "nadena.dev.ndmf",
-        "nadena.dev.ndmf.runtime"
+        "nadena.dev.ndmf.runtime",
+        "nadena.dev.modular-avatar.core"
     ],
     "includePlatforms": [
         "Editor"
@@ -40,6 +41,11 @@
             "name": "jp.lilxyzw.avatarmodifier",
             "expression": "",
             "define": "LIL_AVATAR_MODIFIER"
+        },
+        {
+            "name": "nadena.dev.modular-avatar",
+            "expression": "",
+            "define": "LIL_MODULAR_AVATAR"
         }
     ],
     "noEngineReferences": false

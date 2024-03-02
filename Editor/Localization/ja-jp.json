@@ -10,6 +10,8 @@
 
   "inspector.menuName": "メニュー名",
   "inspector.menuName.tooltip": "VRChatのメニュー上で表示される名前です。何も入力していない場合はオブジェクト名と同じになります。",
+  "inspector.menuParameterName": "メニュー・パラメーター名",
+  "inspector.menuNameParameter.tooltip": "VRChatのメニュー上で表示される名前です。何も入力していない場合はオブジェクト名と同じになります。",
   "inspector.menuNameEmpty": "メニュー名を入力してください。",
   "inspector.parentFolder": "メニューの親フォルダ",
   "inspector.parentOverride": "オーバーライド",
@@ -68,7 +70,9 @@
   "dialog.error.menuNameEmpty": "メニュー名が空になっています。名前を設定してください。",
   "dialog.error.menuNameDuplication": "メニュー名が重複しています。名前を変更してください。",
   "dialog.error.parameterDuplication": "パラメーター名が重複しています。名前を変更してください。",
+  "dialog.error.dresserSettingsDuplication": "AutoDresserSettingsが複数存在します。1つだけを有効化してください。",
   "dialog.error.defaultDuplication": "複数のオブジェクトがオンになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.allObjectOff": "以下の全てのオブジェクトがオフになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
-  "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。"
+  "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。",
+  "dialog.error.menuMADuplication": "MA Menu Itemが複数コンポーネントから参照されています。それぞれのコンポーネントにつき1つのMA Menu Itemを作成するようにしてください。"
 }

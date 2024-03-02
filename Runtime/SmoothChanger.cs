@@ -5,7 +5,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
 {
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(SmoothChanger))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(SmoothChanger))]
-    internal class SmoothChanger : MenuBaseComponent
+    internal class SmoothChanger : MenuBaseComponent, IGenerateParameter
     {
         [NotKeyable] [LILLocalize] [Range(0,1)] public float defaultFrameValue;
         [NotKeyable] public Frame[] frames;

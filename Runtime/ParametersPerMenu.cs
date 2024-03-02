@@ -8,6 +8,12 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     {
         [CostumeName] public string menuName;
         [LILLocalize] public Texture2D icon;
+        [LILLocalize] public MenuFolder parentOverride;
+        #if LIL_MODULAR_AVATAR
+        [LILLocalize] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
+        #else
+        [HideInInspector] public UnityEngine.Object parentOverrideMA;
+        #endif
         public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 

@@ -8,7 +8,7 @@ namespace jp.lilxyzw.lilycalinventory
     internal static partial class AnimationHelper
     {
 
-        internal static void AddSimpleLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name)
+        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name)
         {
             var stateDefault = new AnimatorState
             {
@@ -46,8 +46,8 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            //if(!controller.parameters.Any(p => p.name == name))
-            //    controller.AddParameter(name, AnimatorControllerParameterType.Bool);
+            if(!controller.parameters.Any(p => p.name == name))
+                controller.AddParameter(name, AnimatorControllerParameterType.Bool);
         }
 
         internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name)

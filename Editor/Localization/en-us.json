@@ -10,6 +10,8 @@
 
   "inspector.menuName": "Menu Name",
   "inspector.menuName.tooltip": "This is the name of the menu displayed on VRChat.",
+  "inspector.menuParameterName": "Menu & Parameter Name",
+  "inspector.menuParameterName.tooltip": "This is the name of the menu displayed on VRChat.",
   "inspector.menuNameEmpty": "Please enter the menu name.",
   "inspector.parentFolder": "Parent folder",
   "inspector.parentOverride": "Override",
@@ -68,7 +70,9 @@
   "dialog.error.menuNameEmpty": "The menu name is empty. Please set a name.",
   "dialog.error.menuNameDuplication": "Duplicate menu name. Please change the name.",
   "dialog.error.parameterDuplication": "Duplicate parameter name. Please change the name.",
+  "dialog.error.dresserSettingsDuplication": "There are multiple AutoDresserSettings. Please enable only one.",
   "dialog.error.defaultDuplication": "Multiple objects are turned on. Please check only one so that the tool can set the initial value.",
-  "dialog.error.allObjectOff": "All objects below are turned off. Please check only one so that the tool can set the initial value.初期値を設定できるようにどれか1つだけオンにしてください。",
-  "dialog.error.avatarRootNofFound": "Avatar root object not found. Make sure that the object is inside the avatar and that the avatar has an AvatarDescriptor attached."
+  "dialog.error.allObjectOff": "All objects below are turned off. Please check only one so that the tool can set the initial value.",
+  "dialog.error.avatarRootNofFound": "Avatar root object not found. Make sure that the object is inside the avatar and that the avatar has an AvatarDescriptor attached.",
+  "dialog.error.menuMADuplication": "MA Menu Item is referenced by multiple components. Make sure to create one MA Menu Item for each component."
 }

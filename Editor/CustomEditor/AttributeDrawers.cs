@@ -64,7 +64,8 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            GUIHelper.TextField(position, Localization.G(property), property, property.serializedObject.targetObject.name);
+            string key = property.serializedObject.targetObject is IGenerateParameter ? "inspector.menuParameterName" : "inspector.menuName";
+            GUIHelper.TextField(position, Localization.G(key), property, property.serializedObject.targetObject.name);
         }
     }
 
@@ -74,6 +75,8 @@ namespace jp.lilxyzw.lilycalinventory
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var copy = property.Copy();
+            copy.Next(false);
+            copy.Next(false);
             copy.Next(false);
             copy.Next(false);
             string name = property.stringValue;
@@ -126,10 +129,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var replacers = copy.FPR("materialPropertyModifiers");
-                for(int i = 0; i < replacers.arraySize; i++)
+                var modifiers = copy.FPR("materialPropertyModifiers");
+                for(int i = 0; i < modifiers.arraySize; i++)
                 {
-                    var m = replacers.GetArrayElementAtIndex(i).FPR("floatModifiers");
+                    var m = modifiers.GetArrayElementAtIndex(i).FPR("floatModifiers");
                     for(int j = 0; j < m.arraySize; j++)
                     {
                         var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;
@@ -143,10 +146,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var replacers = copy.FPR("materialPropertyModifiers");
-                for(int i = 0; i < replacers.arraySize; i++)
+                var modifiers = copy.FPR("materialPropertyModifiers");
+                for(int i = 0; i < modifiers.arraySize; i++)
                 {
-                    var m = replacers.GetArrayElementAtIndex(i).FPR("vectorModifiers");
+                    var m = modifiers.GetArrayElementAtIndex(i).FPR("vectorModifiers");
                     for(int j = 0; j < m.arraySize; j++)
                     {
                         var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;

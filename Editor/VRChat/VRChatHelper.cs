@@ -1,11 +1,15 @@
 #if LIL_VRCSDK3A
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
+using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
+using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
+using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.Parameter;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -136,12 +140,12 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, Texture2D icon = null, string name = null)
         {
             menu.controls.Add(
-                new VRCExpressionsMenu.Control
+                new Control
                 {
                     icon = icon,
                     name = name ?? menu2.name,
                     subMenu = menu2,
-                    type = VRCExpressionsMenu.Control.ControlType.SubMenu
+                    type = ControlType.SubMenu
                 }
             );
         }
@@ -182,30 +186,23 @@ namespace jp.lilxyzw.lilycalinventory
             parameters.AddParameter(name, isLocalOnly, isSave, defaultValue, VRCExpressionParameters.ValueType.Float);
         }
 
-        internal static VRCExpressionsMenu.Control GetMenuControlToggle(this MenuBaseComponent component, float value = 1)
+        internal static Control CreateControl(string name, Texture2D icon, ControlType type, string parameterName, float value = 1)
         {
-            var name = component.menuName;
-            return new VRCExpressionsMenu.Control
+            var control =  new Control
             {
-                icon = component.icon,
+                icon = icon,
                 name = name,
-                parameter = new VRCExpressionsMenu.Control.Parameter{name = name},
-                type = VRCExpressionsMenu.Control.ControlType.Toggle,
+                type = type,
                 value = value
             };
+            if(type == ControlType.RadialPuppet) control.subParameters = new[]{new Parameter{name = parameterName}};
+            else control.parameter = new Parameter{name = parameterName};
+            return control;
         }
 
-        internal static VRCExpressionsMenu.Control GetMenuControlRadialPuppet(this MenuBaseComponent component, float value = 1)
+        internal static void CreateAndAdd(this List<Control> controls, string name, Texture2D icon, ControlType type, string parameterName, float value = 1)
         {
-            var name = component.menuName;
-            return new VRCExpressionsMenu.Control
-            {
-                icon = component.icon,
-                name = name,
-                subParameters = new[]{new VRCExpressionsMenu.Control.Parameter{name = name}},
-                type = VRCExpressionsMenu.Control.ControlType.RadialPuppet,
-                value = value
-            };
+            controls.Add(CreateControl(name, icon, type, parameterName, value));
         }
     }
 }

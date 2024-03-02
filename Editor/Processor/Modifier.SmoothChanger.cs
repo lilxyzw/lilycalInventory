@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -20,7 +18,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void ApplySmoothChanger(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, SmoothChanger[] changers, BlendTree root
         #if LIL_VRCSDK3A
-        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic
+        , VRCExpressionParameters parameters
         #endif
         )
         {
@@ -55,10 +53,6 @@ namespace jp.lilxyzw.lilycalinventory
                 else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clips, frames, name, changer);
 
                 #if LIL_VRCSDK3A
-                var parentMenu = menu;
-                var parent = changer.GetMenuParent();
-                if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
-                parentMenu.controls.Add(changer.GetMenuControlRadialPuppet());
                 parameters.AddParameterFloat(name, changer.isLocalOnly, changer.isSave, changer.defaultFrameValue);
                 #endif
             }

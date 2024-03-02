@@ -30,6 +30,7 @@ namespace jp.lilxyzw.lilycalinventory
             serializedObject.UpdateIfRequiredOrScript();
             SerializedProperty iterator = serializedObject.GetIterator();
             iterator.NextVisible(true); // Skip m_Script
+            hasProperty = ModularAvatarHelper.Inspector(target, serializedObject, iterator) || hasProperty;
             while(iterator.NextVisible(false))
             {
                 GUIHelper.AutoField(iterator);

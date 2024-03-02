@@ -9,5 +9,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [MenuName] public string menuName;
         [NotKeyable] [MenuFolderOverride] public MenuFolder parentOverride;
         [NotKeyable] [LILLocalize] public Texture2D icon;
+        #if LIL_MODULAR_AVATAR
+        [NotKeyable] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
+        #else
+        [NotKeyable] [HideInInspector] public Object parentOverrideMA;
+        #endif
     }
 }

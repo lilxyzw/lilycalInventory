@@ -21,10 +21,11 @@ namespace jp.lilxyzw.lilycalinventory
         private static MaterialOptimizer[] optimizers;
         // Menu
         private static AvatarTagComponent[] components;
+        private static AutoDresserSettings[] dresserSettings;
         private static AutoDresser[] dressers;
+        private static Prop[] props;
         private static MenuFolder[] folders;
         private static ItemToggler[] togglers;
-        private static Prop[] props;
         private static CostumeChanger[] costumeChangers;
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
@@ -33,9 +34,11 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void FindComponent(BuildContext ctx)
         {
             // Resolve Dresser
+            dresserSettings = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresserSettings>(true).Where(c => c.enabled).ToArray();
+            if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
             dressers = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
             dressers.ResolveMenuName();
-            dressers.DresserToChanger();
+            dressers.DresserToChanger(dresserSettings);
             // Resolve Prop
             props = ctx.AvatarRootObject.GetComponentsInChildren<Prop>(true).Where(c => c.enabled).ToArray();
             props.ResolveMenuName();
@@ -54,6 +57,8 @@ namespace jp.lilxyzw.lilycalinventory
             components.GetActiveComponents<CostumeChanger>().ResolveMenuName();
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
             ObjHelper.CheckUseless(togglers);
+
+            ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers);
         }
 
         internal static void Clone(BuildContext ctx)
@@ -87,11 +92,11 @@ namespace jp.lilxyzw.lilycalinventory
                     AssetDatabase.AddObjectToAsset(tree, ctx.AssetContainer);
                 }
                 Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
-                Modifier.ApplyMenuFolder(ctx, folders, menu, menuDic);
-                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, menu, parameters, menuDic);
-                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, menu, parameters, menuDic);
-                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, menu, parameters, menuDic);
+                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, parameters);
+                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, parameters);
+                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, parameters);
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
+                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, menu, menuDic);
                 ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
             }
             #else

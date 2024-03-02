@@ -65,7 +65,7 @@ namespace jp.lilxyzw.lilycalinventory
             root.children = children;
         }
 
-        internal static void AddSimpleTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, BlendTree root)
+        internal static void AddItemTogglerTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, BlendTree root)
         {
             var layer = new BlendTree
             {

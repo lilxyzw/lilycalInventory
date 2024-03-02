@@ -1,0 +1,224 @@
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+#if LIL_MODULAR_AVATAR
+using nadena.dev.modular_avatar.core;
+#endif
+#if LIL_VRCSDK3A
+using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
+using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
+using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.Parameter;
+#endif
+
+namespace jp.lilxyzw.lilycalinventory
+{
+    using System.Linq;
+    using runtime;
+
+    internal static class ModularAvatarHelper
+    {
+        internal static bool Inspector(Object target, SerializedObject serializedObject, SerializedProperty iterator)
+        {
+            #if LIL_MODULAR_AVATAR
+            if(target is MenuBaseComponent)
+            {
+                var parentOverrideMA = serializedObject.FindProperty("parentOverrideMA");
+                //menuName
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                //parentOverride
+                if(parentOverrideMA.objectReferenceValue) EditorGUI.BeginDisabledGroup(true);
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                //icon
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                if(parentOverrideMA.objectReferenceValue) EditorGUI.EndDisabledGroup();
+                //parentOverrideMA
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                return true;
+            }
+            #endif
+            return false;
+        }
+
+        internal static void ResolveMenu(MenuFolder[] folders, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers)
+        {
+            #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
+            var menus = new Dictionary<ModularAvatarMenuItem, (Component,bool)>();
+            var duplicates = new List<Component>();
+            ResolveFolders(folders, menus, duplicates);
+            foreach(var m in togglers) m.Resolve(ControlType.Toggle, menus, duplicates);
+            foreach(var m in smoothChangers) m.Resolve(ControlType.RadialPuppet, menus, duplicates);
+            foreach(var m in costumeChangers) m.Resolve(menus, duplicates);
+            if(duplicates.Count > 0)
+                ErrorHelper.Report("dialog.error.menuMADuplication", menus.Where(p => p.Value.Item2).Select(p => p.Value.Item1).Union(duplicates).ToArray());
+
+            // Clean Empty
+            foreach(var m in menus.Keys.Where(m => m.Control.type == ControlType.SubMenu && m.gameObject.transform.childCount == 0).ToArray())
+                Object.DestroyImmediate(m.gameObject);
+            #else
+            foreach(var m in folders) m.parentOverrideMA = null;
+            foreach(var m in togglers) m.parentOverrideMA = null;
+            foreach(var m in smoothChangers) m.parentOverrideMA = null;
+            foreach(var m in costumeChangers)
+            {
+                m.parentOverrideMA = null;
+                foreach(var c in m.costumes) c.parentOverrideMA = null;
+            }
+            #endif
+        }
+
+        #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
+        private static void TryAdd(this Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, ModularAvatarMenuItem item, List<Component> duplicates, Component m)
+        {
+            if(menus.ContainsKey(item))
+            {
+                duplicates.Add(m);
+                menus[item] = (menus[item].Item1,true);
+            }
+            else menus[item] = (m,false);
+        }
+
+        private static void ResolveFolders(MenuFolder[] folders, Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, List<Component> duplicates)
+        {
+            var resolved = new HashSet<MenuFolder>();
+            int resolvedCount = -1;
+            while(resolvedCount != resolved.Count)
+            {
+                resolvedCount = resolved.Count;
+                foreach(var m in folders)
+                {
+                    if(resolved.Contains(m)) continue;
+                    if(m.parentOverrideMA)
+                    {
+                        m.parentOverrideMA.Control.type = ControlType.SubMenu;
+                        m.parentOverrideMA.MenuSource = SubmenuSource.Children;
+                        resolved.Add(m);
+                        menus.TryAdd(m.parentOverrideMA, duplicates, m);
+                        continue;
+                    }
+                    else if(m.parentOverride)
+                    {
+                        if(m.parentOverride.parentOverrideMA)
+                        {
+                            m.parentOverrideMA = CreateChildMenuFolder(m.parentOverride.parentOverrideMA.transform, m);
+                            resolved.Add(m);
+                            menus.TryAdd(m.parentOverrideMA, duplicates, m);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        var parent = m.gameObject.GetComponentInParentInAvatar<MenuFolder>();
+                        if(parent && parent.parentOverrideMA)
+                        {
+                            m.parentOverrideMA = CreateChildMenuFolder(parent.transform, m);
+                            resolved.Add(m);
+                            menus.TryAdd(m.parentOverrideMA, duplicates, m);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void Resolve(this MenuBaseComponent m, ControlType type, Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, List<Component> duplicates)
+        {
+            if(!m.parentOverride) m.parentOverride = m.GetMenuParent();
+            if(m.parentOverrideMA)
+            {
+                m.parentOverrideMA.Set(type, m.menuName);
+                menus.TryAdd(m.parentOverrideMA, duplicates, m);
+                return;
+            }
+            if(m.parentOverride && m.parentOverride.parentOverrideMA)
+            {
+                var parent = m.parentOverride.parentOverrideMA.gameObject.transform;
+                m.parentOverrideMA = CreateChildMenu(parent, m, type);
+                menus.TryAdd(m.parentOverrideMA, duplicates, m);
+            }
+        }
+
+        private static void Resolve(this CostumeChanger m, Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, List<Component> duplicates)
+        {
+            if(!m.parentOverride) m.parentOverride = m.GetMenuParent();
+            for(int i = 0; i < m.costumes.Length; i++)
+            {
+                var c = m.costumes[i];
+                if(!c.parentOverrideMA) continue;
+                c.parentOverrideMA.Set(ControlType.Toggle, m.menuName, i);
+                menus.TryAdd(c.parentOverrideMA, duplicates, m);
+            }
+            Transform parent;
+            if(m.parentOverrideMA)
+            {
+                m.parentOverrideMA.Control.type = ControlType.SubMenu;
+                m.parentOverrideMA.MenuSource = SubmenuSource.Children;
+                menus.TryAdd(m.parentOverrideMA, duplicates, m);
+                parent = m.parentOverrideMA.gameObject.transform;
+            }
+            else if(m.parentOverride && m.parentOverride.parentOverrideMA)
+            {
+                parent = m.parentOverride.parentOverrideMA.gameObject.transform;
+            }
+            else
+            {
+                return;
+            }
+            for(int i = 0; i < m.costumes.Length; i++)
+            {
+                var c = m.costumes[i];
+                if(c.parentOverrideMA) continue;
+                c.parentOverrideMA = CreateChildMenu(parent, c.menuName, c.icon, ControlType.Toggle, m.menuName, i);
+                menus.TryAdd(c.parentOverrideMA, duplicates, m);
+            }
+        }
+
+        private static ModularAvatarMenuItem CreateChildMenuFolder(Transform parent, MenuBaseComponent m)
+        {
+            var o = new GameObject(m.menuName);
+            o.transform.parent = parent;
+            var menuItem = o.AddComponent<ModularAvatarMenuItem>();
+            menuItem.MenuSource = SubmenuSource.Children;
+            menuItem.Control = new Control{
+                name = m.menuName,
+                icon = m.icon,
+                type = ControlType.SubMenu
+            };
+            return menuItem;
+        }
+
+        private static ModularAvatarMenuItem CreateChildMenu(Transform parent, string menuName, Texture2D icon, ControlType type, string parameterName, float value = 1)
+        {
+            var o = new GameObject(menuName);
+            o.transform.parent = parent;
+            var menuItem = o.AddComponent<ModularAvatarMenuItem>();
+            menuItem.MenuSource = SubmenuSource.Children;
+            menuItem.Control = new Control{
+                name = menuName,
+                icon = icon,
+                type = type,
+                value = value
+            };
+            if(type == ControlType.RadialPuppet) menuItem.Control.subParameters = new[]{new Parameter{name = parameterName}};
+            else menuItem.Control.parameter = new Parameter{name = parameterName};
+            return menuItem;
+        }
+
+        private static ModularAvatarMenuItem CreateChildMenu(Transform parent, MenuBaseComponent m, ControlType type, float value = 1)
+        {
+            return CreateChildMenu(parent, m.menuName, m.icon, type, m.menuName, value);
+        }
+
+        private static void Set(this ModularAvatarMenuItem item, ControlType type, string parameterName, float value = 1)
+        {
+            item.Control.type = type;
+            item.Control.value = value;
+            if(type == ControlType.RadialPuppet) item.Control.subParameters = new[]{new Parameter{name = parameterName}};
+            else item.Control.parameter = new Parameter{name = parameterName};
+        }
+        #endif
+    }
+}

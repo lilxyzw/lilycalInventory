@@ -2,7 +2,6 @@
 using jp.lilxyzw.lilycalinventory;
 using jp.lilxyzw.lilycalinventory.runtime;
 using nadena.dev.ndmf;
-using nadena.dev.ndmf.builtin;
 
 [assembly: ExportsPlugin(typeof(LilycalInventoryPlugin))]
 
@@ -15,9 +14,8 @@ namespace jp.lilxyzw.lilycalinventory
 
         protected override void Configure()
         {
-            InPhase(BuildPhase.Resolving).BeforePlugin("com.anatawa12.avatar-optimizer")
-            .Run("Find components", ctx => Processor.FindComponent(ctx))
-            .BeforePass(RemoveEditorOnlyPass.Instance);
+            InPhase(BuildPhase.Resolving).BeforePlugin("nadena.dev.modular-avatar").BeforePlugin("com.anatawa12.avatar-optimizer")
+            .Run("Find components", ctx => Processor.FindComponent(ctx));
 
             var Transforming = InPhase(BuildPhase.Transforming).BeforePlugin("nadena.dev.modular-avatar");
             Transforming.Run("Clone", ctx => Processor.Clone(ctx));

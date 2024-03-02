@@ -5,7 +5,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
 {
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(CostumeChanger))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(CostumeChanger))]
-    internal class CostumeChanger : MenuBaseComponent
+    internal class CostumeChanger : MenuBaseComponent, IGenerateParameter
     {
         [NotKeyable] public Costume[] costumes = new Costume[]{};
         [NotKeyable] [LILLocalize] public bool isSave = true;

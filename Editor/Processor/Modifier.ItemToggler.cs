@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -20,7 +19,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void ApplyItemToggler(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, BlendTree root
         #if LIL_VRCSDK3A
-        , VRCExpressionsMenu menu, VRCExpressionParameters parameters, Dictionary<MenuFolder, VRCExpressionsMenu> dic
+        , VRCExpressionParameters parameters
         #endif
         )
         {
@@ -33,17 +32,11 @@ namespace jp.lilxyzw.lilycalinventory
                     var clips2 = (clips.Item1.ToClip(), clips.Item2.ToClip());
                     AssetDatabase.AddObjectToAsset(clips2.Item1, ctx.AssetContainer);
                     AssetDatabase.AddObjectToAsset(clips2.Item2, ctx.AssetContainer);
-                    if(root) AnimationHelper.AddSimpleTree(controller, clips2.Item1, clips2.Item2, name, root);
-                    else AnimationHelper.AddSimpleLayer(controller, hasWriteDefaultsState, clips2.Item1, clips2.Item2, name);
+                    if(root) AnimationHelper.AddItemTogglerTree(controller, clips2.Item1, clips2.Item2, name, root);
+                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clips2.Item1, clips2.Item2, name);
                 }
-                if(!root && !controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Bool);
 
                 #if LIL_VRCSDK3A
-                var parentMenu = menu;
-                var parent = toggler.GetMenuParent();
-                if(parent && dic.ContainsKey(parent)) parentMenu = dic[parent];
-                parentMenu.controls.Add(toggler.GetMenuControlToggle());
                 parameters.AddParameterToggle(name, toggler.isLocalOnly, toggler.isSave);
                 #endif
             }

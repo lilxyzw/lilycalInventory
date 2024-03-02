@@ -110,6 +110,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var cos = new Costume{
                     menuName = dresser.menuName,
                     icon = dresser.icon,
+                    parentOverride = dresser.parentOverride,
+                    parentOverrideMA = dresser.parentOverrideMA,
                     parametersPerMenu = dresser.parameter.Clone()
                 };
                 cos.parametersPerMenu.objects = cos.parametersPerMenu.objects.Append(new ObjectToggler{obj = obj, value = true}).ToArray();
@@ -127,14 +129,33 @@ namespace jp.lilxyzw.lilycalinventory
             return costumes.ToArray();
         }
 
-        internal static void DresserToChanger(this AutoDresser[] dressers)
+        internal static void DresserToChanger(this AutoDresser[] dressers, AutoDresserSettings[] settings)
         {
             if(dressers == null || dressers.Length == 0) return;
-            var newObj = new GameObject(nameof(AutoDresser));
-            var changer = newObj.AddComponent<CostumeChanger>();
-            changer.menuName = nameof(AutoDresser);
-            changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
-            newObj.transform.parent = avatarRoot;
+            if(settings.Length == 1 && settings[0])
+            {
+                var s = settings[0];
+                var obj = s.gameObject;
+                var menuName = s.menuName;
+                var icon = s.icon;
+                var parentOverride = s.parentOverride;
+                var parentOverrideMA = s.parentOverrideMA;
+                Object.DestroyImmediate(s);
+                var changer = obj.AddComponent<CostumeChanger>();
+                changer.menuName = menuName;
+                changer.icon = icon;
+                changer.parentOverride = parentOverride;
+                changer.parentOverrideMA = parentOverrideMA;
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+            }
+            else
+            {
+                var newObj = new GameObject(nameof(AutoDresser));
+                var changer = newObj.AddComponent<CostumeChanger>();
+                changer.menuName = nameof(AutoDresser);
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+                newObj.transform.parent = avatarRoot;
+            }
         }
 
         internal static void PropToToggler(this Prop[] props)
