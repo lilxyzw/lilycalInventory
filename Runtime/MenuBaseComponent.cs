@@ -10,7 +10,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [MenuFolderOverride] public MenuFolder parentOverride;
         [NotKeyable] [LILLocalize] public Texture2D icon;
         #if LIL_MODULAR_AVATAR
-        [NotKeyable] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
+        [NotKeyable] [LILLocalize] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
         #else
         [NotKeyable] [HideInInspector] public Object parentOverrideMA;
         #endif

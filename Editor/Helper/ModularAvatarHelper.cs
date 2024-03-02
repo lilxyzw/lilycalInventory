@@ -36,7 +36,37 @@ namespace jp.lilxyzw.lilycalinventory
                 if(parentOverrideMA.objectReferenceValue) EditorGUI.EndDisabledGroup();
                 //parentOverrideMA
                 iterator.NextVisible(false);
+                if(!iterator.objectReferenceValue)
+                {
+                    var component = (MenuBaseComponent)target;
+                    if(component.gameObject.GetComponentInParentInAvatar<ModularAvatarMenuGroup>())
+                    {
+                        var item = component.gameObject.AddComponent<ModularAvatarMenuItem>();
+                        item.MenuSource = SubmenuSource.Children;
+                        item.Control = new Control{icon = component.icon};
+                        switch(component)
+                        {
+                            case MenuFolder _:
+                            case CostumeChanger _:
+                                item.Control.type = ControlType.SubMenu;
+                                break;
+                            case SmoothChanger _:
+                                item.Control.type = ControlType.RadialPuppet;
+                                break;
+                            default:
+                                item.Control.type = ControlType.Button;
+                                break;
+                        }
+                        iterator.objectReferenceValue = item;
+                    }
+                }
                 GUIHelper.AutoField(iterator);
+                if(parentOverrideMA.objectReferenceValue)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.HelpBox(Localization.S("inspector.parentOverrideMAInfo"), MessageType.Info);
+                    EditorGUI.indentLevel--;
+                }
                 return true;
             }
             #endif

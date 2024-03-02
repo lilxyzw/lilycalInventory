@@ -64,8 +64,17 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            string key = property.serializedObject.targetObject is IGenerateParameter ? "inspector.menuParameterName" : "inspector.menuName";
+            bool isGenerateParameter = property.serializedObject.targetObject is IGenerateParameter;
+            string key = isGenerateParameter ? "inspector.menuParameterName" : "inspector.menuName";
+            #if LIL_MODULAR_AVATAR
+            bool overrideMA = property.serializedObject.FindProperty("parentOverrideMA").objectReferenceValue;
+            if(overrideMA && isGenerateParameter) key = "inspector.parameterName";
+            if(overrideMA && !isGenerateParameter) EditorGUI.BeginDisabledGroup(true);
+            #endif
             GUIHelper.TextField(position, Localization.G(key), property, property.serializedObject.targetObject.name);
+            #if LIL_MODULAR_AVATAR
+            if(overrideMA && !isGenerateParameter) EditorGUI.EndDisabledGroup();
+            #endif
         }
     }
 
