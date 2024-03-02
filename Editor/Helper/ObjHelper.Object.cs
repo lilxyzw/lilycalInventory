@@ -63,14 +63,37 @@ namespace jp.lilxyzw.lilycalinventory
             return component.gameObject.GetPathInAvatar();
         }
 
-        internal static T[] GetActiveComponents<T>(this Component[] components) where T : MonoBehaviour
+        internal static T[] SelectComponents<T>(this Component[] components) where T : MonoBehaviour
         {
-            return components.Select(c => c as T).Where(c => c && c.enabled).ToArray();
+            return components.Select(c => c as T).Where(c => c).ToArray();
         }
 
         internal static T LoadAssetByGUID<T>(string guid) where T : Object
         {
             return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
+        }
+
+        internal static T[] GetActiveComponentsInChildren<T>(this GameObject gameObject) where T : MonoBehaviour
+        {
+            return gameObject.GetComponentsInChildren<T>(true).Where(c => c.enabled && !c.IsEditorOnly()).ToArray();
+        }
+
+        // EditorOnly
+        internal static bool IsEditorOnly(Transform obj)
+        {
+            if(obj.tag == "EditorOnly") return true;
+            if(obj.transform.parent == null) return false;
+            return IsEditorOnly(obj.transform.parent);
+        }
+
+        internal static bool IsEditorOnly(this GameObject obj)
+        {
+            return IsEditorOnly(obj.transform);
+        }
+
+        internal static bool IsEditorOnly(this Component com)
+        {
+            return IsEditorOnly(com.transform);
         }
     }
 }

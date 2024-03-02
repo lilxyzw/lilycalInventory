@@ -34,27 +34,27 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void FindComponent(BuildContext ctx)
         {
             // Resolve Dresser
-            dresserSettings = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresserSettings>(true).Where(c => c.enabled).ToArray();
+            dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>();
             if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
-            dressers = ctx.AvatarRootObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
+            dressers = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresser>();
             dressers.ResolveMenuName();
             dressers.DresserToChanger(dresserSettings);
             // Resolve Prop
-            props = ctx.AvatarRootObject.GetComponentsInChildren<Prop>(true).Where(c => c.enabled).ToArray();
+            props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>();
             props.ResolveMenuName();
             props.PropToToggler();
 
-            components = ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true).Where(c => c.enabled).ToArray();
-            modifiers = components.GetActiveComponents<MaterialModifier>();
-            optimizers = components.GetActiveComponents<MaterialOptimizer>();
-            folders = components.GetActiveComponents<MenuFolder>();
-            togglers = components.GetActiveComponents<ItemToggler>();
-            costumeChangers = components.GetActiveComponents<CostumeChanger>();
-            smoothChangers = components.GetActiveComponents<SmoothChanger>();
+            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>();
+            modifiers = components.SelectComponents<MaterialModifier>();
+            optimizers = components.SelectComponents<MaterialOptimizer>();
+            folders = components.SelectComponents<MenuFolder>();
+            togglers = components.SelectComponents<ItemToggler>();
+            costumeChangers = components.SelectComponents<CostumeChanger>();
+            smoothChangers = components.SelectComponents<SmoothChanger>();
             shouldModify = components.Length != 0;
             if(!shouldModify) return;
-            components.GetActiveComponents<MenuBaseComponent>().ResolveMenuName();
-            components.GetActiveComponents<CostumeChanger>().ResolveMenuName();
+            components.SelectComponents<MenuBaseComponent>().ResolveMenuName();
+            components.SelectComponents<CostumeChanger>().ResolveMenuName();
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
             ObjHelper.CheckUseless(togglers);
 
@@ -82,7 +82,7 @@ namespace jp.lilxyzw.lilycalinventory
                 parameterNames = new HashSet<string>();
                 if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
                 if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
-                var parameterDuplicates = components.GetActiveComponents<MenuBaseComponent>().Where(c => !(c is MenuFolder) && !(c is AutoDresser) && parameterNames.Contains(c.menuName)).ToArray();
+                var parameterDuplicates = components.SelectComponents<MenuBaseComponent>().Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).ToArray();
                 if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
                 BlendTree tree = null;
