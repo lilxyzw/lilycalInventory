@@ -156,6 +156,10 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
+                    if(vectorModifier.disableX) vectorModifier.value.x = value.x;
+                    if(vectorModifier.disableY) vectorModifier.value.y = value.y;
+                    if(vectorModifier.disableZ) vectorModifier.value.z = value.z;
+                    if(vectorModifier.disableW) vectorModifier.value.w = value.w;
                     clip.Add(bindingX, value.x);
                     clip.Add(bindingY, value.y);
                     clip.Add(bindingZ, value.z);

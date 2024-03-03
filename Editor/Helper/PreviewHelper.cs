@@ -263,9 +263,20 @@ namespace jp.lilxyzw.lilycalinventory
 
                         var material = new Material(materials[i]);
                         foreach(var floatModifier in modifier.floatModifiers)
+                        {
+                            if(!material.HasProperty(floatModifier.propertyName)) continue;
                             material.SetFloat(floatModifier.propertyName, floatModifier.value);
+                        }
                         foreach(var vectorModifier in modifier.vectorModifiers)
-                            material.SetVector(vectorModifier.propertyName, vectorModifier.value);
+                        {
+                            if(!material.HasProperty(vectorModifier.propertyName)) continue;
+                            var value = material.GetVector(vectorModifier.propertyName);
+                            if(!vectorModifier.disableX) value.x = vectorModifier.value.x;
+                            if(!vectorModifier.disableY) value.y = vectorModifier.value.y;
+                            if(!vectorModifier.disableZ) value.z = vectorModifier.value.z;
+                            if(!vectorModifier.disableW) value.w = vectorModifier.value.w;
+                            material.SetVector(vectorModifier.propertyName, value);
+                        }
                         
                         materials[i] = material;
                     }

@@ -86,6 +86,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     {
         [LILLocalize] public string propertyName;
         [OneLineVector] public Vector4 value;
+        [NoLabel] public bool disableX = false;
+        [NoLabel] public bool disableY = false;
+        [NoLabel] public bool disableZ = false;
+        [NoLabel] public bool disableW = false;
     }
 
     [Serializable]

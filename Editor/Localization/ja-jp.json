@@ -51,6 +51,7 @@
   "inspector.vectorModifiers": "操作するVectorプロパティ",
   "inspector.propertyName": "プロパティ名",
   "inspector.value": "値",
+  "inspector.disable": "無効化",
 
   "inspector.costumes": "コスチューム",
 

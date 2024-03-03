@@ -231,4 +231,58 @@ namespace jp.lilxyzw.lilycalinventory
             return GUIHelper.propertyHeight * (property.FPR("replaceTo").arraySize + 2) + GUIHelper.GetSpaceHeight(3);
         }
     }
+
+    [CustomPropertyDrawer(typeof(VectorModifier))]
+    internal class VectorModifierDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var propertyName = property.FPR("propertyName");
+            var value = property.FPR("value");
+            var disableX = property.FPR("disableX");
+            var disableY = property.FPR("disableY");
+            var disableZ = property.FPR("disableZ");
+            var disableW = property.FPR("disableW");
+            GUIHelper.AutoField(position.SingleLine(), propertyName);
+            var fieldPosition = EditorGUI.PrefixLabel(position.NewLine(), Localization.G(value));
+            var fieldWidth = fieldPosition.width * 0.25f;
+
+            float FloatField(ref Rect rect, string label, float value, bool disabled)
+            {
+                if(disabled) EditorGUI.BeginDisabledGroup(true);
+                value = EditorGUI.FloatField(rect, label, value);
+                if(disabled) EditorGUI.EndDisabledGroup();
+                rect.x += fieldWidth;
+                return value;
+            }
+
+            EditorGUIUtility.labelWidth = 12;
+            fieldPosition.width = fieldWidth - 2;
+            EditorGUI.BeginChangeCheck();
+            var vec = value.vector4Value;
+            vec.x = FloatField(ref fieldPosition, "X", vec.x, disableX.boolValue);
+            vec.y = FloatField(ref fieldPosition, "Y", vec.y, disableY.boolValue);
+            vec.z = FloatField(ref fieldPosition, "Z", vec.z, disableZ.boolValue);
+            vec.w = FloatField(ref fieldPosition, "W", vec.w, disableW.boolValue);
+            if(EditorGUI.EndChangeCheck()) value.vector4Value = vec;
+
+            EditorGUIUtility.labelWidth = 0;
+
+            position.NewLine();
+            position = EditorGUI.PrefixLabel(position, Localization.G("inspector.disable"));
+            position.width *= 0.25f;
+            GUIHelper.AutoField(position, disableX);
+            position.x = position.xMax;
+            GUIHelper.AutoField(position, disableY);
+            position.x = position.xMax;
+            GUIHelper.AutoField(position, disableZ);
+            position.x = position.xMax;
+            GUIHelper.AutoField(position, disableW);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return GUIHelper.propertyHeight * 3 + GUIHelper.GetSpaceHeight(3);
+        }
+    }
 }
