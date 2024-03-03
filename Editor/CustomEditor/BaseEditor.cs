@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 
 namespace jp.lilxyzw.lilycalinventory
@@ -17,6 +18,8 @@ namespace jp.lilxyzw.lilycalinventory
         {
             Localization.SelectLanguageGUI();
             var hasProperty = false;
+
+            if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);
 
             if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
             {

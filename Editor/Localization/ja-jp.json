@@ -1,5 +1,6 @@
 {
   "inspector.noProperty": "このコンポーネントには設定項目がありません。",
+  "inspector.componentDisabled": "コンポーネントが無効化されているためビルド時に無視されます。有効化したい場合はコンポーネントのチェックボックスをオンにしてください。",
 
   "inspector.referenceMaterial": "コピー元のマテリアル",
   "inspector.referenceMaterial.tooltip": "ここに指定したマテリアルから設定がコピーされます。",
