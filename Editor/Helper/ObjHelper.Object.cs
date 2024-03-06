@@ -73,9 +73,9 @@ namespace jp.lilxyzw.lilycalinventory
             return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
         }
 
-        internal static T[] GetActiveComponentsInChildren<T>(this GameObject gameObject) where T : MonoBehaviour
+        internal static T[] GetActiveComponentsInChildren<T>(this GameObject gameObject, bool includeInactive) where T : MonoBehaviour
         {
-            return gameObject.GetComponentsInChildren<T>(true).Where(c => c.enabled && !c.IsEditorOnly()).ToArray();
+            return gameObject.GetComponentsInChildren<T>(includeInactive).Where(c => c.enabled && !c.IsEditorOnly()).ToArray();
         }
 
         // EditorOnly

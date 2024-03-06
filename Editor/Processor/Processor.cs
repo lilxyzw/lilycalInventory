@@ -34,17 +34,17 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void FindComponent(BuildContext ctx)
         {
             // Resolve Dresser
-            dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>();
+            dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(false);
             if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
-            dressers = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresser>();
+            dressers = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresser>(true);
             dressers.ResolveMenuName();
             dressers.DresserToChanger(dresserSettings);
             // Resolve Prop
-            props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>();
+            props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>(true);
             props.ResolveMenuName();
             props.PropToToggler();
 
-            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>();
+            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(false);
             modifiers = components.SelectComponents<MaterialModifier>();
             optimizers = components.SelectComponents<MaterialOptimizer>();
             folders = components.SelectComponents<MenuFolder>();
