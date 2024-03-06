@@ -66,7 +66,7 @@ namespace jp.lilxyzw.lilycalinventory
                     modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
 
                 modifier.ToClipDefault(clipOff);
-                modifier.ToClip(clipOn);
+                modifier.ToClip(clipOn, clipOff);
             }
             return (clipOff, clipOn);
         }
@@ -156,10 +156,6 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
-                    if(vectorModifier.disableX) vectorModifier.value.x = value.x;
-                    if(vectorModifier.disableY) vectorModifier.value.y = value.y;
-                    if(vectorModifier.disableZ) vectorModifier.value.z = value.z;
-                    if(vectorModifier.disableW) vectorModifier.value.w = value.w;
                     clip.Add(bindingX, value.x);
                     clip.Add(bindingY, value.y);
                     clip.Add(bindingZ, value.z);
@@ -168,7 +164,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        private static void ToClip(this MaterialPropertyModifier modifier, InternalClip clip)
+        private static void ToClip(this MaterialPropertyModifier modifier, InternalClip clip, InternalClip clipDefault)
         {
             foreach(var renderer in modifier.renderers)
             {
@@ -184,10 +180,10 @@ namespace jp.lilxyzw.lilycalinventory
                     var bindingY = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.y");
                     var bindingZ = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.z");
                     var bindingW = CreateMaterialPropertyBinding(renderer, $"{vectorModifier.propertyName}.w");
-                    clip.Add(bindingX, vectorModifier.value.x);
-                    clip.Add(bindingY, vectorModifier.value.y);
-                    clip.Add(bindingZ, vectorModifier.value.z);
-                    clip.Add(bindingW, vectorModifier.value.w);
+                    clip.Add(bindingX, !vectorModifier.disableX ? vectorModifier.value.x : clipDefault.bindings[bindingX].Item1);
+                    clip.Add(bindingY, !vectorModifier.disableY ? vectorModifier.value.y : clipDefault.bindings[bindingY].Item1);
+                    clip.Add(bindingZ, !vectorModifier.disableZ ? vectorModifier.value.z : clipDefault.bindings[bindingZ].Item1);
+                    clip.Add(bindingW, !vectorModifier.disableW ? vectorModifier.value.w : clipDefault.bindings[bindingW].Item1);
                 }
             }
         }
