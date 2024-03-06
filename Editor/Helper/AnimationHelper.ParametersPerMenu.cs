@@ -137,7 +137,7 @@ namespace jp.lilxyzw.lilycalinventory
                     float value = 0;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material.HasProperty(floatModifier.propertyName)) continue;
+                        if(!material || !material.HasProperty(floatModifier.propertyName)) continue;
                         value = material.GetFloat(floatModifier.propertyName);
                         break;
                     }
@@ -152,7 +152,7 @@ namespace jp.lilxyzw.lilycalinventory
                     Vector4 value = Vector4.zero;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material.HasProperty(vectorModifier.propertyName)) continue;
+                        if(!material || !material.HasProperty(vectorModifier.propertyName)) continue;
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
@@ -215,7 +215,7 @@ namespace jp.lilxyzw.lilycalinventory
                     float value = 0;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material.HasProperty(floatModifier.propertyName)) continue;
+                        if(!material || !material.HasProperty(floatModifier.propertyName)) continue;
                         value = material.GetFloat(floatModifier.propertyName);
                         break;
                     }
@@ -226,7 +226,7 @@ namespace jp.lilxyzw.lilycalinventory
                     Vector4 value = Vector4.zero;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material.HasProperty(vectorModifier.propertyName)) continue;
+                        if(!material || !material.HasProperty(vectorModifier.propertyName)) continue;
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
