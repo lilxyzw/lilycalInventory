@@ -3,7 +3,6 @@ using UnityEngine.Animations;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
-    [DisallowMultipleComponent]
     internal abstract class MenuBaseComponent : AvatarTagComponent
     {
         [NotKeyable] [MenuName] public string menuName;
@@ -14,5 +13,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         #else
         [NotKeyable] [HideInInspector] public Object parentOverrideMA;
         #endif
+    }
+
+    [DisallowMultipleComponent]
+    internal abstract class MenuBaseDisallowMultipleComponent : MenuBaseComponent
+    {
     }
 }
