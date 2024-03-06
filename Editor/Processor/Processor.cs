@@ -82,7 +82,7 @@ namespace jp.lilxyzw.lilycalinventory
                 parameterNames = new HashSet<string>();
                 if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
                 if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
-                var parameterDuplicates = components.SelectComponents<MenuBaseComponent>().Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).ToArray();
+                var parameterDuplicates = components.SelectComponents<MenuBaseComponent>().Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).Select(c => c.gameObject).ToArray();
                 if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
                 BlendTree tree = null;
