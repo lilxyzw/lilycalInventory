@@ -247,23 +247,14 @@ namespace jp.lilxyzw.lilycalinventory
             var fieldPosition = EditorGUI.PrefixLabel(position.NewLine(), Localization.G(value));
             var fieldWidth = fieldPosition.width * 0.25f;
 
-            float FloatField(ref Rect rect, string label, float value, bool disabled)
-            {
-                if(disabled) EditorGUI.BeginDisabledGroup(true);
-                value = EditorGUI.FloatField(rect, label, value);
-                if(disabled) EditorGUI.EndDisabledGroup();
-                rect.x += fieldWidth;
-                return value;
-            }
-
             EditorGUIUtility.labelWidth = 12;
             fieldPosition.width = fieldWidth - 2;
             EditorGUI.BeginChangeCheck();
             var vec = value.vector4Value;
-            vec.x = FloatField(ref fieldPosition, "X", vec.x, disableX.boolValue);
-            vec.y = FloatField(ref fieldPosition, "Y", vec.y, disableY.boolValue);
-            vec.z = FloatField(ref fieldPosition, "Z", vec.z, disableZ.boolValue);
-            vec.w = FloatField(ref fieldPosition, "W", vec.w, disableW.boolValue);
+            vec.x = FloatField(ref fieldPosition, "X", vec.x, disableX.boolValue, fieldWidth);
+            vec.y = FloatField(ref fieldPosition, "Y", vec.y, disableY.boolValue, fieldWidth);
+            vec.z = FloatField(ref fieldPosition, "Z", vec.z, disableZ.boolValue, fieldWidth);
+            vec.w = FloatField(ref fieldPosition, "W", vec.w, disableW.boolValue, fieldWidth);
             if(EditorGUI.EndChangeCheck()) value.vector4Value = vec;
 
             EditorGUIUtility.labelWidth = 0;
@@ -278,6 +269,15 @@ namespace jp.lilxyzw.lilycalinventory
             GUIHelper.AutoField(position, disableZ);
             position.x = position.xMax;
             GUIHelper.AutoField(position, disableW);
+        }
+
+        float FloatField(ref Rect rect, string label, float value, bool disabled, float fieldWidth)
+        {
+            if(disabled) EditorGUI.BeginDisabledGroup(true);
+            value = EditorGUI.FloatField(rect, label, value);
+            if(disabled) EditorGUI.EndDisabledGroup();
+            rect.x += fieldWidth;
+            return value;
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

@@ -72,6 +72,16 @@
   "inspector.previewCostume": "プレビューするコスチューム",
   "inspector.previewFrame": "プレビューするフレーム",
 
+  "inspector.commentRoot": "作者コメント",
+  "inspector.messageType": "メッセージの種類",
+  "inspector.comments": "コメント",
+  "inspector.langcode": "言語コード",
+  "inspector.text": "テキスト",
+  "inspector.commentInformation": "言語コードは\"en-us\"のような形で入力してください。対応する言語コードがなかった場合は一番上のテキストが優先して表示されます。",
+  "inspector.commentNo": "コメントが入力されていません。",
+  "inspector.edit": "編集",
+  "inspector.apply": "適用",
+
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
   "dialog.error.menuNameEmpty": "メニュー名が空になっています。名前を設定してください。",

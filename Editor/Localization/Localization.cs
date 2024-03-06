@@ -29,7 +29,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var langData = File.ReadAllText(path);
                 var lang = JsonDictionaryParser.Deserialize<string>(langData);
                 if(lang == null) continue;
-                var code = Path.GetFileNameWithoutExtension(path).ToLower();
+                var code = Path.GetFileNameWithoutExtension(path).ToLower(CultureInfo.InvariantCulture);
                 languages.Add(lang);
                 codes.Add(code);
                 try
@@ -44,6 +44,11 @@ namespace jp.lilxyzw.lilycalinventory
             }
             names = tmpNames.ToArray();
             number = GetIndexByCode(LoadLanguageSettings());
+        }
+
+        internal static string GetCurrentCode()
+        {
+            return codes[number];
         }
 
         internal static string[] GetCodes()
@@ -79,6 +84,11 @@ namespace jp.lilxyzw.lilycalinventory
             return languages[number].TryGetValue(key, out string o) ? o : key;
         }
 
+        internal static string S(SerializedProperty property)
+        {
+            return S($"inspector.{property.name}");
+        }
+
         internal static GUIContent G(string key)
         {
             return new GUIContent(S(key) ?? key, S($"{key}.tooltip"));
@@ -89,11 +99,16 @@ namespace jp.lilxyzw.lilycalinventory
             return G($"inspector.{property.name}");
         }
 
-        internal static void SelectLanguageGUI()
+        internal static bool SelectLanguageGUI()
         {
             EditorGUI.BeginChangeCheck();
             number = EditorGUILayout.Popup("Editor Language", number, names);
-            if(EditorGUI.EndChangeCheck()) SaveLanguageSettings();
+            if(EditorGUI.EndChangeCheck())
+            {
+                SaveLanguageSettings();
+                return true;
+            }
+            return false;
         }
 
         internal static void SelectLanguageGUI(Rect position)

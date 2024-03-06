@@ -164,5 +164,24 @@ namespace jp.lilxyzw.lilycalinventory
                 style.onNormal.textColor ,
             };
         }
+
+        internal static void SetBackground(this GUIStyle style, Color color)
+        {
+            var tex = new Texture2D(1,1);
+            tex.SetPixel(0,0,color);
+            style.SetBackground(tex);
+        }
+
+        private static void SetBackground(this GUIStyle style, Texture2D tex)
+        {
+            style.active.background    = tex;
+            style.focused.background   = tex;
+            style.hover.background     = tex;
+            style.normal.background    = tex;
+            style.onActive.background  = tex;
+            style.onFocused.background = tex;
+            style.onHover.background   = tex;
+            style.onNormal.background  = tex;
+        }
     }
 }

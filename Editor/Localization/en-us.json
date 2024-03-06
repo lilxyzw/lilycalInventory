@@ -72,6 +72,16 @@
   "inspector.previewCostume": "Preview Costume",
   "inspector.previewFrame": "Preview Frame",
 
+  "inspector.commentRoot": "Author's comment",
+  "inspector.messageType": "Message Type",
+  "inspector.comments": "Comments",
+  "inspector.langcode": "Language Code",
+  "inspector.text": "Text",
+  "inspector.commentInformation": "Please enter the language code in a format such as \"en-us\". If there is no corresponding language code, the top text will be displayed first.",
+  "inspector.commentNo": "No comment has been entered.",
+  "inspector.edit": "Edit",
+  "inspector.apply": "Apply",
+
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing.",
   "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations.",
   "dialog.error.menuNameEmpty": "The menu name is empty. Please set a name.",
