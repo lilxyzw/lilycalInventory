@@ -168,6 +168,8 @@ namespace jp.lilxyzw.lilycalinventory
                 Object.DestroyImmediate(prop);
                 var toggler2 = obj.AddComponent<ItemToggler>();
                 toggler2.menuName = toggler.menuName;
+                toggler2.parentOverride = toggler.parentOverride;
+                toggler2.parentOverrideMA = toggler.parentOverrideMA;
                 toggler2.icon = toggler.icon;
                 toggler2.isSave = toggler.isSave;
                 toggler2.isLocalOnly = toggler.isLocalOnly;
@@ -180,6 +182,8 @@ namespace jp.lilxyzw.lilycalinventory
             var obj = prop.gameObject;
             var toggler = new ItemToggler{
                 menuName = prop.menuName,
+                parentOverride = prop.parentOverride,
+                parentOverrideMA = prop.parentOverrideMA,
                 icon = prop.icon,
                 isSave = prop.isSave,
                 isLocalOnly = prop.isLocalOnly,
