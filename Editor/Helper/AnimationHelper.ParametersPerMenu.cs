@@ -205,13 +205,20 @@ namespace jp.lilxyzw.lilycalinventory
             parameter.blendShapeModifiers = blendShapeModifiers.ToArray();
 
             parameter.materialReplacers = parameters.SelectMany(p => p.materialReplacers).Where(m => m.renderer).Select(m => new MaterialReplacer{renderer = m.renderer, replaceTo = m.renderer.sharedMaterials}).ToArray();
-            var materialPropertyModifiers = parameters.SelectMany(p => p.materialPropertyModifiers);
+            var materialPropertyModifiers = (MaterialPropertyModifier[])parameters.SelectMany(p => p.materialPropertyModifiers).Select(m => {
+                var mod = new MaterialPropertyModifier();
+                mod.renderers = m.renderers;
+                mod.floatModifiers = (FloatModifier[])m.floatModifiers.Clone();
+                mod.vectorModifiers = (VectorModifier[])m.vectorModifiers.Clone();
+                return mod;
+            }).ToArray().Clone();
             foreach(var modifier in materialPropertyModifiers)
             foreach(var renderer in modifier.renderers)
             {
                 if(!renderer) continue;
-                foreach(var floatModifier in modifier.floatModifiers)
+                for(int i = 0; i < modifier.floatModifiers.Length; i++)
                 {
+                    var floatModifier = modifier.floatModifiers[i];
                     float value = 0;
                     foreach(var material in renderer.sharedMaterials)
                     {
@@ -219,10 +226,11 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetFloat(floatModifier.propertyName);
                         break;
                     }
-                    floatModifier.value = value;
+                    modifier.floatModifiers[i].value = value;
                 }
-                foreach(var vectorModifier in modifier.vectorModifiers)
+                for(int i = 0; i < modifier.vectorModifiers.Length; i++)
                 {
+                    var vectorModifier = modifier.vectorModifiers[i];
                     Vector4 value = Vector4.zero;
                     foreach(var material in renderer.sharedMaterials)
                     {
@@ -230,10 +238,10 @@ namespace jp.lilxyzw.lilycalinventory
                         value = material.GetVector(vectorModifier.propertyName);
                         break;
                     }
-                    vectorModifier.value = value;
+                    modifier.vectorModifiers[i].value = value;
                 }
             }
-            parameter.materialPropertyModifiers = materialPropertyModifiers.ToArray();
+            parameter.materialPropertyModifiers = materialPropertyModifiers;
 
             return parameter;
         }

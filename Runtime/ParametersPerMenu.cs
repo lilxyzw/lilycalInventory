@@ -53,7 +53,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     }
 
     [Serializable]
-    internal class BlendShapeNameValue
+    internal struct BlendShapeNameValue
     {
         public string name;
         public float value;
@@ -75,26 +75,23 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     }
 
     [Serializable]
-    internal class FloatModifier : LILElementSimple
+    internal struct FloatModifier : LILElementSimple
     {
         [LILLocalize] public string propertyName;
         [LILLocalize] public float value;
     }
 
     [Serializable]
-    internal class VectorModifier : LILElementSimple
+    internal struct VectorModifier : LILElementSimple
     {
         [LILLocalize] public string propertyName;
         [OneLineVector] public Vector4 value;
-        [NoLabel] public bool disableX = false;
-        [NoLabel] public bool disableY = false;
-        [NoLabel] public bool disableZ = false;
-        [NoLabel] public bool disableW = false;
+        [NoLabel] public bool disableX;
+        [NoLabel] public bool disableY;
+        [NoLabel] public bool disableZ;
+        [NoLabel] public bool disableW;
     }
 
-    [Serializable]
-    abstract class LILElement {}
-
-    [Serializable]
-    abstract class LILElementSimple {}
+    interface LILElement {}
+    interface LILElementSimple {}
 }
