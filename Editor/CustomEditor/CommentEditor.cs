@@ -41,6 +41,7 @@ namespace jp.lilxyzw.lilycalinventory
             veNoComment = new VisualElement();
             veComment = new VisualElement();
             veCommentRoot = new VisualElement();
+            veRoot.Bind(serializedObject);
             UpdateGUI();
             return veRoot;
         }
@@ -91,22 +92,16 @@ namespace jp.lilxyzw.lilycalinventory
             veNoComment.Clear();
             veComment.Clear();
             veCommentRoot.Clear();
-            veRoot.Add(new IMGUIContainer(() => {if(Localization.SelectLanguageGUI()) UpdateGUI();}));
-            veRoot.Bind(serializedObject);
 
             veEditmode.Add(new CustomHelpBox(Localization.S("inspector.commentInformation"), MessageType.Info));
-            veEditmode.Add(new PropertyField{bindingPath = "messageType"});
             veEditmode.Add(new IMGUIContainer(() => {
+                GUIHelper.AutoField(serializedObject.FindProperty("messageType"));
                 GUIHelper.AutoField(serializedObject.FindProperty("comments"));
                 serializedObject.ApplyModifiedProperties();
             }));
             veNoComment.Add(new Label(Localization.S("inspector.commentNo")));
             veComment.Add(new Label(Localization.S("inspector.commentRoot")));
             veComment.Add(veCommentRoot);
-
-            veRoot.Add(veEditmode);
-            veRoot.Add(veNoComment);
-            veRoot.Add(veComment);
 
             veButtonEdit = new Button(() => {
                 isEditing = !isEditing;
@@ -122,6 +117,10 @@ namespace jp.lilxyzw.lilycalinventory
                 text = Localization.S("inspector.apply")
             };
 
+            veRoot.Add(new IMGUIContainer(() => {if(Localization.SelectLanguageGUI()) UpdateGUI();}));
+            veRoot.Add(veEditmode);
+            veRoot.Add(veNoComment);
+            veRoot.Add(veComment);
             veRoot.Add(veButtonEdit);
             veRoot.Add(veButtonApply);
 
@@ -132,7 +131,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(isEditing)
             {
-                veEditmode.style.display = DisplayStyle.None;
                 veEditmode.style.display = DisplayStyle.Flex;
                 veNoComment.style.display = DisplayStyle.None;
                 veComment.style.display = DisplayStyle.None;
