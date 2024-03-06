@@ -21,7 +21,7 @@ namespace jp.lilxyzw.lilycalinventory
             var toggleInts = new Dictionary<GameObject, Dictionary<string, (int,HashSet<(int,bool)>)>>();
             togglers.GatherConditions(toggleBools);
             costumeChangers.GatherConditions(toggleInts);
-            var multiConditionObjects = toggleBools.Select(b => b.Key).Concat(toggleInts.Select(i => i.Key)).GroupBy(o => o.name).Where(g => g.Count() > 1).Select(g => g.ElementAt(0)).ToArray();
+            var multiConditionObjects = toggleBools.Select(b => b.Key).Concat(toggleInts.Select(i => i.Key)).GroupBy(o => o).Where(g => g.Count() > 1).Select(g => g.ElementAt(0)).ToArray();
 
             foreach(var t in togglers)
                 t.parameter.objects = t.parameter.objects.Where(o => !multiConditionObjects.Contains(o.obj)).ToArray();
