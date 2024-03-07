@@ -117,6 +117,9 @@ namespace jp.lilxyzw.lilycalinventory
             if(materialMap.ContainsKey(material)) return materialMap[material];
             if(context.IsTemporaryAsset(material)) return materialMap[material] = material;
             var clone = Object.Instantiate(material); // new Material(material) is slow
+            #if LIL_NDMF
+            ObjectRegistry.RegisterReplacedObject(material, clone);
+            #endif
             AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
             return materialMap[material] = clone;
         }
@@ -126,6 +129,9 @@ namespace jp.lilxyzw.lilycalinventory
             if(!obj || context.IsTemporaryAsset(obj)) return obj;
             if(map.ContainsKey(obj)) return map[obj];
             var clone = Object.Instantiate(obj);
+            #if LIL_NDMF
+            ObjectRegistry.RegisterReplacedObject(obj, clone);
+            #endif
             AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
             return map[obj] = clone;
         }

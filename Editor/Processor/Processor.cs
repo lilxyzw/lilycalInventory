@@ -33,6 +33,10 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void FindComponent(BuildContext ctx)
         {
+            // Remove Comment Component
+            foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
+                Object.DestroyImmediate(component);
+
             // Resolve Dresser
             dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(true);
             if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
