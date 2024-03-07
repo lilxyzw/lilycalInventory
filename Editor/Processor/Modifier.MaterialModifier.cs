@@ -3,6 +3,10 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
+#if LIL_NDMF
+using nadena.dev.ndmf;
+#endif
+
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
@@ -15,10 +19,14 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 var refMaterial = modifier.referenceMaterial;
                 if(!refMaterial || !refMaterial.shader) continue;
-                
+
+                #if LIL_NDMF
+                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(ObjectRegistry.GetReference(m).Object as Material)).ToArray();
+                if(materialsMod.Length == 0) continue;
+                #else
                 var ignoreMaterials = modifier.ignoreMaterials.Where(m => m && Cloner.materialMap.ContainsKey(m)).Select(m => Cloner.materialMap[m]);
                 var materialsMod = materials.Except(ignoreMaterials).ToArray();
-                if(materialsMod.Length == 0) continue;
+                #endif
 
                 var textureOverride = new Dictionary<string,Object>();
                 var floatOverride = new Dictionary<string,float>();

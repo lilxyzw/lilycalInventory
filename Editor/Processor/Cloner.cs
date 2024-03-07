@@ -14,7 +14,6 @@ namespace jp.lilxyzw.lilycalinventory
         internal static Dictionary<Material,Material> materialMap;
         internal static Material[] DeepCloneAssets(BuildContext context)
         {
-            materialMap = new Dictionary<Material, Material>();
             CloneAnimatorControllers(context);
             AnimationUtil.CloneAllControllers(context);
             CloneAssetForPlatform(context);

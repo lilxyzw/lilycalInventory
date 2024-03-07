@@ -33,6 +33,8 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void FindComponent(BuildContext ctx)
         {
+            Cloner.materialMap = new Dictionary<Material, Material>();
+
             // Remove Comment Component
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
                 Object.DestroyImmediate(component);
