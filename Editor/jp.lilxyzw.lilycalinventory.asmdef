@@ -23,29 +23,24 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.vrchat.base",
-            "expression": "",
-            "define": "LIL_VRCSDK3"
-        },
-        {
             "name": "com.vrchat.avatars",
             "expression": "",
             "define": "LIL_VRCSDK3A"
         },
         {
             "name": "nadena.dev.ndmf",
-            "expression": "",
+            "expression": "1.3",
             "define": "LIL_NDMF"
-        },
-        {
-            "name": "jp.lilxyzw.avatarmodifier",
-            "expression": "",
-            "define": "LIL_AVATAR_MODIFIER"
         },
         {
             "name": "nadena.dev.modular-avatar",
             "expression": "",
             "define": "LIL_MODULAR_AVATAR"
+        },
+        {
+            "name": "jp.lilxyzw.avatarmodifier",
+            "expression": "",
+            "define": "LIL_AVATAR_MODIFIER"
         }
     ],
     "noEngineReferences": false

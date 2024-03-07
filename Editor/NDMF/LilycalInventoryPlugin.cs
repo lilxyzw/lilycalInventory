@@ -14,8 +14,8 @@ namespace jp.lilxyzw.lilycalinventory
 
         protected override void Configure()
         {
-            InPhase(BuildPhase.Resolving).BeforePlugin("nadena.dev.modular-avatar")
-            .Run("Find LI Components", ctx => Processor.FindComponent(ctx));
+            var Resolving = InPhase(BuildPhase.Resolving).BeforePlugin("nadena.dev.modular-avatar");
+            Resolving.Run("Find LI Components", ctx => Processor.FindComponent(ctx));
 
             var Transforming = InPhase(BuildPhase.Transforming).BeforePlugin("nadena.dev.modular-avatar");
             Transforming.Run("Clone Assets", ctx => Processor.CloneAssets(ctx));

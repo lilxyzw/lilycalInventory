@@ -19,8 +19,9 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
                 var ctx = new BuildContext(avatarGameObject);
 
                 Processor.FindComponent(ctx);
-                Processor.Clone(ctx);
+                Processor.CloneAssets(ctx);
                 Processor.ModifyPreProcess(ctx);
+                Processor.CloneMaterials(ctx);
                 Processor.ModifyPostProcess(ctx);
                 Processor.RemoveComponent(ctx);
                 Processor.Optimize(ctx);
