@@ -67,10 +67,10 @@ namespace jp.lilxyzw.lilycalinventory
             ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers);
         }
 
-        internal static void Clone(BuildContext ctx)
+        internal static void CloneAssets(BuildContext ctx)
         {
             if(!shouldModify) return;
-            materials = Cloner.DeepCloneAssets(ctx);
+            Cloner.DeepCloneAssets(ctx);
         }
 
         internal static void ModifyPreProcess(BuildContext ctx)
@@ -108,6 +108,12 @@ namespace jp.lilxyzw.lilycalinventory
             #else
             // Not supported
             #endif
+        }
+
+        internal static void CloneMaterials(BuildContext ctx)
+        {
+            if(!shouldModify) return;
+            materials = Cloner.CloneAllMaterials(ctx);
         }
 
         internal static void ModifyPostProcess(BuildContext ctx)

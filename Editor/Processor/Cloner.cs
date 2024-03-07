@@ -12,12 +12,11 @@ namespace jp.lilxyzw.lilycalinventory
     internal class Cloner
     {
         internal static Dictionary<Material,Material> materialMap;
-        internal static Material[] DeepCloneAssets(BuildContext context)
+        internal static void DeepCloneAssets(BuildContext context)
         {
             CloneAnimatorControllers(context);
             AnimationUtil.CloneAllControllers(context);
             CloneAssetForPlatform(context);
-            return CloneAllMaterials(context);
         }
 
         private static void CloneAnimatorControllers(BuildContext context)
@@ -33,7 +32,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        private static Material[] CloneAllMaterials(BuildContext context)
+        internal static Material[] CloneAllMaterials(BuildContext context)
         {
             CloneRendererMaterials(context);
             CloneAnimationClipMaterials(context);

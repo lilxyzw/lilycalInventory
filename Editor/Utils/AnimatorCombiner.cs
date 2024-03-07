@@ -320,6 +320,9 @@ namespace jp.lilxyzw.lilycalinventory
                 newClip.name = clip.name;
                 if (isSaved)
                 {
+                    #if LIL_NDMF
+                    nadena.dev.ndmf.ObjectRegistry.RegisterReplacedObject(clip, newClip);
+                    #endif
                     AssetDatabase.AddObjectToAsset(newClip, _combined);
                 }
 
@@ -424,6 +427,9 @@ namespace jp.lilxyzw.lilycalinventory
 
             if (isSaved && _combined != null && EditorUtility.IsPersistent(_combined))
             {
+                #if LIL_NDMF
+                nadena.dev.ndmf.ObjectRegistry.RegisterReplacedObject(original, obj);
+                #endif
                 AssetDatabase.AddObjectToAsset(obj, _combined);
             }
 

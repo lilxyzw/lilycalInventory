@@ -14,15 +14,15 @@ namespace jp.lilxyzw.lilycalinventory
 
         protected override void Configure()
         {
-            InPhase(BuildPhase.Resolving).BeforePlugin("nadena.dev.modular-avatar").BeforePlugin("com.anatawa12.avatar-optimizer")
-            .Run("Find components", ctx => Processor.FindComponent(ctx));
+            InPhase(BuildPhase.Resolving).BeforePlugin("nadena.dev.modular-avatar")
+            .Run("Find LI Components", ctx => Processor.FindComponent(ctx));
 
             var Transforming = InPhase(BuildPhase.Transforming).BeforePlugin("nadena.dev.modular-avatar");
-            Transforming.Run("Clone", ctx => Processor.Clone(ctx));
+            Transforming.Run("Clone Assets", ctx => Processor.CloneAssets(ctx));
             Transforming.Run("ModifyPreProcess", ctx => Processor.ModifyPreProcess(ctx));
 
-            var TransformingPostProcess = InPhase(BuildPhase.Transforming).AfterPlugin("nadena.dev.modular-avatar");
-            TransformingPostProcess.Run("ClonePostProcess", ctx => Processor.Clone(ctx));
+            var TransformingPostProcess = InPhase(BuildPhase.Transforming).AfterPlugin("nadena.dev.modular-avatar").AfterPlugin("net.rs64.tex-trans-tool");
+            TransformingPostProcess.Run("Clone Materials", ctx => Processor.CloneMaterials(ctx));
             TransformingPostProcess.Run("ModifyPostProcess", ctx => Processor.ModifyPostProcess(ctx));
             TransformingPostProcess.Run("Remove Component", ctx => Processor.RemoveComponent(ctx));
 
