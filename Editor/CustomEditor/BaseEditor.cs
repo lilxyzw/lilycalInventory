@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
-    using UnityEngine;
 
     [CustomEditor(typeof(AvatarTagComponent), true)] [CanEditMultipleObjects]
     internal class BaseEditor : Editor
@@ -61,7 +61,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 if(menuChildren[folder].Count > 0)
                 {
-                    EditorGUILayout.LabelField("フォルダの中身");
+                    EditorGUILayout.LabelField(Localization.G("inspector.folderContents"));
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                     DrawChildren(folder);
                     EditorGUILayout.EndVertical();
