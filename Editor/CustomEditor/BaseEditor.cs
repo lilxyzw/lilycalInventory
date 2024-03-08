@@ -45,7 +45,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
             if(serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
 
-            if(target is MenuFolder folder)
+            if(targets.Length == 1 && target is MenuFolder folder)
             {
                 if(menuChildren.Count == 0)
                 {
