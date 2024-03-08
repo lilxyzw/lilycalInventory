@@ -8,7 +8,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class ObjHelper
     {
-        private static string GetMenuName(this MenuBaseComponent component)
+        internal static string GetMenuName(this MenuBaseComponent component)
         {
             var name = component.menuName;
             if(string.IsNullOrEmpty(name)) name = component.gameObject.name;

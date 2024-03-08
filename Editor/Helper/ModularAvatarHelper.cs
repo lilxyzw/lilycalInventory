@@ -17,7 +17,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static class ModularAvatarHelper
     {
-        internal static bool Inspector(Object target, SerializedObject serializedObject, SerializedProperty iterator)
+        internal static bool Inspector(Object target, SerializedObject serializedObject, SerializedProperty iterator, bool skipIcon = false)
         {
             #if LIL_MODULAR_AVATAR
             if(target is MenuBaseComponent)
@@ -32,7 +32,7 @@ namespace jp.lilxyzw.lilycalinventory
                 GUIHelper.AutoField(iterator);
                 //icon
                 iterator.NextVisible(false);
-                GUIHelper.AutoField(iterator);
+                if(!skipIcon) GUIHelper.AutoField(iterator);
                 if(parentOverrideMA.objectReferenceValue) EditorGUI.EndDisabledGroup();
                 //parentOverrideMA
                 iterator.NextVisible(false);
