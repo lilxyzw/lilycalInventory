@@ -91,6 +91,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static GUIContent G(string key)
         {
+            if(DragAndDrop.objectReferences != null) return new GUIContent(S(key) ?? key);
             return new GUIContent(S(key) ?? key, S($"{key}.tooltip"));
         }
 
