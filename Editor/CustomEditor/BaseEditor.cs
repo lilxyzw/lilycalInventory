@@ -75,6 +75,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void DrawChildren(MenuFolder folder)
         {
+            EditorGUILayout.BeginVertical();
             var components = menuChildren[folder];
             foreach(var c in components)
             {
@@ -84,12 +85,13 @@ namespace jp.lilxyzw.lilycalinventory
                 if(c is MenuFolder f)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.Space();
+                    EditorGUILayout.Space(6, false);
                     DrawChildren(f);
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUILayout.EndVertical();
             }
+            EditorGUILayout.EndVertical();
         }
 
         internal static void ParamsPerChildren(MenuBaseComponent obj)
