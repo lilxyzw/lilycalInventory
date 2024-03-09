@@ -24,14 +24,16 @@
   "inspector.parentOverrideMAInfo": "メニューの設定はMA Menu Itemで管理されています。アイコン等を変更したい場合はMA Menu Item側を編集してください。",
   "inspector.icon": "アイコン",
   "inspector.icon.tooltip": "VRChatのメニュー上で表示されるアイコンです。",
+  "inspector.folderContents": "フォルダの中身",
 
   "inspector.isSave": "有効状態を保存",
   "inspector.isSave.tooltip": "これをオンにするとアバター読み込み直してもメニューの状態が保存されます。",
   "inspector.isLocalOnly": "ローカルのみにする",
   "inspector.isLocalOnly.tooltip": "これをオンにすると自分視点でのみオブジェクトのオンオフがされるようになります。",
 
-  "inspector.objects": "オブジェクトのオンオフ",
-  "inspector.objects.tooltip": "ここに指定したオブジェクトはメニューを有効化したときオンまたはオフになります。",
+  "inspector.objects": "オブジェクトのオンオフ（ここにD&Dで一括追加可能）",
+  "inspector.objects.tooltip": "ここに指定したオブジェクトはメニューを有効化したときオンまたはオフになります。ここに複数オブジェクトをドラッグ&ドロップすることで一括で追加することもできます。複数オブジェクトを選択する際はInspector右上の鍵のアイコンをクリックして画面が切り替わらないようにしてください。画面が切り替わる状態に戻したい場合はもう一度鍵のアイコンをクリックすることでロックを解除できます。",
+  "inspector.dragAndDrop": "ドラッグ&ドロップで一括追加",
 
   "inspector.blendShapeModifiers": "BlendShapeの切り替え",
   "inspector.blendShapeModifiers.tooltip": "ここに指定したBlendShapeはメニューを有効化したときに指定した値にセットされます。",
@@ -81,6 +83,9 @@
   "inspector.commentNo": "コメントが入力されていません。",
   "inspector.edit": "編集",
   "inspector.apply": "適用",
+
+  "inspector.add": "追加",
+  "inspector.delete": "削除",
 
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",

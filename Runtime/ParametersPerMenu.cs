@@ -67,7 +67,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     }
 
     [Serializable]
-    internal class MaterialPropertyModifier : LILElement
+    internal class MaterialPropertyModifier : LILElementWithoutChildrenFoldout
     {
         public Renderer[] renderers;
         public FloatModifier[] floatModifiers;
@@ -93,5 +93,6 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     }
 
     interface LILElement {}
+    interface LILElementWithoutChildrenFoldout {}
     interface LILElementSimple {}
 }

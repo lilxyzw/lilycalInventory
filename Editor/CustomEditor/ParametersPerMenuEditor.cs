@@ -12,6 +12,11 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            OnGUI(position, property, true);
+        }
+
+        internal static void OnGUI(Rect position, SerializedProperty property, bool drawFoldout)
+        {
             bool isExpanded = GUIHelper.FoldoutOnly(position, property);
             var end = property.GetEndProperty();
             property.NextVisible(true);
@@ -24,14 +29,37 @@ namespace jp.lilxyzw.lilycalinventory
                 return;
             }
 
-            if(isObjectArray) position.Indent();
-            position = GUIHelper.AutoField(position, property);
-            if(!isObjectArray) position.Indent();
+            if(drawFoldout && isObjectArray) position.Indent();
+            position = GUIHelper.AutoField(position, property, drawFoldout);
+            if(drawFoldout && !isObjectArray) position.Indent();
 
             while(property.NextVisible(false) && !SerializedProperty.EqualContents(property, end))
             {
-                position = GUIHelper.AutoField(position, property);
+                position = GUIHelper.AutoField(position, property, drawFoldout);
             }
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            if(!property.isExpanded) return GUIHelper.propertyHeight;
+            var end = property.GetEndProperty();
+            var iterator = property.Copy();
+            iterator.NextVisible(true);
+            float height = GUIHelper.GetAutoFieldHeight(iterator);
+            while(iterator.NextVisible(false) && !SerializedProperty.EqualContents(iterator, end))
+            {
+                height += GUIHelper.GetAutoFieldHeight(iterator);
+            }
+            return height;
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(LILElementWithoutChildrenFoldout), true)]
+    internal class LILElementWithoutChildrenFoldoutDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            LILElementDrawer.OnGUI(position, property, false);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -85,24 +113,21 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            position = GUIHelper.List(position, property.FPR(ParametersPerMenu.N_objects), prop =>
-                {
-                    prop.FindPropertyRelative("obj").objectReferenceValue = null;
-                    prop.FindPropertyRelative("value").boolValue = true;
-                }
-            );
-            position = GUIHelper.List(position, property.FPR(ParametersPerMenu.N_blendShapeModifiers), prop =>
-                {
-                    prop.FindPropertyRelative("skinnedMeshRenderer").objectReferenceValue = null;
-                    prop.FindPropertyRelative("blendShapeNameValues").arraySize = 0;
-                }
-            );
-            position = GUIHelper.List(position, property.FPR(ParametersPerMenu.N_materialReplacers), prop =>
-                {
-                    prop.FindPropertyRelative("renderer").objectReferenceValue = null;
-                    prop.FindPropertyRelative("replaceTo").arraySize = 0;
-                }
-            );
+            position = GUIHelper.DragAndDropList(position, property.FPR(ParametersPerMenu.N_objects), true, "obj", prop =>
+            {
+                prop.FPR("obj").objectReferenceValue = null;
+                prop.FPR("value").boolValue = true;
+            });
+            position = GUIHelper.DragAndDropList<SkinnedMeshRenderer>(position, property.FPR(ParametersPerMenu.N_blendShapeModifiers), true, "skinnedMeshRenderer", prop =>
+            {
+                prop.FPR("skinnedMeshRenderer").objectReferenceValue = null;
+                prop.FPR("blendShapeNameValues").arraySize = 0;
+            });
+            position = GUIHelper.DragAndDropList<Renderer>(position, property.FPR(ParametersPerMenu.N_materialReplacers), true, "renderer", prop =>
+            {
+                prop.FPR("renderer").objectReferenceValue = null;
+                prop.FPR("replaceTo").arraySize = 0;
+            });
             position = GUIHelper.List(position, property.FPR(ParametersPerMenu.N_materialPropertyModifiers));
         }
 
@@ -144,9 +169,8 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(!GUIHelper.FoldoutOnly(position, property)) return;
 
-            position.Indent();
             var blendShapeNameValues = property.FPR("blendShapeNameValues");
-            position = GUIHelper.List(position.NewLine(), blendShapeNameValues, prop =>
+            position = GUIHelper.List(position.NewLine(), blendShapeNameValues, false, prop =>
                 {
                     if(!mesh) return;
                     blendShapeNameValues.arraySize--;
@@ -218,16 +242,13 @@ namespace jp.lilxyzw.lilycalinventory
             }
             replaceTo.ResizeArray(materials.Length, p => p.objectReferenceValue = null);
 
-            if(!GUIHelper.FoldoutOnly(position, property)) return;
-
-            EditorGUI.LabelField(position.NewLine(), Localization.G("inspector.replaceTo"));
             position.Indent();
+            EditorGUI.LabelField(position.NewLine(), Localization.G("inspector.replaceTo"));
             position = GUIHelper.SimpleList(replaceTo, position.NewLine(), materials.Select(m => m.TryGetName()).ToArray());
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if(!property.isExpanded) return GUIHelper.propertyHeight;
             return GUIHelper.propertyHeight * (property.FPR("replaceTo").arraySize + 2) + GUIHelper.GetSpaceHeight(3);
         }
     }
