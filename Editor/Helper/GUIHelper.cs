@@ -51,7 +51,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(drawFoldout)
             {
                 var rect = new Rect(position);
-                rect.xMin -=  EditorStyles.foldout.padding.left - EditorStyles.label.padding.left;
+                if(EditorGUIUtility.hierarchyMode) rect.xMin -=  EditorStyles.foldout.padding.left - EditorStyles.label.padding.left;
                 if(Event.current.type == EventType.Repaint) EditorStyles.foldoutHeader.Draw(rect, false, false, prop.isExpanded, false);
                 prop.isExpanded = EditorGUI.Foldout(position, prop.isExpanded, label);
             }
