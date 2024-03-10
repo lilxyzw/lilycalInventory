@@ -157,13 +157,14 @@ namespace jp.lilxyzw.lilycalinventory
     [CustomPropertyDrawer(typeof(BlendShapeModifier))]
     internal class BlendShapeModifierDrawer : PropertyDrawer
     {
-        readonly Dictionary<Mesh, string[]> blendShapes = new Dictionary<Mesh, string[]>();
+        private readonly Dictionary<Mesh, string[]> blendShapes = new Dictionary<Mesh, string[]>();
+        private Mesh mesh = null;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var smr = property.FPR("skinnedMeshRenderer");
             EditorGUI.PropertyField(position.SingleLine(), smr);
-            Mesh mesh = null;
+            mesh = null;
             if(smr.objectReferenceValue) mesh = ((SkinnedMeshRenderer)smr.objectReferenceValue).sharedMesh;
             BlendShapeNameValueDrawer.mesh = mesh;
 
