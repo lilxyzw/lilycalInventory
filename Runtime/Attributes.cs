@@ -19,6 +19,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     internal class CostumeNameAttribute : PropertyAttribute {}
 
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    internal class FrameAttribute : PropertyAttribute {}
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     internal class LILBoxAttribute : PropertyAttribute {}
 
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]

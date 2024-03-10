@@ -165,7 +165,7 @@ namespace jp.lilxyzw.lilycalinventory
         private void DrawIndex(string key)
         {
             EditorGUI.BeginChangeCheck();
-            previewFrame = EditorGUILayout.Slider(Localization.G(key), previewFrame, 0, 1);
+            previewFrame = EditorGUILayout.Slider(Localization.G(key), previewFrame * 100f, 0f, 100f) / 100f;
             if(EditorGUI.EndChangeCheck()) StopPreview();
         }
 
