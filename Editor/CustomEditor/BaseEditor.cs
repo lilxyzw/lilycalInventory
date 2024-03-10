@@ -15,12 +15,15 @@ namespace jp.lilxyzw.lilycalinventory
         {
             GUIHelper.ResetList();
             PreviewHelper.instance.StopPreview();
+            ParameterViewer.Reset();
             menuChildren.Clear();
         }
 
         public override void OnInspectorGUI()
         {
             Localization.SelectLanguageGUI();
+
+            if(target is MenuBaseComponent comp) ParameterViewer.Draw(comp);
             var hasProperty = false;
 
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);

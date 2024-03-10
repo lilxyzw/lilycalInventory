@@ -87,6 +87,10 @@
   "inspector.add": "追加",
   "inspector.delete": "削除",
 
+  "inspector.ParameterViewer.memoryUsed": "使用メモリ",
+  "inspector.ParameterViewer.memoryRemaining": "残り",
+  "inspector.ParameterViewer.memoryAvatar": "アバター",
+
   "dialog.error.processfailed": "処理中にエラーが発生したためビルドが中断されました。",
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
   "dialog.error.menuNameEmpty": "メニュー名が空になっています。名前を設定してください。",

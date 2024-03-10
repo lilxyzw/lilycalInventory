@@ -34,7 +34,7 @@
         },
         {
             "name": "nadena.dev.modular-avatar",
-            "expression": "",
+            "expression": "1.9",
             "define": "LIL_MODULAR_AVATAR"
         },
         {
