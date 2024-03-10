@@ -1,24 +1,33 @@
-#if LIL_VRCSDK3A
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
+using Object = UnityEngine.Object;
+
+#if LIL_VRCSDK3A
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
 using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
 using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.Parameter;
+using ValueType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionParameters.ValueType;
+#endif
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
+#endif
+
+#if LIL_MODULAR_AVATAR
+using nadena.dev.modular_avatar.core;
 #endif
 
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
+    #if LIL_VRCSDK3A
     internal static class VRChatHelper
     {
         private static Texture2D m_IconNext;
@@ -205,5 +214,153 @@ namespace jp.lilxyzw.lilycalinventory
             controls.Add(CreateControl(name, icon, type, parameterName, value));
         }
     }
+    #endif
+
+    internal static class ParameterViewer
+    {
+        #if LIL_VRCSDK3A
+        private static int costBool = VRCExpressionParameters.TypeCost(ValueType.Bool);
+        private static int costInt = VRCExpressionParameters.TypeCost(ValueType.Int);
+        private static int costFloat = VRCExpressionParameters.TypeCost(ValueType.Float);
+        private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
+
+        private static bool isExpandedAvatar = false;
+        private static bool isExpandedMA = false;
+        private static bool isExpandedLI = false;
+        private static IEnumerable<Object> autoDressers;
+        private static IEnumerable<Object> props;
+        private static IEnumerable<Object> itemTogglers;
+        private static IEnumerable<Object> costumeChangers;
+        private static IEnumerable<Object> smoothChangers;
+        private static IEnumerable<Object> maParams;
+        private static int costByAvatar;
+        private static int costByLI;
+        private static int costByMA;
+        private static GameObject avatarRoot;
+        private static VRCExpressionParameters parameters;
+
+        internal static void Draw(MenuBaseComponent component)
+        {
+            Update(component);
+            if(!avatarRoot) return;
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("使用メモリ");
+            var position = EditorGUILayout.GetControlRect(GUILayout.Height(8));
+            var rect = position;
+            EditorGUI.DrawRect(rect, new Color(0.5f,0.5f,0.5f,0.5f));
+
+            if(costByAvatar != 0)
+            {
+                rect.width = position.width * ((float)costByAvatar / costMax);
+                EditorGUI.DrawRect(rect, new Color(0.203f, 0.764f, 0.450f));
+                rect.x = rect.xMax;
+
+                EditorGUI.indentLevel++;
+                if(isExpandedAvatar = EditorGUILayout.Foldout(isExpandedAvatar, $"Avatar: {costByAvatar} / {costMax}"))
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    EditorGUILayout.ObjectField(parameters, typeof(Object), true);
+                    EditorGUI.EndDisabledGroup();
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            #if LIL_MODULAR_AVATAR
+            if(costByMA != 0)
+            {
+                rect.width = position.width * ((float)costByMA / costMax);
+                EditorGUI.DrawRect(rect, new Color(0.000f, 0.627f, 0.913f));
+                rect.x = rect.xMax;
+
+                EditorGUI.indentLevel++;
+                if(isExpandedMA = EditorGUILayout.Foldout(isExpandedMA, $"Modular Avatar: {costByMA} / {costMax}"))
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    foreach(var c in maParams) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    EditorGUI.EndDisabledGroup();
+                }
+                EditorGUI.indentLevel--;
+            }
+            #endif
+
+            if(costByLI != 0)
+            {
+                rect.width = position.width * ((float)costByLI / costMax);
+                EditorGUI.DrawRect(rect, new Color(0.572f, 0.549f, 0.858f));
+                rect.x = rect.xMax;
+
+                EditorGUI.indentLevel++;
+                if(isExpandedLI = EditorGUILayout.Foldout(isExpandedLI, $"lilycalInventory: {costByLI} / {costMax}"))
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    foreach(var c in autoDressers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    foreach(var c in props) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    foreach(var c in itemTogglers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    foreach(var c in costumeChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    foreach(var c in smoothChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    EditorGUI.EndDisabledGroup();
+                }
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        private static void Update(MenuBaseComponent component)
+        {
+            if(avatarRoot) return;
+            avatarRoot = component.gameObject.GetAvatarRoot().gameObject;
+
+            // By Avatar
+            costByAvatar = 0;
+            parameters = null;
+            var descriptor = avatarRoot.GetComponent<VRCAvatarDescriptor>();
+            if(descriptor && descriptor.expressionParameters)
+            {
+                costByAvatar = descriptor.expressionParameters.CalcTotalCost();
+                parameters = descriptor.expressionParameters;
+            }
+
+            // By Modular Avatar
+            #if LIL_MODULAR_AVATAR
+            int CalcCost(ParameterConfig config)
+            {
+                if(config.internalParameter || config.isPrefix || config.localOnly || config.syncType == ParameterSyncType.NotSynced) return 0;
+                switch(config.syncType)
+                {
+                    case ParameterSyncType.Bool: return costBool;
+                    case ParameterSyncType.Int: return costInt;
+                    case ParameterSyncType.Float: return costFloat;
+                }
+                return 0;
+            }
+
+            maParams = avatarRoot.GetComponentsInChildren<ModularAvatarParameters>().Where(c => !c.IsEditorOnly());
+            costByMA = maParams.SelectMany(c => ((ModularAvatarParameters)c).parameters).Sum(p => CalcCost(p));
+            #endif
+
+            // By lilycalInventory
+            var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && !c.IsEditorOnly());
+            autoDressers = components.Where(c => c is AutoDresser);
+            props = components.Where(c => c is Prop);
+            itemTogglers = components.Where(c => c is ItemToggler);
+            costumeChangers = components.Where(c => c is CostumeChanger);
+            smoothChangers = components.Where(c => c is SmoothChanger);
+
+            costByLI = costBool * (props.Count() + itemTogglers.Count())
+                + costInt * costumeChangers.Count()
+                + costFloat * smoothChangers.Count();
+            if(autoDressers.Count() > 0) costByLI += costInt;
+        }
+
+        internal static void Reset()
+        {
+            avatarRoot = null;
+        }
+        #else
+        internal static void Draw(MenuBaseComponent component){}
+        internal static void Update(MenuBaseComponent component){}
+        internal static void Reset(){}
+        #endif
+    }
 }
-#endif
