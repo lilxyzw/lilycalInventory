@@ -177,10 +177,10 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal static ItemToggler PropToToggler(this Prop prop)
+        internal static ItemTogglerInternal PropToToggler(this Prop prop)
         {
             var obj = prop.gameObject;
-            var toggler = new ItemToggler{
+            var toggler = new ItemTogglerInternal{
                 menuName = prop.menuName,
                 parentOverride = prop.parentOverride,
                 parentOverrideMA = prop.parentOverrideMA,
