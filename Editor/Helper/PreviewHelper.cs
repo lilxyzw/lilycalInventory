@@ -151,9 +151,13 @@ namespace jp.lilxyzw.lilycalinventory
 
         private void DrawIndex(int size, string key)
         {
+            EditorGUI.BeginDisabledGroup(size == 0);
             EditorGUI.BeginChangeCheck();
             previewIndex = EditorGUILayout.IntSlider(Localization.G(key), previewIndex, 0, size - 1);
             if(EditorGUI.EndChangeCheck()) StopPreview();
+            EditorGUI.EndDisabledGroup();
+
+            if(previewIndex < 0) previewIndex = 0;
         }
 
         internal void DrawIndex(Object obj)
