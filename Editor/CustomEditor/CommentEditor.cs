@@ -198,10 +198,6 @@ namespace jp.lilxyzw.lilycalinventory
             }
             Add(new IMGUIContainer(() => {
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-                var labelwidth = EditorGUIUtility.currentViewWidth;
-                labelwidth -= EditorStyles.helpBox.margin.horizontal;
-                labelwidth -= EditorStyles.helpBox.border.horizontal;
-                labelwidth -= EditorStyles.helpBox.padding.horizontal;
                 if(type != MessageType.None)
                 {
                     var icon = GetIconContent(type);
@@ -210,9 +206,8 @@ namespace jp.lilxyzw.lilycalinventory
                     EditorGUILayout.LabelField(icon, GUIStyle.none, GUILayout.Width(icon.image.width), GUILayout.Height(icon.image.height));
                     GUILayout.FlexibleSpace();
                     EditorGUILayout.EndVertical();
-                    labelwidth -= icon.image.width;
                 }
-                EditorGUILayout.SelectableLabel(label, styleText, GUILayout.Height(styleText.CalcHeight(new GUIContent(label), labelwidth)));
+                EditorGUI.SelectableLabel(GUILayoutUtility.GetRect(new GUIContent(label), styleText), label, styleText);
                 EditorGUILayout.EndHorizontal();
             }));
         }
