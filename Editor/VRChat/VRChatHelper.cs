@@ -224,6 +224,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costFloat = VRCExpressionParameters.TypeCost(ValueType.Float);
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
 
+        private static bool isInitialized = false;
         private static bool isExpandedAvatar = false;
         private static bool isExpandedMA = false;
         private static bool isExpandedLI = false;
@@ -309,8 +310,11 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void Update(MenuBaseComponent component)
         {
-            if(avatarRoot) return;
-            avatarRoot = component.gameObject.GetAvatarRoot().gameObject;
+            if(isInitialized) return;
+            isInitialized = true;
+            var root = component.gameObject.GetAvatarRoot();
+            if(!root) return;
+            avatarRoot = root.gameObject;
 
             // By Avatar
             costByAvatar = 0;
@@ -356,7 +360,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void Reset()
         {
-            avatarRoot = null;
+            isInitialized = false;
         }
         #else
         internal static void Draw(MenuBaseComponent component){}
