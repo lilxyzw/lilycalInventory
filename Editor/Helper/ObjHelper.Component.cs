@@ -123,7 +123,11 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 else costumes.Add(cos);
             }
-            if(def == null) ErrorHelper.Report("dialog.error.allObjectOff", dressers);
+            if(def == null)
+            {
+                ErrorHelper.Report("dialog.error.allObjectOff", dressers);
+                return null;
+            }
             if(!avatarRoot) ErrorHelper.Report("dialog.error.avatarRootNofFound", dressers);
             costumes.Insert(0, def);
             return costumes.ToArray();
@@ -147,6 +151,7 @@ namespace jp.lilxyzw.lilycalinventory
                 changer.parentOverride = parentOverride;
                 changer.parentOverrideMA = parentOverrideMA;
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+                if(changer.costumes == null) Object.DestroyImmediate(changer);
             }
             else
             {
@@ -154,6 +159,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var changer = newObj.AddComponent<CostumeChanger>();
                 changer.menuName = nameof(AutoDresser);
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+                if(changer.costumes == null) Object.DestroyImmediate(changer);
                 newObj.transform.parent = avatarRoot;
             }
         }
