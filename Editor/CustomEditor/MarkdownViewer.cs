@@ -379,12 +379,12 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
                     if(listSpace == 1 && mdpart.listDepth > 1) listSpace = mdpart.listDepth;
-                    temp.Add((mdpart.type, mdpart.text, mdpart.blockquoteDepth, mdpart.listDepth / listSpace));
+                    temp.AddFixed((mdpart.type, mdpart.text, mdpart.blockquoteDepth, mdpart.listDepth / listSpace));
                 }
                 else if(mdpart.type != MDType.br && mdpart.type != MDType.h1line && mdpart.type != MDType.h2line)
                 {
                     isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
-                    temp.Add((mdpart.type, mdpart.text, mdpart.blockquoteDepth, 0));
+                    temp.AddFixed((mdpart.type, mdpart.text, mdpart.blockquoteDepth, 0));
                 }
                 else if(mdpart.type == MDType.br)
                 {
