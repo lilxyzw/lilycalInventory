@@ -87,6 +87,10 @@
   "inspector.add": "Add",
   "inspector.delete": "Del",
 
+  "inspector.ParameterViewer.memoryUsed": "Memory Used",
+  "inspector.ParameterViewer.memoryRemaining": "Remaining",
+  "inspector.ParameterViewer.memoryAvatar": "Avatar",
+
   "dialog.error.processfailed": "Avatar build was canceled because an error occurred during processing.",
   "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations.",
   "dialog.error.menuNameEmpty": "The menu name is empty. Please set a name.",

@@ -245,7 +245,8 @@ namespace jp.lilxyzw.lilycalinventory
             if(!avatarRoot) return;
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("使用メモリ");
+            int costSum = costByAvatar + costByMA + costByLI;
+            EditorGUILayout.LabelField($"{Localization.S("inspector.ParameterViewer.memoryUsed")}: {costSum} / {costMax} ({Localization.S("inspector.ParameterViewer.memoryRemaining")}: {costMax - costSum})");
             var position = EditorGUILayout.GetControlRect(GUILayout.Height(8));
             var rect = position;
             EditorGUI.DrawRect(rect, new Color(0.5f,0.5f,0.5f,0.5f));
@@ -257,7 +258,7 @@ namespace jp.lilxyzw.lilycalinventory
                 rect.x = rect.xMax;
 
                 EditorGUI.indentLevel++;
-                if(isExpandedAvatar = EditorGUILayout.Foldout(isExpandedAvatar, $"Avatar: {costByAvatar} / {costMax}"))
+                if(isExpandedAvatar = EditorGUILayout.Foldout(isExpandedAvatar, $"{Localization.S("inspector.ParameterViewer.memoryAvatar")}: {costByAvatar} / {costMax}"))
                 {
                     EditorGUI.BeginDisabledGroup(true);
                     EditorGUILayout.ObjectField(parameters, typeof(Object), true);
