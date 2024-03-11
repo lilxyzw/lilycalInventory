@@ -30,6 +30,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
         private static HashSet<string> parameterNames;
+        private static (GameObject,bool)[] actives;
 
         internal static void FindComponent(BuildContext ctx)
         {
@@ -39,18 +40,34 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
                 Object.DestroyImmediate(component);
 
-            // Resolve Dresser
-            dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(true);
-            if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
             dressers = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresser>(true);
+            props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>(true);
+            actives = dressers.Select(d => (d.gameObject,d.gameObject.activeSelf)).Union(props.Select(p => (p.gameObject,p.gameObject.activeSelf))).ToArray();
+
+            // Resolve Dresser
+            dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(false);
+            if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
             dressers.ResolveMenuName();
             dressers.DresserToChanger(dresserSettings);
             // Resolve Prop
-            props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>(true);
             props.ResolveMenuName();
             props.PropToToggler();
 
-            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true);
+            // Set force active recursive
+            void ForceActive(MenuBaseComponent component)
+            {
+                var parent = component.GetMenuParent();
+                if(!parent) return;
+                parent.forceActive = true;
+                ForceActive(parent);
+            }
+
+            foreach(var component in ctx.AvatarRootObject.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => c.forceActive).ToArray())
+                ForceActive(component);
+
+            foreach(var a in actives) a.Item1.SetActive(true);
+            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).Where(c => c.gameObject.activeInHierarchy || c.forceActive).ToArray();
+            foreach(var a in actives) a.Item1.SetActive(a.Item2);
             modifiers = components.SelectComponents<MaterialModifier>();
             optimizers = components.SelectComponents<MaterialOptimizer>();
             folders = components.SelectComponents<MenuFolder>();
@@ -124,7 +141,6 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void RemoveComponent(BuildContext ctx)
         {
-            if(!shouldModify) return;
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true))
                 Object.DestroyImmediate(component);
         }

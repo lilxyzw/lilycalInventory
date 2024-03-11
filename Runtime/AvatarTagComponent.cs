@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
@@ -7,6 +8,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     , VRC.SDKBase.IEditorOnly
     #endif
     {
+        [NonSerialized] internal bool forceActive = false;
         void Start(){}
     }
 }
