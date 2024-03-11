@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace jp.lilxyzw.lilycalinventory
         private static ParametersPerMenu m_Parameters;
         private static bool doPreview = true;
         private static int previewIndex = 0;
+        private static float previewFrame = 0;
+        private static readonly Dictionary<Object, Dictionary<string, object>> valueContainer = new Dictionary<Object, Dictionary<string, object>>();
 
         [SerializeField] private AnimationModeDriver driver;
         private AnimationModeDriver Driver => driver ? driver : driver = CreateDriver();
@@ -86,7 +89,7 @@ namespace jp.lilxyzw.lilycalinventory
         private void StartPreview(SmoothChanger changer)
         {
             if(previewIndex >= changer.frames.Length) return;
-            StartPreview(changer.frames.Select(c => c.parametersPerMenu).ToArray());
+            StartPreview(Interpolate(changer.frames));
         }
 
         private void StartPreview(AutoDresser dresser)
@@ -116,6 +119,7 @@ namespace jp.lilxyzw.lilycalinventory
         internal void StopPreview()
         {
             StopAnimationMode(Driver);
+            valueContainer.Clear();
             EditorApplication.update -= Update;
             target = null;
         }
@@ -160,13 +164,20 @@ namespace jp.lilxyzw.lilycalinventory
             if(previewIndex < 0) previewIndex = 0;
         }
 
+        private void DrawIndex(string key)
+        {
+            EditorGUI.BeginChangeCheck();
+            previewFrame = EditorGUILayout.Slider(Localization.G(key), previewFrame * 100f, 0f, 100f) / 100f;
+            if(EditorGUI.EndChangeCheck()) StopPreview();
+        }
+
         internal void DrawIndex(Object obj)
         {
             if(!obj) return;
             switch(obj)
             {
                 case CostumeChanger c: if(c.costumes != null) DrawIndex(c.costumes.Length, "inspector.previewCostume"); return;
-                case SmoothChanger c: if(c.frames != null) DrawIndex(c.frames.Length, "inspector.previewFrame"); break;
+                case SmoothChanger c: if(c.frames != null) DrawIndex("inspector.previewFrame"); break;
             }
         }
 
@@ -177,17 +188,13 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(!toggler.obj) continue;
                 var binding = AnimationHelper.CreateToggleBinding(toggler.obj);
-                AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                    propertyPath = new SerializedObject(toggler.obj).FindProperty("m_IsActive").propertyPath,
-                    target = toggler.obj,
-                    value = toggler.obj.activeSelf ? "1" : "0"
-                }, true);
+                AddPropertyModification(binding, toggler.obj, new SerializedObject(toggler.obj).FindProperty("m_IsActive").propertyPath, toggler.obj.activeSelf);
                 toggler.obj.SetActive(toggler.value);
             }
 
             foreach(var modifier in m_Parameters.blendShapeModifiers)
             {
-                if(modifier.applyToAll)
+                if(!modifier.skinnedMeshRenderer)
                 {
                     var renderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>(true);
                     foreach(var renderer in renderers)
@@ -197,29 +204,22 @@ namespace jp.lilxyzw.lilycalinventory
                         {
                             var index = renderer.sharedMesh.GetBlendShapeIndex(namevalue.name);
                             if(index == -1) continue;
+                            var m_BlendShapeWeights = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights");
+                            if(index >= m_BlendShapeWeights.arraySize) continue;
                             var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                            AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                                propertyPath = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath,
-                                target = renderer,
-                                value = renderer.GetBlendShapeWeight(index).ToString(CultureInfo.InvariantCulture)
-                            }, true);
+                            AddPropertyModification(binding, renderer, m_BlendShapeWeights.GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
                             renderer.SetBlendShapeWeight(index, namevalue.value);
                         }
                     }
                     continue;
                 }
-                if(!modifier.skinnedMeshRenderer) continue;
                 foreach(var namevalue in modifier.blendShapeNameValues)
                 {
                     var renderer = modifier.skinnedMeshRenderer;
                     var index = renderer.sharedMesh.GetBlendShapeIndex(namevalue.name);
                     if(index == -1) continue;
                     var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                    AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                        propertyPath = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath,
-                        target = renderer,
-                        value = renderer.GetBlendShapeWeight(index).ToString(CultureInfo.InvariantCulture)
-                    }, true);
+                    AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
                     renderer.SetBlendShapeWeight(index, namevalue.value);
                 }
             }
@@ -233,11 +233,7 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(!replacer.replaceTo[i]) continue;
                     var binding = AnimationHelper.CreateMaterialReplaceBinding(replacer.renderer, i);
-                    AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                        propertyPath = new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath,
-                        target = replacer.renderer,
-                        objectReference = replacer.renderer.sharedMaterials[i]
-                    }, true);
+                    AddPropertyModification(binding, target, new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, replacer.renderer.sharedMaterials[i]);
                     materials[i] = replacer.replaceTo[i];
                     modified = true;
                 }
@@ -259,12 +255,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         if(!materials[i]) continue;
                         var binding = AnimationHelper.CreateMaterialReplaceBinding(renderer, i);
-                        AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                            propertyPath = new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath,
-                            target = renderer,
-                            objectReference = renderer.sharedMaterials[i]
-                        }, true);
-
+                        AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, renderer.sharedMaterials[i]);
                         var material = new Material(materials[i]);
                         foreach(var floatModifier in modifier.floatModifiers)
                         {
@@ -287,6 +278,197 @@ namespace jp.lilxyzw.lilycalinventory
                     renderer.sharedMaterials = materials;
                 }
             }
+        }
+
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, Object value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                objectReference = value
+            }, true);
+        }
+
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, float value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                value = value.ToString(CultureInfo.InvariantCulture)
+            }, true);
+        }
+
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, bool value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                value = value ? "1" : "0"
+            }, true);
+        }
+
+        private static void AddToContainer(Object target, string propertyPath, object value)
+        {
+            if(!valueContainer.ContainsKey(target)) valueContainer[target] = new Dictionary<string, object>();
+            valueContainer[target][propertyPath] = value;
+        }
+
+        internal static object GetFromContainer(Object target, string propertyPath)
+        {
+            if(!valueContainer.ContainsKey(target)) return null;
+            if(!valueContainer[target].ContainsKey(propertyPath)) return null;
+            return valueContainer[target][propertyPath];
+        }
+
+        private ParametersPerMenu Interpolate(Frame[] frames)
+        {
+            if(frames.Length == 0) return null;
+
+            var parameters = frames.Select(f => f.parametersPerMenu).ToArray().CreateDefaultParameters();
+
+            if(frames.Length == 1) return frames[0].parametersPerMenu.Merge(parameters);
+            var same = frames.Where(f => f.frameValue == previewFrame);
+            if(same.Count() > 0) return same.ElementAt(0).parametersPerMenu.Merge(parameters);
+
+            Frame nearestMin = null;
+            Frame nearestMax = null;
+            float diffMin = -2;
+            float diffMax = 2;
+            foreach(var f in frames)
+            {
+                var diff = f.frameValue - previewFrame;
+                if(diff < 0 && diff > diffMin)
+                {
+                    diffMin = diff;
+                    nearestMin = f;
+                }
+                if(diff > 0 && diff < diffMax)
+                {
+                    diffMax = diff;
+                    nearestMax = f;
+                }
+            }
+            if(nearestMin == null) return nearestMax.parametersPerMenu.Merge(parameters);
+            if(nearestMax == null) return nearestMin.parametersPerMenu.Merge(parameters);
+
+            bool isNearMax = Mathf.Abs(diffMin) > diffMax;
+            float lerpfactor = -diffMin / (Mathf.Abs(diffMin) + diffMax);
+
+            foreach(var obj in parameters.objects)
+            {
+                bool min = obj.value;
+                bool max = obj.value;
+                var mins = nearestMin.parametersPerMenu.objects.Where(o => o.obj == obj.obj).Select(o => o.value);
+                if(mins.Count() > 0) min = mins.First();
+                var maxs = nearestMax.parametersPerMenu.objects.Where(o => o.obj == obj.obj).Select(o => o.value);
+                if(maxs.Count() > 0) max = maxs.First();
+                obj.value = isNearMax ? max : min;
+            }
+
+            var defaultValues = parameters.blendShapeModifiers.Select(m => (m.skinnedMeshRenderer, m.blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value))).ToHashSet();
+            var renderers = nearestMin.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer).Union(
+                nearestMax.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer)
+            ).ToArray();
+            parameters.blendShapeModifiers = new BlendShapeModifier[renderers.Length];
+            for(int i = 0; i < renderers.Length; i++)
+            {
+                var r = renderers[i];
+                var min = new Dictionary<string,float>();
+                var max = new Dictionary<string,float>();
+                var mins = nearestMin.parametersPerMenu.blendShapeModifiers.Where(o => o.skinnedMeshRenderer == r);
+                if(mins.Count() > 0) min = mins.First().blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value);
+                var maxs = nearestMax.parametersPerMenu.blendShapeModifiers.Where(o => o.skinnedMeshRenderer == r);
+                if(maxs.Count() > 0) max = maxs.First().blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value);
+
+                var names = min.Keys.Union(max.Keys).Distinct().ToArray();
+
+                parameters.blendShapeModifiers[i] = new BlendShapeModifier
+                {
+                    blendShapeNameValues = new BlendShapeNameValue[names.Length],
+                    applyToAll = !r
+                };
+
+                int j = 0;
+                foreach(var name in names)
+                {
+                    float def = 0;
+                    if(defaultValues.Any(v => v.Item1 == r) && defaultValues.First(v => v.Item1 == r).Item2.ContainsKey(name)) def = defaultValues.First(v => v.Item1 == r).Item2[name];
+                    float minV = def;
+                    float maxV = def;
+                    if(min.ContainsKey(name)) minV = min[name];
+                    if(max.ContainsKey(name)) maxV = max[name];
+                    parameters.blendShapeModifiers[i].blendShapeNameValues[j].name = name;
+                    parameters.blendShapeModifiers[i].blendShapeNameValues[j].value = Mathf.Lerp(minV, maxV, lerpfactor);
+                    j++;
+                }
+            }
+
+            foreach(var rep in parameters.materialReplacers)
+            {
+                var min = rep.replaceTo;
+                var max = rep.replaceTo;
+                var mins = nearestMin.parametersPerMenu.materialReplacers.Where(r => r.renderer == rep.renderer).Select(o => o.replaceTo);
+                if(mins.Count() > 0) min = mins.First();
+                var maxs = nearestMax.parametersPerMenu.materialReplacers.Where(r => r.renderer == rep.renderer).Select(o => o.replaceTo);
+                if(maxs.Count() > 0) max = maxs.First();
+                rep.replaceTo = isNearMax ? max : min;
+            }
+
+            bool IsSame(Renderer[] a, Renderer[] b)
+            {
+                if(a.Length != b.Length) return false;
+                foreach(var r in a)
+                {
+                    if(!b.Contains(r)) return false;
+                }
+                return true;
+            }
+
+            foreach(var mod in parameters.materialPropertyModifiers)
+            {
+                var minF = mod.floatModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                var minV = mod.vectorModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                var maxF = mod.floatModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                var maxV = mod.vectorModifiers.ToDictionary(m => m.propertyName, m => m.value);
+
+                var mins = nearestMin.parametersPerMenu.materialPropertyModifiers.Where(m => IsSame(m.renderers, mod.renderers));
+                if(mins.Count() > 0)
+                {
+                    minF = mins.First().floatModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                    minV = mins.First().vectorModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                }
+                var maxs = nearestMax.parametersPerMenu.materialPropertyModifiers.Where(m => IsSame(m.renderers, mod.renderers));
+                if(maxs.Count() > 0)
+                {
+                    maxF = maxs.First().floatModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                    maxV = maxs.First().vectorModifiers.ToDictionary(m => m.propertyName, m => m.value);
+                }
+
+                for(int i = 0; i < mod.floatModifiers.Length; i++)
+                {
+                    var m = mod.floatModifiers[i];
+                    var minVal = m.value;
+                    var maxVal = m.value;
+                    if(minF.ContainsKey(m.propertyName)) minVal = minF[m.propertyName];
+                    if(maxF.ContainsKey(m.propertyName)) maxVal = maxF[m.propertyName];
+                    mod.floatModifiers[i].value = Mathf.Lerp(minVal, maxVal, lerpfactor);
+                }
+
+                for(int i = 0; i < mod.vectorModifiers.Length; i++)
+                {
+                    var m = mod.vectorModifiers[i];
+                    var minVal = m.value;
+                    var maxVal = m.value;
+                    if(minV.ContainsKey(m.propertyName)) minVal = minV[m.propertyName];
+                    if(maxV.ContainsKey(m.propertyName)) maxVal = maxV[m.propertyName];
+                    mod.vectorModifiers[i].value = Vector4.Lerp(minVal, maxVal, lerpfactor);
+                }
+            }
+
+            return parameters;
         }
     }
 }

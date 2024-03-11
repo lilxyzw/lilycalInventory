@@ -23,11 +23,34 @@ namespace jp.lilxyzw.lilycalinventory
         {
             Localization.SelectLanguageGUI();
 
-            if(target is MenuBaseComponent comp) ParameterViewer.Draw(comp);
-            var hasProperty = false;
+            // Warn for AutoDresser
+            if(target is AutoDresser dresser)
+            {
+                var root = dresser.gameObject.GetAvatarRoot();
+                if(root)
+                {
+                    int activeCount = 0;
 
+                    foreach(var d in root.GetComponentsInChildren<AutoDresser>(true))
+                    {
+                        if(!d.enabled || d.IsEditorOnly()) continue;
+                        var a = PreviewHelper.GetFromContainer(d.gameObject, new SerializedObject(d.gameObject).FindProperty("m_IsActive").propertyPath);
+                        if(a is bool activeSelf && activeSelf) activeCount++;
+                        if(a == null && d.gameObject.activeSelf) activeCount++;
+                    }
+
+                    if(activeCount == 0) EditorGUILayout.HelpBox(Localization.S("dialog.error.allObjectOff"), MessageType.Error);
+                    if(activeCount > 1) EditorGUILayout.HelpBox(Localization.S("dialog.error.defaultDuplication"), MessageType.Error);
+                }
+            }
+
+            // Warn component disabled
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);
 
+            // ExpressionParameters
+            if(target is MenuBaseComponent comp) ParameterViewer.Draw(comp);
+
+            // Preview Helper
             if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
             {
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -36,6 +59,9 @@ namespace jp.lilxyzw.lilycalinventory
                 PreviewHelper.instance.TogglePreview(target);
                 EditorGUILayout.EndVertical();
             }
+
+            // Draw Properties
+            var hasProperty = false;
 
             serializedObject.UpdateIfRequiredOrScript();
             SerializedProperty iterator = serializedObject.GetIterator();
@@ -48,6 +74,9 @@ namespace jp.lilxyzw.lilycalinventory
             }
             if(serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
 
+            if(!hasProperty) EditorGUILayout.HelpBox(Localization.S("inspector.noProperty"), MessageType.Info);
+
+            // Folder Viewer
             if(targets.Length == 1 && target is MenuFolder folder)
             {
                 if(menuChildren.Count == 0)
@@ -70,8 +99,6 @@ namespace jp.lilxyzw.lilycalinventory
                     EditorGUILayout.EndVertical();
                 }
             }
-
-            if(!hasProperty) EditorGUILayout.HelpBox(Localization.S("inspector.noProperty"), MessageType.Info);
 
             if(targets.Length == 1) PreviewHelper.instance.StartPreview(target);
         }

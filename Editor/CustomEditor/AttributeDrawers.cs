@@ -181,6 +181,17 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    [CustomPropertyDrawer(typeof(FrameAttribute))]
+    internal class FrameDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginChangeCheck();
+            var value = EditorGUI.Slider(position, Localization.G(property), property.floatValue * 100f, 0f, 100f);
+            if(EditorGUI.EndChangeCheck()) property.floatValue = value / 100f;
+        }
+    }
+
     [CustomPropertyDrawer(typeof(LILBoxAttribute))]
     internal class LILBoxDrawer : PropertyDrawer
     {

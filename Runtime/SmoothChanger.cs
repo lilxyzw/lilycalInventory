@@ -7,7 +7,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(SmoothChanger))]
     internal class SmoothChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] [LILLocalize] [Range(0,1)] public float defaultFrameValue;
+        [NotKeyable] [Frame] public float defaultFrameValue;
         [NotKeyable] public Frame[] frames;
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;

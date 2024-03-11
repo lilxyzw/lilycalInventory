@@ -20,7 +20,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [Serializable]
     internal class Frame : LILElement
     {
-        [LILLocalize] [Range(0,1)] public float frameValue = 0;
+        [Frame] public float frameValue = 0;
         public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 
