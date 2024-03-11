@@ -22,14 +22,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(parent) parentName = parent.gameObject.name;
                 else parentName = "(Root)";
             }
-            EditorGUI.LabelField(position.SingleLine(), Localization.G("inspector.parentFolder"), new GUIContent(parentName));
-            position.Indent();
-            EditorGUI.PropertyField(position.NewLine(), property, Localization.G(property));
-        }
-
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return GUIHelper.propertyHeight * 2 + GUIHelper.GetSpaceHeight(2);
+            GUIHelper.ObjectField(position, Localization.G(property), property, $"{parentName} (Menu Folder)");
         }
     }
 

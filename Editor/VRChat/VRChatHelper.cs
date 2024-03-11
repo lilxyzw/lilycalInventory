@@ -225,6 +225,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
 
         private static bool isInitialized = false;
+        private static bool isExpandedDetails = false;
         private static bool isExpandedAvatar = false;
         private static bool isExpandedMA = false;
         private static bool isExpandedLI = false;
@@ -247,7 +248,53 @@ namespace jp.lilxyzw.lilycalinventory
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             int costSum = costByAvatar + costByMA + costByLI;
-            EditorGUILayout.LabelField($"{Localization.S("inspector.ParameterViewer.memoryUsed")}: {costSum} / {costMax} ({Localization.S("inspector.ParameterViewer.memoryRemaining")}: {costMax - costSum})");
+            EditorGUI.indentLevel++;
+            if(isExpandedDetails = EditorGUILayout.Foldout(isExpandedDetails, $"{Localization.S("inspector.ParameterViewer.memoryUsed")}: {costSum} / {costMax} ({Localization.S("inspector.ParameterViewer.memoryRemaining")}: {costMax - costSum})"))
+            {
+                if(costByAvatar != 0)
+                {
+                    EditorGUI.indentLevel++;
+                    if(isExpandedAvatar = EditorGUILayout.Foldout(isExpandedAvatar, $"{Localization.S("inspector.ParameterViewer.memoryAvatar")}: {costByAvatar}"))
+                    {
+                        EditorGUI.BeginDisabledGroup(true);
+                        EditorGUILayout.ObjectField(parameters, typeof(Object), true);
+                        EditorGUI.EndDisabledGroup();
+                    }
+                    EditorGUI.indentLevel--;
+                }
+
+                #if LIL_MODULAR_AVATAR
+                if(costByMA != 0)
+                {
+                    EditorGUI.indentLevel++;
+                    if(isExpandedMA = EditorGUILayout.Foldout(isExpandedMA, $"Modular Avatar: {costByMA}"))
+                    {
+                        EditorGUI.BeginDisabledGroup(true);
+                        foreach(var c in maParams) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        EditorGUI.EndDisabledGroup();
+                    }
+                    EditorGUI.indentLevel--;
+                }
+                #endif
+
+                if(costByLI != 0)
+                {
+                    EditorGUI.indentLevel++;
+                    if(isExpandedLI = EditorGUILayout.Foldout(isExpandedLI, $"lilycalInventory: {costByLI}"))
+                    {
+                        EditorGUI.BeginDisabledGroup(true);
+                        foreach(var c in autoDressers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        foreach(var c in props) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        foreach(var c in itemTogglers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        foreach(var c in costumeChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        foreach(var c in smoothChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                        EditorGUI.EndDisabledGroup();
+                    }
+                    EditorGUI.indentLevel--;
+                }
+            }
+            EditorGUI.indentLevel--;
+
             var position = EditorGUILayout.GetControlRect(GUILayout.Height(8));
             var rect = position;
             EditorGUI.DrawRect(rect, new Color(0.5f,0.5f,0.5f,0.5f));
@@ -257,15 +304,6 @@ namespace jp.lilxyzw.lilycalinventory
                 rect.width = position.width * ((float)costByAvatar / costMax);
                 EditorGUI.DrawRect(rect, new Color(0.203f, 0.764f, 0.450f));
                 rect.x = rect.xMax;
-
-                EditorGUI.indentLevel++;
-                if(isExpandedAvatar = EditorGUILayout.Foldout(isExpandedAvatar, $"{Localization.S("inspector.ParameterViewer.memoryAvatar")}: {costByAvatar} / {costMax}"))
-                {
-                    EditorGUI.BeginDisabledGroup(true);
-                    EditorGUILayout.ObjectField(parameters, typeof(Object), true);
-                    EditorGUI.EndDisabledGroup();
-                }
-                EditorGUI.indentLevel--;
             }
 
             #if LIL_MODULAR_AVATAR
@@ -274,15 +312,6 @@ namespace jp.lilxyzw.lilycalinventory
                 rect.width = position.width * ((float)costByMA / costMax);
                 EditorGUI.DrawRect(rect, new Color(0.000f, 0.627f, 0.913f));
                 rect.x = rect.xMax;
-
-                EditorGUI.indentLevel++;
-                if(isExpandedMA = EditorGUILayout.Foldout(isExpandedMA, $"Modular Avatar: {costByMA} / {costMax}"))
-                {
-                    EditorGUI.BeginDisabledGroup(true);
-                    foreach(var c in maParams) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    EditorGUI.EndDisabledGroup();
-                }
-                EditorGUI.indentLevel--;
             }
             #endif
 
@@ -291,19 +320,6 @@ namespace jp.lilxyzw.lilycalinventory
                 rect.width = position.width * ((float)costByLI / costMax);
                 EditorGUI.DrawRect(rect, new Color(0.572f, 0.549f, 0.858f));
                 rect.x = rect.xMax;
-
-                EditorGUI.indentLevel++;
-                if(isExpandedLI = EditorGUILayout.Foldout(isExpandedLI, $"lilycalInventory: {costByLI} / {costMax}"))
-                {
-                    EditorGUI.BeginDisabledGroup(true);
-                    foreach(var c in autoDressers) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    foreach(var c in props) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    foreach(var c in itemTogglers) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    foreach(var c in costumeChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    foreach(var c in smoothChangers) EditorGUILayout.ObjectField(c, typeof(Object), true);
-                    EditorGUI.EndDisabledGroup();
-                }
-                EditorGUI.indentLevel--;
             }
             EditorGUILayout.EndVertical();
         }

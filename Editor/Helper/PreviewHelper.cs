@@ -146,8 +146,9 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal void TogglePreview(Object obj)
         {
+            var rect = EditorGUI.PrefixLabel(EditorGUILayout.GetControlRect(), Localization.G("inspector.previewAnimation"));
             EditorGUI.BeginChangeCheck();
-            doPreview = GUILayout.Toolbar(doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
+            doPreview = GUI.Toolbar(rect, doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
             if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
             if(doPreview && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
                 EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);

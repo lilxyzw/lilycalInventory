@@ -17,60 +17,40 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static class ModularAvatarHelper
     {
-        internal static bool Inspector(Object target, SerializedObject serializedObject, SerializedProperty iterator, bool skipIcon = false)
+        internal static void Inspector(Object target, SerializedProperty iterator)
         {
             #if LIL_MODULAR_AVATAR
-            if(target is MenuBaseComponent)
+            if(iterator.objectReferenceValue)
             {
-                var parentOverrideMA = serializedObject.FindProperty("parentOverrideMA");
-                //menuName
-                iterator.NextVisible(false);
-                GUIHelper.AutoField(iterator);
-                //parentOverride
-                if(parentOverrideMA.objectReferenceValue) EditorGUI.BeginDisabledGroup(true);
-                iterator.NextVisible(false);
-                GUIHelper.AutoField(iterator);
-                //icon
-                iterator.NextVisible(false);
-                if(!skipIcon) GUIHelper.AutoField(iterator);
-                if(parentOverrideMA.objectReferenceValue) EditorGUI.EndDisabledGroup();
-                //parentOverrideMA
-                iterator.NextVisible(false);
-                if(!iterator.objectReferenceValue)
+                EditorGUI.indentLevel++;
+                EditorGUILayout.HelpBox(Localization.S("inspector.parentOverrideMAInfo"), MessageType.Info);
+                EditorGUI.indentLevel--;
+            }
+            else
+            {
+                var component = (MenuBaseComponent)target;
+                if(component.gameObject.GetComponentInParentInAvatar<ModularAvatarMenuGroup>())
                 {
-                    var component = (MenuBaseComponent)target;
-                    if(component.gameObject.GetComponentInParentInAvatar<ModularAvatarMenuGroup>())
+                    var item = component.gameObject.AddComponent<ModularAvatarMenuItem>();
+                    item.MenuSource = SubmenuSource.Children;
+                    item.Control = new Control{icon = component.icon};
+                    switch(component)
                     {
-                        var item = component.gameObject.AddComponent<ModularAvatarMenuItem>();
-                        item.MenuSource = SubmenuSource.Children;
-                        item.Control = new Control{icon = component.icon};
-                        switch(component)
-                        {
-                            case MenuFolder _:
-                            case CostumeChanger _:
-                                item.Control.type = ControlType.SubMenu;
-                                break;
-                            case SmoothChanger _:
-                                item.Control.type = ControlType.RadialPuppet;
-                                break;
-                            default:
-                                item.Control.type = ControlType.Button;
-                                break;
-                        }
-                        iterator.objectReferenceValue = item;
+                        case MenuFolder _:
+                        case CostumeChanger _:
+                            item.Control.type = ControlType.SubMenu;
+                            break;
+                        case SmoothChanger _:
+                            item.Control.type = ControlType.RadialPuppet;
+                            break;
+                        default:
+                            item.Control.type = ControlType.Button;
+                            break;
                     }
+                    iterator.objectReferenceValue = item;
                 }
-                GUIHelper.AutoField(iterator);
-                if(parentOverrideMA.objectReferenceValue)
-                {
-                    EditorGUI.indentLevel++;
-                    EditorGUILayout.HelpBox(Localization.S("inspector.parentOverrideMAInfo"), MessageType.Info);
-                    EditorGUI.indentLevel--;
-                }
-                return true;
             }
             #endif
-            return false;
         }
 
         internal static void ResolveMenu(MenuFolder[] folders, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers)

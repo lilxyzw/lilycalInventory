@@ -7,9 +7,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(ItemToggler))]
     internal class ItemToggler : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
+        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
     }
 
     internal class ItemTogglerInternal
@@ -22,8 +23,8 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         #else
         [NotKeyable] [HideInInspector] public Object parentOverrideMA;
         #endif
-        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
     }
 }

@@ -7,8 +7,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(CostumeChanger))]
     internal class CostumeChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] public Costume[] costumes = new Costume[]{};
         [NotKeyable] [LILLocalize] public bool isSave = true;
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
+        [NotKeyable] public Costume[] costumes = new Costume[]{};
     }
 }

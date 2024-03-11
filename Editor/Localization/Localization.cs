@@ -91,7 +91,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static GUIContent G(string key)
         {
-            if(DragAndDrop.objectReferences != null) return new GUIContent(S(key) ?? key);
+            if(DragAndDrop.objectReferences != null && DragAndDrop.objectReferences.Length > 0) return new GUIContent(S(key) ?? key);
             return new GUIContent(S(key) ?? key, S($"{key}.tooltip"));
         }
 
@@ -176,7 +176,7 @@ namespace jp.lilxyzw.lilycalinventory
         public override void OnGUI(Rect position)
         {
             LILLocalizeHeaderAttribute loc = attribute as LILLocalizeHeaderAttribute;
-            EditorGUI.LabelField(position, Localization.G(loc.name));
+            EditorGUI.LabelField(position, Localization.G(loc.name), EditorStyles.boldLabel);
         }
     }
 }

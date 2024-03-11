@@ -16,15 +16,18 @@
   "inspector.menuParameterName": "メニュー・パラメーター名",
   "inspector.menuNameParameter.tooltip": "VRChatで使用されるメニューとパラメーターの名前です。何も入力していない場合はオブジェクト名と同じになります。",
   "inspector.menuNameEmpty": "メニュー名を入力してください。",
-  "inspector.parentFolder": "メニューの親フォルダ",
-  "inspector.parentOverride": "オーバーライド",
+  "inspector.parentOverride": "メニューの親フォルダ",
   "inspector.parentOverride.tooltip": "ここで指定したフォルダーの中にメニューが入ります。何も指定していない場合、親にMenuFolderコンポーネントがあればその中に、なければルートに入ります。",
-  "inspector.parentOverrideMA": "オーバーライド (Modular Avatar)",
+  "inspector.parentOverrideMA": "メニューのオーバーライド (Modular Avatar)",
   "inspector.parentOverrideMA.tooltip": "ここにMA Menu Itemを指定するとこのツールのかわりにModular Avatar側でメニューが生成されるようになります。アイコンやメニュー名などの設定はMA Menu Itemのものが優先されます。",
   "inspector.parentOverrideMAInfo": "メニューの設定はMA Menu Itemで管理されています。アイコン等を変更したい場合はMA Menu Item側を編集してください。",
   "inspector.icon": "アイコン",
   "inspector.icon.tooltip": "VRChatのメニュー上で表示されるアイコンです。",
-  "inspector.folderContents": "フォルダの中身",
+
+  "inspector.menuSettings": "# メニュー設定",
+  "inspector.animationSettings": "# アニメーション設定",
+  "inspector.folderContents": "# フォルダの中身",
+  "inspector.parametersWith": "# 一緒に操作するパラメーター（拡張設定）",
 
   "inspector.isSave": "有効状態を保存",
   "inspector.isSave.tooltip": "これをオンにするとアバター読み込み直してもメニューの状態が保存されます。",
@@ -64,8 +67,6 @@
   "inspector.frames.tooltip": "Radial Puppetで操作するプロパティを設定します。間のフレームは補間されます。",
   "inspector.frameValue": "パペット設定値 (%)",
   "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき100になります。",
-
-  "inspector.parametersWith": "一緒に操作するパラメーター",
 
   "inspector.previewAnimation": "アニメーションのプレビュー",
   "inspector.preview": "プレビュー",

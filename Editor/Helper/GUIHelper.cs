@@ -20,8 +20,14 @@ namespace jp.lilxyzw.lilycalinventory
                 return m_PlaceholderStyle;
             }
         }
-        private static GUIStyle m_PlaceholderStyle;
-        private static GUIStyle m_DropStyle;
+        private static GUIStyle placeholderObjectStyle
+        {
+            get
+            {
+                if(m_PlaceholderObjectStyle == null) InitializeGUI();
+                return m_PlaceholderObjectStyle;
+            }
+        }
         private static GUIStyle dropStyle
         {
             get
@@ -30,6 +36,9 @@ namespace jp.lilxyzw.lilycalinventory
                 return m_DropStyle;
             }
         }
+        private static GUIStyle m_PlaceholderStyle;
+        private static GUIStyle m_PlaceholderObjectStyle;
+        private static GUIStyle m_DropStyle;
         internal static readonly float propertyHeight = EditorGUIUtility.singleLineHeight;
 
         private static void InitializeGUI()
@@ -39,10 +48,17 @@ namespace jp.lilxyzw.lilycalinventory
                 fontStyle = FontStyle.Italic,
                 padding = EditorStyles.textField.padding
             };
+            m_PlaceholderObjectStyle = new GUIStyle(EditorStyles.objectField)
+            {
+                fontStyle = FontStyle.Italic,
+                padding = EditorStyles.textField.padding
+            };
             m_DropStyle = new GUIStyle(EditorStyles.helpBox)
             {
                 alignment = TextAnchor.MiddleCenter
             };
+            var col = EditorStyles.objectField.normal.textColor;
+            SetColors(m_PlaceholderObjectStyle, new Color(col.r, col.g, col.b, 0.5f));
         }
 
         private static bool Foldout(Rect position, SerializedProperty prop, bool drawFoldout, GUIContent content = null)
@@ -102,6 +118,18 @@ namespace jp.lilxyzw.lilycalinventory
                 EditorGUI.BeginDisabledGroup(true);
                 EditorGUI.LabelField(position, hideContent, new GUIContent(placeholder), placeholderStyle);
                 EditorGUI.EndDisabledGroup();
+            }
+        }
+
+        internal static void ObjectField(Rect position, GUIContent label, SerializedProperty property, string placeholder)
+        {
+            EditorGUI.PropertyField(position, property, label);
+            if(!property.objectReferenceValue && !string.IsNullOrEmpty(placeholder) && GUI.enabled)
+            {
+                EditorGUI.LabelField(position, hideContent, new GUIContent(placeholder), placeholderObjectStyle);
+                GUIStyle buttonStyle = "ObjectFieldButton";
+                Rect position2 = buttonStyle.margin.Remove(new Rect(position.xMax - 19f, position.y, 19f, position.height));
+                EditorGUI.LabelField(position2, GUIContent.none, buttonStyle);
             }
         }
 

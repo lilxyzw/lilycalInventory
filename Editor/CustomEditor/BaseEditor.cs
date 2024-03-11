@@ -47,17 +47,19 @@ namespace jp.lilxyzw.lilycalinventory
             // Warn component disabled
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);
 
-            // ExpressionParameters
-            if(target is MenuBaseComponent comp) ParameterViewer.Draw(comp);
-
-            // Preview Helper
-            if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
+            if(target is MenuBaseComponent comp)
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUILayout.LabelField(Localization.G("inspector.previewAnimation"));
-                PreviewHelper.instance.DrawIndex(target);
-                PreviewHelper.instance.TogglePreview(target);
-                EditorGUILayout.EndVertical();
+                // ExpressionParameters
+                ParameterViewer.Draw(comp);
+
+                // Preview Helper
+                if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
+                {
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                    PreviewHelper.instance.TogglePreview(target);
+                    PreviewHelper.instance.DrawIndex(target);
+                    EditorGUILayout.EndVertical();
+                }
             }
 
             // Draw Properties
@@ -66,7 +68,13 @@ namespace jp.lilxyzw.lilycalinventory
             serializedObject.UpdateIfRequiredOrScript();
             SerializedProperty iterator = serializedObject.GetIterator();
             iterator.NextVisible(true); // Skip m_Script
-            hasProperty = ModularAvatarHelper.Inspector(target, serializedObject, iterator) || hasProperty;
+            if(target is MenuBaseComponent)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField(Localization.G("inspector.menuSettings"), EditorStyles.boldLabel);
+                DrawMenuBaseParameters(target, serializedObject, iterator);
+                hasProperty = true;
+            }
             while(iterator.NextVisible(false))
             {
                 GUIHelper.AutoField(iterator);
@@ -93,7 +101,8 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 if(menuChildren[folder].Count > 0)
                 {
-                    EditorGUILayout.LabelField(Localization.G("inspector.folderContents"));
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField(Localization.G("inspector.folderContents"), EditorStyles.boldLabel);
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                     DrawChildren(folder);
                     EditorGUILayout.EndVertical();
@@ -103,7 +112,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(targets.Length == 1) PreviewHelper.instance.StartPreview(target);
         }
 
-        internal static void DrawChildren(MenuFolder folder)
+        private static void DrawChildren(MenuFolder folder)
         {
             EditorGUILayout.BeginVertical();
             var components = menuChildren[folder];
@@ -124,7 +133,7 @@ namespace jp.lilxyzw.lilycalinventory
             EditorGUILayout.EndVertical();
         }
 
-        internal static void ParamsPerChildren(MenuBaseComponent obj)
+        private static void ParamsPerChildren(MenuBaseComponent obj)
         {
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.ObjectField(obj, obj.GetType(), true);
@@ -133,25 +142,55 @@ namespace jp.lilxyzw.lilycalinventory
             var so = new SerializedObject(obj);
             so.UpdateIfRequiredOrScript();
 
+            var iterator = so.GetIterator();
+            iterator.NextVisible(true);
+            DrawMenuBaseParameters(obj, so, iterator);
+
+            so.ApplyModifiedProperties();
+        }
+
+        private static GUIStyle styleIcon => m_StyleIcon != null ? m_StyleIcon : m_StyleIcon = new GUIStyle(EditorStyles.objectFieldThumb){alignment = TextAnchor.MiddleCenter};
+        private static GUIStyle m_StyleIcon;
+        private static void DrawMenuBaseParameters(Object obj, SerializedObject so, SerializedProperty iterator)
+        {
             EditorGUILayout.BeginHorizontal();
                 var iconSize = EditorGUIUtility.singleLineHeight * 3 + GUIHelper.GetSpaceHeight(3);
-                var icon = so.FindProperty("icon");
-                EditorGUI.BeginChangeCheck();
-                var tex = EditorGUILayout.ObjectField(icon.objectReferenceValue, typeof(Texture2D), false, GUILayout.Width(iconSize), GUILayout.Height(iconSize));
-                if(EditorGUI.EndChangeCheck()) icon.objectReferenceValue = tex;
+                var rectIcon = EditorGUILayout.GetControlRect(GUILayout.Width(iconSize), GUILayout.Height(iconSize));
 
                 EditorGUILayout.BeginVertical();
-                var iterator = so.GetIterator();
-                iterator.NextVisible(true);
-                if(!ModularAvatarHelper.Inspector(obj, so, iterator, true))
+                #if LIL_MODULAR_AVATAR
+                bool isOverridedByMA = so.FindProperty("parentOverrideMA").objectReferenceValue;
+                #else
+                bool isOverridedByMA = false;
+                #endif
+                //menuName
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                //parentOverride
+                if(isOverridedByMA) EditorGUI.BeginDisabledGroup(true);
+                iterator.NextVisible(false);
+                GUIHelper.AutoField(iterator);
+                //icon
+                iterator.NextVisible(false);
+                EditorGUI.BeginChangeCheck();
+                var tex = EditorGUI.ObjectField(rectIcon, iterator.objectReferenceValue, typeof(Texture2D), false);
+                if(EditorGUI.EndChangeCheck()) iterator.objectReferenceValue = tex;
+                if(!isOverridedByMA && !iterator.objectReferenceValue)
                 {
-                    EditorGUILayout.PropertyField(so.FindProperty("menuName"));
-                    EditorGUILayout.PropertyField(so.FindProperty("parentOverride"));
+                    EditorGUI.LabelField(rectIcon, Localization.G("inspector.icon"), styleIcon);
+                    GUIStyle styleOverlay = EditorStyles.objectFieldThumb.name + "Overlay2";
+                    EditorGUI.LabelField(rectIcon, "Select", styleOverlay);
                 }
+                if(isOverridedByMA) EditorGUI.EndDisabledGroup();
+                //parentOverrideMA
+                iterator.NextVisible(false);
+                #if LIL_MODULAR_AVATAR
+                GUIHelper.AutoField(iterator);
+                #endif
                 EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
-            so.ApplyModifiedProperties();
+            ModularAvatarHelper.Inspector(obj, iterator);
         }
     }
 }
