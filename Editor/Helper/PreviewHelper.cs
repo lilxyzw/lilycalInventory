@@ -19,6 +19,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static bool doPreview = true;
         private static int previewIndex = 0;
         private static float previewFrame = 0;
+        private static readonly Dictionary<Object, Dictionary<string, object>> valueContainer = new Dictionary<Object, Dictionary<string, object>>();
 
         [SerializeField] private AnimationModeDriver driver;
         private AnimationModeDriver Driver => driver ? driver : driver = CreateDriver();
@@ -118,6 +119,7 @@ namespace jp.lilxyzw.lilycalinventory
         internal void StopPreview()
         {
             StopAnimationMode(Driver);
+            valueContainer.Clear();
             EditorApplication.update -= Update;
             target = null;
         }
@@ -186,11 +188,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(!toggler.obj) continue;
                 var binding = AnimationHelper.CreateToggleBinding(toggler.obj);
-                AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                    propertyPath = new SerializedObject(toggler.obj).FindProperty("m_IsActive").propertyPath,
-                    target = toggler.obj,
-                    value = toggler.obj.activeSelf ? "1" : "0"
-                }, true);
+                AddPropertyModification(binding, toggler.obj, new SerializedObject(toggler.obj).FindProperty("m_IsActive").propertyPath, toggler.obj.activeSelf);
                 toggler.obj.SetActive(toggler.value);
             }
 
@@ -209,11 +207,7 @@ namespace jp.lilxyzw.lilycalinventory
                             var m_BlendShapeWeights = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights");
                             if(index >= m_BlendShapeWeights.arraySize) continue;
                             var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                            AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                                propertyPath = m_BlendShapeWeights.GetArrayElementAtIndex(index).propertyPath,
-                                target = renderer,
-                                value = renderer.GetBlendShapeWeight(index).ToString(CultureInfo.InvariantCulture)
-                            }, true);
+                            AddPropertyModification(binding, renderer, m_BlendShapeWeights.GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
                             renderer.SetBlendShapeWeight(index, namevalue.value);
                         }
                     }
@@ -225,11 +219,7 @@ namespace jp.lilxyzw.lilycalinventory
                     var index = renderer.sharedMesh.GetBlendShapeIndex(namevalue.name);
                     if(index == -1) continue;
                     var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                    AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                        propertyPath = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath,
-                        target = renderer,
-                        value = renderer.GetBlendShapeWeight(index).ToString(CultureInfo.InvariantCulture)
-                    }, true);
+                    AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
                     renderer.SetBlendShapeWeight(index, namevalue.value);
                 }
             }
@@ -243,11 +233,7 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(!replacer.replaceTo[i]) continue;
                     var binding = AnimationHelper.CreateMaterialReplaceBinding(replacer.renderer, i);
-                    AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                        propertyPath = new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath,
-                        target = replacer.renderer,
-                        objectReference = replacer.renderer.sharedMaterials[i]
-                    }, true);
+                    AddPropertyModification(binding, target, new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, replacer.renderer.sharedMaterials[i]);
                     materials[i] = replacer.replaceTo[i];
                     modified = true;
                 }
@@ -269,12 +255,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         if(!materials[i]) continue;
                         var binding = AnimationHelper.CreateMaterialReplaceBinding(renderer, i);
-                        AnimationMode.AddPropertyModification(binding, new PropertyModification{
-                            propertyPath = new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath,
-                            target = renderer,
-                            objectReference = renderer.sharedMaterials[i]
-                        }, true);
-
+                        AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, renderer.sharedMaterials[i]);
                         var material = new Material(materials[i]);
                         foreach(var floatModifier in modifier.floatModifiers)
                         {
@@ -299,7 +280,50 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal ParametersPerMenu Interpolate(Frame[] frames)
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, Object value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                objectReference = value
+            }, true);
+        }
+
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, float value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                value = value.ToString(CultureInfo.InvariantCulture)
+            }, true);
+        }
+
+        private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, bool value)
+        {
+            AddToContainer(target, propertyPath, value);
+            AnimationMode.AddPropertyModification(binding, new PropertyModification{
+                propertyPath = propertyPath,
+                target = target,
+                value = value ? "1" : "0"
+            }, true);
+        }
+
+        private static void AddToContainer(Object target, string propertyPath, object value)
+        {
+            if(!valueContainer.ContainsKey(target)) valueContainer[target] = new Dictionary<string, object>();
+            valueContainer[target][propertyPath] = value;
+        }
+
+        internal static object GetFromContainer(Object target, string propertyPath)
+        {
+            if(!valueContainer.ContainsKey(target)) return null;
+            if(!valueContainer[target].ContainsKey(propertyPath)) return null;
+            return valueContainer[target][propertyPath];
+        }
+
+        private ParametersPerMenu Interpolate(Frame[] frames)
         {
             if(frames.Length == 0) return null;
 

@@ -97,8 +97,8 @@
   "dialog.error.menuNameDuplication": "Duplicate menu name. Please change the name.",
   "dialog.error.parameterDuplication": "Duplicate parameter name. Please change the name.",
   "dialog.error.dresserSettingsDuplication": "There are multiple AutoDresserSettings. Please enable only one.",
-  "dialog.error.defaultDuplication": "Multiple objects are turned on. Please check only one so that the tool can set the initial value.",
-  "dialog.error.allObjectOff": "All objects below are turned off. Please check only one so that the tool can set the initial value.",
+  "dialog.error.defaultDuplication": "Multiple objects with AutoDresser are turned on. Please check only one so that the tool can set the initial value.",
+  "dialog.error.allObjectOff": "All objects with AutoDresser are turned off. Please check only one so that the tool can set the initial value.",
   "dialog.error.avatarRootNofFound": "Avatar root object not found. Make sure that the object is inside the avatar and that the avatar has an AvatarDescriptor attached.",
   "dialog.error.menuMADuplication": "MA Menu Item is referenced by multiple components. Make sure to create one MA Menu Item for each component."
 }
