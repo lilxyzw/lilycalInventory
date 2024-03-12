@@ -215,11 +215,11 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal static float GetAutoFieldHeight(SerializedProperty property)
+        internal static float GetAutoFieldHeight(SerializedProperty property, bool drawFoldout = true)
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                return GetListHeight(property.Copy()) + GetSpaceHeight();
+                return GetListHeight(property.Copy(), drawFoldout) + GetSpaceHeight();
             }
             else
             {

@@ -78,7 +78,8 @@ namespace jp.lilxyzw.lilycalinventory
             }
             while(iterator.NextVisible(false))
             {
-                GUIHelper.AutoField(iterator);
+                if(iterator.name == "costumes" || iterator.name == "frames") GUIHelper.AutoField(iterator, false);
+                else GUIHelper.AutoField(iterator);
                 hasProperty = true;
             }
             if(serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
