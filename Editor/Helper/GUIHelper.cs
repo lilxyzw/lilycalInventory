@@ -61,23 +61,23 @@ namespace jp.lilxyzw.lilycalinventory
             SetColors(m_PlaceholderObjectStyle, new Color(col.r, col.g, col.b, 0.5f));
         }
 
-        private static bool Foldout(Rect position, SerializedProperty prop, bool drawFoldout, GUIContent content = null)
+        private static bool Foldout(Rect position, SerializedProperty property, bool drawFoldout, GUIContent content = null)
         {
-            var label = EditorGUI.BeginProperty(position, content ?? Localization.G(prop), prop);
+            var label = EditorGUI.BeginProperty(position, content ?? Localization.G(property), property);
             if(drawFoldout)
             {
                 var rect = new Rect(position);
                 if(EditorGUIUtility.hierarchyMode) rect.xMin -=  EditorStyles.foldout.padding.left - EditorStyles.label.padding.left;
-                if(Event.current.type == EventType.Repaint) EditorStyles.foldoutHeader.Draw(rect, false, false, prop.isExpanded, false);
-                prop.isExpanded = EditorGUI.Foldout(position, prop.isExpanded, label);
+                if(Event.current.type == EventType.Repaint) EditorStyles.foldoutHeader.Draw(rect, false, false, property.isExpanded, false);
+                PropertyFoldout(position, property, label);
             }
             else
             {
                 EditorGUI.LabelField(position, label);
-                prop.isExpanded = true;
+                property.isExpanded = true;
             }
             EditorGUI.EndProperty();
-            return prop.isExpanded;
+            return property.isExpanded;
         }
 
         private static bool Foldout(SerializedProperty prop, bool drawFoldout, GUIContent content = null)
@@ -86,16 +86,41 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // TODO
-        internal static bool FoldoutOnly(Rect position, SerializedProperty prop)
+        internal static bool FoldoutOnly(Rect position, SerializedProperty property)
         {
             position.width = 12;
             position.height = propertyHeight;
             position.x -= 12;
-            var label = EditorGUI.BeginProperty(position, GUIContent.none, prop);
+            var label = EditorGUI.BeginProperty(position, GUIContent.none, property);
             position.x += 12;
-            prop.isExpanded = EditorGUI.Foldout(position, prop.isExpanded, label);
+            PropertyFoldout(position, property, label);
             EditorGUI.EndProperty();
-            return prop.isExpanded;
+            return property.isExpanded;
+        }
+
+        private static bool PropertyFoldout(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginChangeCheck();
+            var isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+            if(property.isExpanded != isExpanded)
+            {
+                if(Event.current.alt) SetExpandedRecurse(property, isExpanded);
+                else property.isExpanded = isExpanded;
+            }
+            return isExpanded;
+        }
+
+        private static void SetExpandedRecurse(SerializedProperty property, bool expanded)
+        {
+            SerializedProperty iter = property.Copy();
+            iter.isExpanded = expanded;
+            int depth = iter.depth;
+            bool visitChild = true;
+            while(iter.NextVisible(visitChild) && iter.depth > depth)
+            {
+                visitChild = iter.propertyType != SerializedPropertyType.String;
+                if(iter.hasVisibleChildren) iter.isExpanded = expanded;
+            }
         }
 
         // TODO
