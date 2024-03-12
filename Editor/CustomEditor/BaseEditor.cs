@@ -21,6 +21,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         public override void OnInspectorGUI()
         {
+            VersionChecker.DrawGUI();
             Localization.SelectLanguageGUI();
 
             // Warn for AutoDresser

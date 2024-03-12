@@ -8,8 +8,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         internal const string COMPONENTS_BASE = TOOL_NAME + "/LI ";
         internal const string URL_DOCS_BASE = "https://github.com/lilxyzw/lilycalInventory";
         internal const string URL_DOCS_COMPONENT = URL_DOCS_BASE + "#LI-";
+        internal const string URL_PACKAGE_JSON = "https://raw.githubusercontent.com/lilxyzw/lilycalInventory/main/package.json";
 
         internal const string GUID_ICON_NEXT = "defba5627489c4648afe871f388469b1";
         internal const string GUID_LOCALIZATION = "d54616bccdc07254a998850242066cc6";
+        internal const string GUID_PACKAGE = "38b330de5f5bc1148a6eace5583dbb77";
     }
 }

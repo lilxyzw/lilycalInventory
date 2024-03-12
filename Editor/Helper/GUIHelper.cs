@@ -36,9 +36,18 @@ namespace jp.lilxyzw.lilycalinventory
                 return m_DropStyle;
             }
         }
+        internal static GUIStyle boldRedStyle
+        {
+            get
+            {
+                if(m_BoldRedStyle == null) InitializeGUI();
+                return m_BoldRedStyle;
+            }
+        }
         private static GUIStyle m_PlaceholderStyle;
         private static GUIStyle m_PlaceholderObjectStyle;
         private static GUIStyle m_DropStyle;
+        private static GUIStyle m_BoldRedStyle;
         internal static readonly float propertyHeight = EditorGUIUtility.singleLineHeight;
 
         private static void InitializeGUI()
@@ -57,8 +66,10 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 alignment = TextAnchor.MiddleCenter
             };
+            m_BoldRedStyle = new GUIStyle(EditorStyles.boldLabel);
             var col = EditorStyles.objectField.normal.textColor;
             SetColors(m_PlaceholderObjectStyle, new Color(col.r, col.g, col.b, 0.5f));
+            SetColors(m_BoldRedStyle, Color.red);
         }
 
         private static bool Foldout(Rect position, SerializedProperty property, bool drawFoldout, GUIContent content = null)
