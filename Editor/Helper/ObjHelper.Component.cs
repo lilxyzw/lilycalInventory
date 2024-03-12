@@ -144,12 +144,16 @@ namespace jp.lilxyzw.lilycalinventory
                 var icon = s.icon;
                 var parentOverride = s.parentOverride;
                 var parentOverrideMA = s.parentOverrideMA;
+                var isSave = s.isSave;
+                var isLocalOnly = s.isLocalOnly;
                 Object.DestroyImmediate(s);
                 var changer = obj.AddComponent<CostumeChanger>();
                 changer.menuName = menuName;
                 changer.icon = icon;
                 changer.parentOverride = parentOverride;
                 changer.parentOverrideMA = parentOverrideMA;
+                changer.isSave = isSave;
+                changer.isLocalOnly = isLocalOnly;
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
                 changer.forceActive = true;
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
