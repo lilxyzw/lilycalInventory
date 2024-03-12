@@ -123,6 +123,8 @@ namespace jp.lilxyzw.lilycalinventory
             var rectNum = new Rect(rect.xMax - EditorGUIUtility.fieldWidth + EditorGUIUtility.standardVerticalSpacing * 3, rect.y, EditorGUIUtility.fieldWidth, rect.height);
             var rectRem = new Rect(rectNum.x - 40 - EditorGUIUtility.standardVerticalSpacing, rect.y, 40, rect.height);
             var rectAdd = new Rect(rectRem.x - 40 - EditorGUIUtility.standardVerticalSpacing, rect.y, 40, rect.height);
+            var rectBack = new Rect(rectAdd.x, rect.y, rect.xMax - rectAdd.x, EditorGUIUtility.singleLineHeight);
+            EditorGUI.DrawRect(rectBack, EditorGUIUtility.isProSkin ? new Color(0.219f,0.219f,0.219f,1) : new Color(0.784f,0.784f,0.784f,1));
 
             EditorGUI.BeginChangeCheck();
             var size = EditorGUI.IntField(rectNum, list.serializedProperty.arraySize);
