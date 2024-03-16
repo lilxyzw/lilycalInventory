@@ -16,6 +16,20 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 parentName = property.objectReferenceValue.name;
             }
+            else if(property.serializedObject.targetObject is AutoDresser)
+            {
+                var root = gameObject.GetAvatarRoot();
+                if(root)
+                {
+                    var settings = root.GetComponentInChildren<AutoDresserSettings>();
+                    if(settings) parentName = settings.GetMenuName();
+                    else parentName = "AutoDresser";
+                }
+                else
+                {
+                    parentName = "AutoDresser";
+                }
+            }
             else
             {
                 var parent = gameObject.GetComponentInParentInAvatar<MenuFolder>();

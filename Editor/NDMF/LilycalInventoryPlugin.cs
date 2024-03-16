@@ -2,6 +2,7 @@
 using jp.lilxyzw.lilycalinventory;
 using jp.lilxyzw.lilycalinventory.runtime;
 using nadena.dev.ndmf;
+using UnityEngine;
 
 [assembly: ExportsPlugin(typeof(LilycalInventoryPlugin))]
 
@@ -11,6 +12,10 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override string QualifiedName => ConstantValues.PACKAGE_NAME_FULL;
         public override string DisplayName => ConstantValues.TOOL_NAME;
+
+        #if LIL_NDMF_1_4_0
+        public override Color? ThemeColor => new Color(0.572f, 0.549f, 0.858f);
+        #endif
 
         protected override void Configure()
         {

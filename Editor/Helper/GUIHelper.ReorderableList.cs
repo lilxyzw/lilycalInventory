@@ -77,7 +77,7 @@ namespace jp.lilxyzw.lilycalinventory
                 multiSelect = true,
                 #endif
                 elementHeightCallback = index => EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(index)),
-                onAddCallback = list => property.ResizeArray(property.arraySize + 1, initializeFunction),
+                onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction),
                 drawHeaderCallback = rect => headerRect = rect,
                 drawElementCallback = (rect, index, isActive, isFocused) =>
                 {
@@ -118,7 +118,11 @@ namespace jp.lilxyzw.lilycalinventory
                 if(m_scheduleRemove == null) Debug.LogError("m_scheduleRemove == null");
             }
 
-            bool isOverMaxMultiEditLimit = list.serializedProperty != null && list.serializedProperty.minArraySize > list.serializedProperty.serializedObject.maxArraySizeForMultiEditing && list.serializedProperty.serializedObject.isEditingMultipleObjects;
+            bool isOverMaxMultiEditLimit = list.serializedProperty != null &&
+            #if UNITY_2022_3_OR_NEWER
+            list.serializedProperty.minArraySize > list.serializedProperty.serializedObject.maxArraySizeForMultiEditing &&
+            #endif
+            list.serializedProperty.serializedObject.isEditingMultipleObjects;
 
             var rectNum = new Rect(rect.xMax - EditorGUIUtility.fieldWidth + EditorGUIUtility.standardVerticalSpacing * 3, rect.y, EditorGUIUtility.fieldWidth, rect.height);
             var rectRem = new Rect(rectNum.x - 40 - EditorGUIUtility.standardVerticalSpacing, rect.y, 40, rect.height);

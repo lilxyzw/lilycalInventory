@@ -219,13 +219,72 @@ namespace jp.lilxyzw.lilycalinventory
     internal static class ParameterViewer
     {
         #if LIL_VRCSDK3A
-        private static int costBool = VRCExpressionParameters.TypeCost(ValueType.Bool);
-        private static int costInt = VRCExpressionParameters.TypeCost(ValueType.Int);
-        private static int costFloat = VRCExpressionParameters.TypeCost(ValueType.Float);
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
 
         private static bool isInitialized = false;
         private static bool isExpandedDetails = false;
+        private static GameObject avatarRoot;
+
+        #if LIL_NDMF_1_4_0
+        private static Dictionary<PluginBase,bool> isExpandeds = new Dictionary<PluginBase, bool>();
+
+        internal static void Draw(MenuBaseComponent component)
+        {
+            var root = component.gameObject.GetAvatarRoot();
+            if(!root) return;
+            avatarRoot = root.gameObject;
+            var groups = ParameterInfo.ForUI.GetParametersForObject(avatarRoot).GroupBy(p => p.Plugin).OrderBy(g => g.Key.DisplayName).ToArray();
+            int costSum = groups.Sum(g => g.Sum(p => p.BitUsage));
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUI.indentLevel++;
+            isExpandedDetails = EditorGUILayout.Foldout(isExpandedDetails, $"{Localization.S("inspector.ParameterViewer.memoryUsed")}: {costSum} / {costMax} ({Localization.S("inspector.ParameterViewer.memoryRemaining")}: {costMax - costSum})");
+
+            var graphs = new List<(int,Color)>();
+            foreach(var group in groups)
+            {
+                var plugin = group.Key.DisplayName;
+                var sum = group.Sum(g => g.BitUsage);
+                graphs.Add((sum, group.Key.ThemeColor??Color.red));
+                if(!isExpandeds.ContainsKey(group.Key)) isExpandeds[group.Key] = false;
+
+                if(!isExpandedDetails) continue;
+
+                EditorGUI.indentLevel++;
+                if(isExpandeds[group.Key] = EditorGUILayout.Foldout(isExpandeds[group.Key], $"{group.Key.DisplayName}: {sum}"))
+                {
+                    EditorGUI.BeginDisabledGroup(true);
+                    foreach(var c in group.Select(g => g.Source).Distinct().ToArray()) EditorGUILayout.ObjectField(c, typeof(Object), true);
+                    EditorGUI.EndDisabledGroup();
+                }
+                EditorGUI.indentLevel--;
+            }
+            EditorGUI.indentLevel--;
+
+            var position = EditorGUILayout.GetControlRect(GUILayout.Height(8));
+            var rect = position;
+            EditorGUI.DrawRect(rect, new Color(0.5f,0.5f,0.5f,0.5f));
+
+            // Graph
+            foreach(var graph in graphs)
+            {
+                rect.width = position.width * ((float)graph.Item1 / costMax);
+                EditorGUI.DrawRect(rect, graph.Item2);
+                rect.x = rect.xMax;
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        struct PluginMods
+        {
+            string name;
+            Component[] components;
+            
+        }
+        #else
+        private static int costBool = VRCExpressionParameters.TypeCost(ValueType.Bool);
+        private static int costInt = VRCExpressionParameters.TypeCost(ValueType.Int);
+        private static int costFloat = VRCExpressionParameters.TypeCost(ValueType.Float);
         private static bool isExpandedAvatar = false;
         private static bool isExpandedMA = false;
         private static bool isExpandedLI = false;
@@ -238,7 +297,6 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costByAvatar;
         private static int costByLI;
         private static int costByMA;
-        private static GameObject avatarRoot;
         private static VRCExpressionParameters parameters;
 
         internal static void Draw(MenuBaseComponent component)
@@ -361,9 +419,10 @@ namespace jp.lilxyzw.lilycalinventory
             #endif
 
             // By lilycalInventory
-            var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && !c.IsEditorOnly());
+            var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && c.enabled && !c.IsEditorOnly());
             autoDressers = components.Where(c => c is AutoDresser);
             props = components.Where(c => c is Prop);
+            components = components.Where(c => c.gameObject.activeInHierarchy);
             itemTogglers = components.Where(c => c is ItemToggler);
             costumeChangers = components.Where(c => c is CostumeChanger);
             smoothChangers = components.Where(c => c is SmoothChanger);
@@ -373,6 +432,7 @@ namespace jp.lilxyzw.lilycalinventory
                 + costFloat * smoothChangers.Count();
             if(autoDressers.Count() > 0) costByLI += costInt;
         }
+        #endif
 
         internal static void Reset()
         {

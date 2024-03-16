@@ -149,9 +149,10 @@ namespace jp.lilxyzw.lilycalinventory
             var rect = EditorGUI.PrefixLabel(EditorGUILayout.GetControlRect(), Localization.G("inspector.previewAnimation"));
             EditorGUI.BeginChangeCheck();
             doPreview = GUI.Toolbar(rect, doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
-            if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
+            var isChanged = EditorGUI.EndChangeCheck();
             if(doPreview && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
                 EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);
+            if(isChanged && !doPreview) StopPreview();
         }
 
         private void DrawIndex(int size, string key)
@@ -369,7 +370,7 @@ namespace jp.lilxyzw.lilycalinventory
                 obj.value = isNearMax ? max : min;
             }
 
-            var defaultValues = parameters.blendShapeModifiers.Select(m => (m.skinnedMeshRenderer, m.blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value))).ToHashSet();
+            var defaultValues = parameters.blendShapeModifiers.Select(m => (m.skinnedMeshRenderer, m.blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value))).Distinct().ToList();
             var renderers = nearestMin.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer).Union(
                 nearestMax.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer)
             ).ToArray();

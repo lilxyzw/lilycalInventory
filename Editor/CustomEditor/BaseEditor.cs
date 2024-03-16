@@ -13,6 +13,11 @@ namespace jp.lilxyzw.lilycalinventory
         private static Dictionary<MenuFolder, List<MenuBaseComponent>> menuChildren = new Dictionary<MenuFolder, List<MenuBaseComponent>>();
         void OnDisable()
         {
+            OnDisableInternal();
+        }
+
+        internal static void OnDisableInternal()
+        {
             GUIHelper.ResetList();
             PreviewHelper.instance.StopPreview();
             ParameterViewer.Reset();
@@ -91,17 +96,21 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(menuChildren.Count == 0)
                 {
-                    var components = folder.gameObject.GetAvatarRoot().GetComponentsInChildren<MenuBaseComponent>(true).Where(c => c.enabled);
-                    foreach(var c in components)
+                    var root = folder.gameObject.GetAvatarRoot();
+                    if(root)
                     {
-                        if(c is MenuFolder f && !menuChildren.ContainsKey(f)) menuChildren[f] = new List<MenuBaseComponent>();
-                        var parent = c.GetMenuParent();
-                        if(!parent) continue;
-                        if(!menuChildren.ContainsKey(parent)) menuChildren[parent] = new List<MenuBaseComponent>();
-                        menuChildren[parent].Add(c);
+                        var components = folder.gameObject.GetAvatarRoot().GetComponentsInChildren<MenuBaseComponent>(true).Where(c => c.enabled);
+                        foreach(var c in components)
+                        {
+                            if(c is MenuFolder f && !menuChildren.ContainsKey(f)) menuChildren[f] = new List<MenuBaseComponent>();
+                            var parent = c.GetMenuParent();
+                            if(!parent) continue;
+                            if(!menuChildren.ContainsKey(parent)) menuChildren[parent] = new List<MenuBaseComponent>();
+                            menuChildren[parent].Add(c);
+                        }
                     }
                 }
-                if(menuChildren[folder].Count > 0)
+                if(menuChildren.ContainsKey(folder) && menuChildren[folder].Count > 0)
                 {
                     EditorGUILayout.Space();
                     EditorGUILayout.LabelField(Localization.G("inspector.folderContents"), EditorStyles.boldLabel);

@@ -31,9 +31,11 @@ namespace jp.lilxyzw.lilycalinventory
         internal static Transform GetAvatarRoot(this GameObject gameObject)
         {
             #if LIL_VRCSDK3A
+                if(gameObject.GetComponent<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>()) return gameObject.transform;
                 var descriptor = gameObject.GetComponentInParentInRoot<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>(null);
                 if(descriptor) return descriptor.transform;
             #else
+                if(gameObject.GetComponent<Animator>()) return gameObject.transform;
                 var animator = gameObject.GetComponentInParentInRoot<Animator>(null);
                 if(animator) return animator.transform;
             #endif
