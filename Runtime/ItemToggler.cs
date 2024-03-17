@@ -3,6 +3,8 @@ using UnityEngine.Animations;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // オブジェクトをオンオフするコンポーネント
+    // Boolパラメーターが生成されます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(ItemToggler))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(ItemToggler))]
     internal class ItemToggler : MenuBaseDisallowMultipleComponent, IGenerateParameter
@@ -13,6 +15,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
     }
 
+    // こちらは上記と全く同じフィールドを持つクラスです。
+    // Componentを直接newするとUnityに怒られるためこちらを経由するようにしています。
+    // Propからの変換時に使用されます。
     internal class ItemTogglerInternal
     {
         [NotKeyable] [MenuName] public string menuName;

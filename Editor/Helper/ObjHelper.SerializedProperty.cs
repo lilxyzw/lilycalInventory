@@ -11,11 +11,13 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class ObjHelper
     {
+        // FindPropertyRelativeが長いわりに使い所がかなり多いので省略できるように
         internal static SerializedProperty FPR(this SerializedProperty property, string name)
         {
             return property.FindPropertyRelative(name);
         }
 
+        // 配列リサイズ時に所定の値で埋められるように
         internal static void ResizeArray(this SerializedProperty prop, int size, Action<SerializedProperty> initializeFunction = null)
         {
             var arraySize = prop.arraySize;
@@ -26,6 +28,7 @@ namespace jp.lilxyzw.lilycalinventory
                     initializeFunction.Invoke(prop.GetArrayElementAtIndex(i));
         }
 
+        // 配列から全オブジェクト名を取得
         internal static string[] GetAllObjectNames(this SerializedProperty property)
         {
             if(property.arraySize == 0) return new[]{"Empty"};
@@ -35,6 +38,7 @@ namespace jp.lilxyzw.lilycalinventory
             return names.ToArray();
         }
 
+        // 配列の全要素に対して所定の処理を実行
         internal static void DoAllElements(this SerializedProperty property, Action<SerializedProperty,int> function)
         {
             if(property.arraySize == 0) return;

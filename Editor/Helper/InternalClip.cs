@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
+    // Unity標準のAnimationClipのかわり
+    // 1フレームしか扱えないが高速で処理できる
     internal class InternalClip
     {
         internal Dictionary<EditorCurveBinding,(float,Object,bool)> bindings = new Dictionary<EditorCurveBinding,(float,Object,bool)>();

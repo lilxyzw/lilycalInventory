@@ -1,5 +1,6 @@
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // URLやGUIDなどの定数はここに集約して、変更があった場合に更新しやすくします。
     internal class ConstantValues
     {
         internal const string TOOL_NAME = "lilycalInventory";

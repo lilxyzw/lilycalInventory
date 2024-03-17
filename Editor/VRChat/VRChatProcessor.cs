@@ -8,6 +8,7 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
 {
     using runtime;
 
+    // NDMFがない場合はこちらで処理
     public class AvatarPreprocessor : IVRCSDKPreprocessAvatarCallback
     {
         public int callbackOrder => -1100;

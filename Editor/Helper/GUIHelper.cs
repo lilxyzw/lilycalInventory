@@ -11,72 +11,16 @@ namespace jp.lilxyzw.lilycalinventory
     {
         private const float INDENT_WIDTH = 15f;
         private static readonly float GUI_SPACE = EditorGUIUtility.standardVerticalSpacing;
-        private static readonly GUIContent hideContent = new GUIContent(" ");
-        private static GUIStyle placeholderStyle
-        {
-            get
-            {
-                if(m_PlaceholderStyle == null) InitializeGUI();
-                return m_PlaceholderStyle;
-            }
-        }
-        private static GUIStyle placeholderObjectStyle
-        {
-            get
-            {
-                if(m_PlaceholderObjectStyle == null) InitializeGUI();
-                return m_PlaceholderObjectStyle;
-            }
-        }
-        private static GUIStyle dropStyle
-        {
-            get
-            {
-                if(m_DropStyle == null) InitializeGUI();
-                return m_DropStyle;
-            }
-        }
-        internal static GUIStyle boldRedStyle
-        {
-            get
-            {
-                if(m_BoldRedStyle == null) InitializeGUI();
-                return m_BoldRedStyle;
-            }
-        }
-        private static GUIStyle m_PlaceholderStyle;
-        private static GUIStyle m_PlaceholderObjectStyle;
-        private static GUIStyle m_DropStyle;
-        private static GUIStyle m_BoldRedStyle;
         internal static readonly float propertyHeight = EditorGUIUtility.singleLineHeight;
+        private static readonly GUIContent hideContent = new GUIContent(" ");
 
-        private static void InitializeGUI()
-        {
-            m_PlaceholderStyle = new GUIStyle(EditorStyles.label)
-            {
-                fontStyle = FontStyle.Italic,
-                padding = EditorStyles.textField.padding
-            };
-            m_PlaceholderObjectStyle = new GUIStyle(EditorStyles.objectField)
-            {
-                fontStyle = FontStyle.Italic,
-                padding = EditorStyles.textField.padding
-            };
-            m_DropStyle = new GUIStyle(EditorStyles.helpBox)
-            {
-                alignment = TextAnchor.MiddleCenter
-            };
-            m_BoldRedStyle = new GUIStyle(EditorStyles.boldLabel);
-            var col = EditorStyles.objectField.normal.textColor;
-            SetColors(m_PlaceholderObjectStyle, new Color(col.r, col.g, col.b, 0.5f));
-            SetColors(m_BoldRedStyle, Color.red);
-        }
-
+        // 汎用的なFoldout
         private static bool Foldout(Rect position, SerializedProperty property, bool drawFoldout, GUIContent content = null)
         {
             var label = EditorGUI.BeginProperty(position, content ?? Localization.G(property), property);
             if(drawFoldout)
             {
+                // Foldoutを描画する場合は左にずらして位置調整
                 var rect = new Rect(position);
                 if(EditorGUIUtility.hierarchyMode) rect.xMin -=  EditorStyles.foldout.padding.left - EditorStyles.label.padding.left;
                 if(Event.current.type == EventType.Repaint) EditorStyles.foldoutHeader.Draw(rect, false, false, property.isExpanded, false);
@@ -84,6 +28,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
             else
             {
+                // Foldoutを描画しない場合は普通にラベルを表示
                 EditorGUI.LabelField(position, label);
                 property.isExpanded = true;
             }
@@ -91,12 +36,13 @@ namespace jp.lilxyzw.lilycalinventory
             return property.isExpanded;
         }
 
+        // EditorGUILayout用
         private static bool Foldout(SerializedProperty prop, bool drawFoldout, GUIContent content = null)
         {
             return Foldout(EditorGUILayout.GetControlRect(), prop, drawFoldout, content);
         }
 
-        // TODO
+        // Foldoutの三角形の部分だけ
         internal static bool FoldoutOnly(Rect position, SerializedProperty property)
         {
             position.width = 12;
@@ -115,12 +61,14 @@ namespace jp.lilxyzw.lilycalinventory
             var isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
             if(property.isExpanded != isExpanded)
             {
+                // altキーが押されている場合は再帰的に開く
                 if(Event.current.alt) SetExpandedRecurse(property, isExpanded);
                 else property.isExpanded = isExpanded;
             }
             return isExpanded;
         }
 
+        // 再帰的にFoldoutを開く
         private static void SetExpandedRecurse(SerializedProperty property, bool expanded)
         {
             SerializedProperty iter = property.Copy();
@@ -134,18 +82,20 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        // TODO
+        // 子を取得しつつFieldを表示
         internal static bool ChildField(Rect position, SerializedProperty property, string childName)
         {
             var p = property.FPR(childName);
             return EditorGUI.PropertyField(position, p, Localization.G(p));
         }
 
+        // ラベルなしでFieldを表示
         internal static bool ChildFieldOnly(Rect position, SerializedProperty property, string childName)
         {
             return EditorGUI.PropertyField(position, property.FPR(childName), GUIContent.none);
         }
 
+        // プレースホルダ付きのTextField
         internal static void TextField(Rect position, GUIContent label, SerializedProperty property, string placeholder)
         {
             EditorGUI.PropertyField(position, property, label);
@@ -157,6 +107,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // プレースホルダ付きのObjectField
         internal static void ObjectField(Rect position, GUIContent label, SerializedProperty property, string placeholder)
         {
             EditorGUI.PropertyField(position, property, label);
@@ -169,17 +120,23 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // D&Dに対応するtypeを取得
         private static Dictionary<string,Type> subclassOfObject = typeof(Object).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Object))).ToDictionary(t => t.Name, t => t);
         private static Dictionary<string,Type> subclassOfComponent = typeof(Object).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Component))).ToDictionary(t => t.Name, t => t);
         internal static Rect AutoField(Rect position, SerializedProperty property, bool drawFoldout = true)
         {
+            // 配列の描画
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
                 var prop = property.Copy();
                 var arrayElementType = prop.arrayElementType;
-                if(!arrayElementType.StartsWith("PPtr<$")) List(position, prop, drawFoldout);
 
+                // 参照でない場合はD&D非対応
+                if(!arrayElementType.StartsWith("PPtr<$")) List(position, prop, drawFoldout);
                 arrayElementType = arrayElementType.Replace("PPtr<$","").Replace(">","");
+
+                // Componentである場合はD&D対応
+                // D&DされたものがGameObjectである場合はGetComponent()
                 if(subclassOfComponent.ContainsKey(arrayElementType))
                 {
                     var type = subclassOfComponent[arrayElementType];
@@ -189,13 +146,18 @@ namespace jp.lilxyzw.lilycalinventory
                         return false;
                     });
                 }
+
+                // Objectである場合は普通にD&D対応
                 if(subclassOfObject.ContainsKey(arrayElementType))
                 {
                     return DragAndDropList(position, prop, drawFoldout, null, null, o => o.GetType().Name == arrayElementType);
                 }
 
+                // Objectでない場合はD&D非対応
                 return List(position, prop, drawFoldout);
             }
+
+            // 配列以外の描画
             else
             {
                 EditorGUI.PropertyField(position.SetHeight(property), property);
@@ -203,6 +165,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // EditorGUILayout版
         internal static void AutoField(SerializedProperty property, bool drawFoldout = true)
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
@@ -227,11 +190,13 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // ラベルなし
         internal static bool FieldOnly(Rect position, SerializedProperty property)
         {
             return EditorGUI.PropertyField(position, property, GUIContent.none);
         }
 
+        // D&D可能なリスト
         internal static Rect DragAndDropList<T>(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction) where T : Component
         {
             return DragAndDropList(position, property, drawFoldout, childName, initializeFunction, o => (o is GameObject g) && g.GetComponent<T>());
@@ -247,16 +212,20 @@ namespace jp.lilxyzw.lilycalinventory
             var e = Event.current;
             int itemCount = 0;
             var items = new Object[]{};
+
+            // D&D中のものの中から型が一致しているものだけ抽出
             if(DragAndDrop.objectReferences != null) items = DragAndDrop.objectReferences.Where(selectFunc).Where(o => o).ToArray();
             itemCount = items.Length;
 
             var rectDandD = new Rect(position)
             {
+                // D&D中のものが1つの場合はラベルだけD&D対象、そうでない場合はリスト全体がD&D対象
                 height = itemCount == 1 ? EditorGUIUtility.singleLineHeight : GetListHeight(property, drawFoldout) - EditorGUIUtility.singleLineHeight
             };
             bool isDragSingleObject = rectDandD.Contains(e.mousePosition) && itemCount == 1;
             bool isDragMultiObject = rectDandD.Contains(e.mousePosition) && itemCount > 1;
 
+            // 複数オブジェクトをD&Dしている場合はリストをグレーアウトさせてD&D可能な旨のボックスを表示
             EditorGUI.BeginDisabledGroup(isDragMultiObject);
             position = List(position, property, drawFoldout, initializeFunction);
             EditorGUI.EndDisabledGroup();
@@ -268,6 +237,8 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     case EventType.DragPerform:
                         DragAndDrop.AcceptDrag();
+
+                        // 既存要素を取得
                         var exists = new List<Object>();
                         for(int i = 0; i < property.arraySize; i++)
                         {
@@ -276,6 +247,7 @@ namespace jp.lilxyzw.lilycalinventory
                             if(obj.objectReferenceValue) exists.Add(obj.objectReferenceValue);
                         }
 
+                        // 既存要素と重複するものは除外
                         var objectsToAdd = items.Where(o => o && !exists.Contains(o)).ToArray();
                         foreach(var o in objectsToAdd)
                         {
@@ -296,6 +268,7 @@ namespace jp.lilxyzw.lilycalinventory
             return position;
         }
 
+        // D&D可能な旨を表示するBox
         internal static void DrawDropLect(Rect position)
         {
             dropStyle.fontSize = (int)Mathf.Min(24, position.height);
@@ -305,63 +278,6 @@ namespace jp.lilxyzw.lilycalinventory
         internal static GUIContent[] CreateContents(string[] labels)
         {
             return labels.Select(l => new GUIContent(l)).ToArray();
-        }
-
-        internal static void SetColors(this GUIStyle style, Color color)
-        {
-            style.active.textColor    = color;
-            style.focused.textColor   = color;
-            style.hover.textColor     = color;
-            style.normal.textColor    = color;
-            style.onActive.textColor  = color;
-            style.onFocused.textColor = color;
-            style.onHover.textColor   = color;
-            style.onNormal.textColor  = color;
-        }
-
-        internal static void SetColors(this GUIStyle style, Color[] colors)
-        {
-            style.active.textColor    = colors[0];
-            style.focused.textColor   = colors[1];
-            style.hover.textColor     = colors[2];
-            style.normal.textColor    = colors[3];
-            style.onActive.textColor  = colors[4];
-            style.onFocused.textColor = colors[5];
-            style.onHover.textColor   = colors[6];
-            style.onNormal.textColor  = colors[7];
-        }
-
-        internal static Color[] GetColors(this GUIStyle style)
-        {
-            return new[]{
-                style.active.textColor   ,
-                style.focused.textColor  ,
-                style.hover.textColor    ,
-                style.normal.textColor   ,
-                style.onActive.textColor ,
-                style.onFocused.textColor,
-                style.onHover.textColor  ,
-                style.onNormal.textColor ,
-            };
-        }
-
-        internal static void SetBackground(this GUIStyle style, Color color)
-        {
-            var tex = new Texture2D(1,1);
-            tex.SetPixel(0,0,color);
-            style.SetBackground(tex);
-        }
-
-        private static void SetBackground(this GUIStyle style, Texture2D tex)
-        {
-            style.active.background    = tex;
-            style.focused.background   = tex;
-            style.hover.background     = tex;
-            style.normal.background    = tex;
-            style.onActive.background  = tex;
-            style.onFocused.background = tex;
-            style.onHover.background   = tex;
-            style.onNormal.background  = tex;
         }
     }
 }

@@ -5,6 +5,7 @@ namespace jp.lilxyzw.lilycalinventory
 {
     internal static partial class GUIHelper
     {
+        // リストのかわりにプロパティを並べて表示するだけのシンプルなもの
         internal static Rect SimpleList(SerializedProperty prop, Rect position, string[] labels)
         {
             SerializedProperty endProperty = prop.GetEndProperty();

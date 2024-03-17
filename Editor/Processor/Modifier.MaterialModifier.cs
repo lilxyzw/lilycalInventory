@@ -17,22 +17,27 @@ namespace jp.lilxyzw.lilycalinventory
         {
             foreach(var modifier in modifiers)
             {
+                // 参照マテリアルがないか壊れている場合は無視
                 var refMaterial = modifier.referenceMaterial;
                 if(!refMaterial || !refMaterial.shader) continue;
 
                 #if LIL_NDMF
+                // NDMF使用時はObjectRegistryでクローン前のマテリアルを追跡
                 var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(ObjectRegistry.GetReference(m).Object as Material)).ToArray();
                 if(materialsMod.Length == 0) continue;
                 #else
+                // そうでない場合はクローンマップから追跡
                 var ignoreMaterials = modifier.ignoreMaterials.Where(m => m && Cloner.materialMap.ContainsKey(m)).Select(m => Cloner.materialMap[m]);
                 var materialsMod = materials.Except(ignoreMaterials).ToArray();
                 #endif
 
+                // 参照マテリアルからプロパティを取得
                 var textureOverride = new Dictionary<string,Object>();
                 var floatOverride = new Dictionary<string,float>();
                 var vectorOverride = new Dictionary<string,Vector4>();
                 GatherProperties(modifier, textureOverride, floatOverride, vectorOverride);
 
+                // 編集対象にプロパティをコピー
                 foreach(var material in materialsMod)
                 {
                     ModifyProperties(material, textureOverride, floatOverride, vectorOverride);
@@ -89,7 +94,7 @@ namespace jp.lilxyzw.lilycalinventory
                     p.FindPropertyRelative("second").colorValue = vectorOverride[name];
             });
 
-            so.ApplyModifiedProperties();
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

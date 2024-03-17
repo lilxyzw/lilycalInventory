@@ -29,7 +29,8 @@ namespace jp.lilxyzw.lilycalinventory
             VersionChecker.DrawGUI();
             Localization.SelectLanguageGUI();
 
-            // Warn for AutoDresser
+            // AutoDresser用の警告
+            // オンになっているオブジェクトが1つだけでない場合に初期衣装を決定できないためエラーを表示
             if(target is AutoDresser dresser)
             {
                 var root = dresser.gameObject.GetAvatarRoot();
@@ -50,7 +51,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
-            // Warn component disabled
+            // コンポーネントがオフになっている場合にビルド時に無視される旨の警告を表示
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);
 
             if(target is MenuBaseComponent comp)
@@ -58,7 +59,7 @@ namespace jp.lilxyzw.lilycalinventory
                 // ExpressionParameters
                 ParameterViewer.Draw(comp);
 
-                // Preview Helper
+                // プレビューの設定用GUI
                 if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
                 {
                     EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -68,12 +69,15 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
-            // Draw Properties
+            // ----------------------------------------------------------------
+            // ここからプロパティの描画
             var hasProperty = false;
 
             serializedObject.UpdateIfRequiredOrScript();
             SerializedProperty iterator = serializedObject.GetIterator();
             iterator.NextVisible(true); // Skip m_Script
+
+            // メニュー系コンポーネントである場合はアイコン等を整理して表示
             if(target is MenuBaseComponent)
             {
                 EditorGUILayout.Space();
@@ -81,17 +85,23 @@ namespace jp.lilxyzw.lilycalinventory
                 DrawMenuBaseParameters(target, serializedObject, iterator);
                 hasProperty = true;
             }
+
+            // 残りのプロパティを表示
             while(iterator.NextVisible(false))
             {
                 if(iterator.name == "costumes" || iterator.name == "frames") GUIHelper.AutoField(iterator, false);
                 else GUIHelper.AutoField(iterator);
                 hasProperty = true;
             }
+
+            // 変更を適用、変更点がある場合はプレビューを停止して更新
             if(serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
 
+            // 設定が存在しない場合はその旨を表示
             if(!hasProperty) EditorGUILayout.HelpBox(Localization.S("inspector.noProperty"), MessageType.Info);
 
-            // Folder Viewer
+            // ----------------------------------------------------------------
+            // フォルダの中身を表示
             if(targets.Length == 1 && target is MenuFolder folder)
             {
                 if(menuChildren.Count == 0)
@@ -120,9 +130,12 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
+            // ----------------------------------------------------------------
+            // 全てを確認した後にプレビューを実行
             if(targets.Length == 1) PreviewHelper.instance.StartPreview(target);
         }
 
+        // メニューの子を再帰的に表示
         private static void DrawChildren(MenuFolder folder)
         {
             EditorGUILayout.BeginVertical();
@@ -144,6 +157,7 @@ namespace jp.lilxyzw.lilycalinventory
             EditorGUILayout.EndVertical();
         }
 
+        // メニューの子オブジェクトとそのプロパティを表示
         private static void ParamsPerChildren(MenuBaseComponent obj)
         {
             EditorGUI.BeginDisabledGroup(true);
@@ -160,11 +174,13 @@ namespace jp.lilxyzw.lilycalinventory
             so.ApplyModifiedProperties();
         }
 
+        // メニューのパラメーターを整理して表示
         private static GUIStyle styleIcon => m_StyleIcon != null ? m_StyleIcon : m_StyleIcon = new GUIStyle(EditorStyles.objectFieldThumb){alignment = TextAnchor.MiddleCenter};
         private static GUIStyle m_StyleIcon;
         private static void DrawMenuBaseParameters(Object obj, SerializedObject so, SerializedProperty iterator)
         {
             EditorGUILayout.BeginHorizontal();
+                // アイコンは左に大きく正方形で表示
                 var iconSize = EditorGUIUtility.singleLineHeight * 3 + GUIHelper.GetSpaceHeight(3);
                 var rectIcon = EditorGUILayout.GetControlRect(GUILayout.Width(iconSize), GUILayout.Height(iconSize));
 
@@ -177,8 +193,10 @@ namespace jp.lilxyzw.lilycalinventory
                 //menuName
                 iterator.NextVisible(false);
                 GUIHelper.AutoField(iterator);
-                //parentOverride
+
+                // MAで制御される場合はグレーアウト
                 if(isOverridedByMA) EditorGUI.BeginDisabledGroup(true);
+                //parentOverride
                 iterator.NextVisible(false);
                 GUIHelper.AutoField(iterator);
                 //icon
@@ -193,6 +211,8 @@ namespace jp.lilxyzw.lilycalinventory
                     EditorGUI.LabelField(rectIcon, "Select", styleOverlay);
                 }
                 if(isOverridedByMA) EditorGUI.EndDisabledGroup();
+                // MAで制御される場合はグレーアウト
+
                 //parentOverrideMA
                 iterator.NextVisible(false);
                 #if LIL_MODULAR_AVATAR

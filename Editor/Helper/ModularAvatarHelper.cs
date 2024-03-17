@@ -20,12 +20,15 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void Inspector(Object target, SerializedProperty iterator)
         {
             #if LIL_MODULAR_AVATAR
+            // MAのメニューで制御されている場合はその旨を伝えるヘルプボックスを表示
             if(iterator.objectReferenceValue)
             {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.HelpBox(Localization.S("inspector.parentOverrideMAInfo"), MessageType.Info);
                 EditorGUI.indentLevel--;
             }
+
+            // そうでない場合かつオブジェクトがMenuGroup配下にある場合はMenuItemを生成
             else
             {
                 var component = (MenuBaseComponent)target;
@@ -53,6 +56,7 @@ namespace jp.lilxyzw.lilycalinventory
             #endif
         }
 
+        // 再帰的にMenuGroup配下に
         internal static void ResolveMenu(MenuFolder[] folders, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers)
         {
             #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
@@ -62,10 +66,12 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var m in togglers) m.Resolve(ControlType.Toggle, menus, duplicates);
             foreach(var m in smoothChangers) m.Resolve(ControlType.RadialPuppet, menus, duplicates);
             foreach(var m in costumeChangers) m.Resolve(menus, duplicates);
+
+            // 複数コンポーネントから参照されるMenuItemがあった場合にエラー
             if(duplicates.Count > 0)
                 ErrorHelper.Report("dialog.error.menuMADuplication", menus.Where(p => p.Value.Item2).Select(p => p.Value.Item1).Union(duplicates).ToArray());
 
-            // Clean Empty
+            // 空のメニューを除去
             foreach(var m in menus.Keys.Where(m => m.Control.type == ControlType.SubMenu && m.gameObject.transform.childCount == 0).ToArray())
                 Object.DestroyImmediate(m.gameObject);
             #else

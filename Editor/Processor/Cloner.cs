@@ -12,6 +12,8 @@ namespace jp.lilxyzw.lilycalinventory
     internal class Cloner
     {
         internal static Dictionary<Material,Material> materialMap;
+
+        // AnimatorControllerとExpressionsMenuとExpressionParametersをクローン
         internal static void DeepCloneAssets(BuildContext context)
         {
             CloneAnimatorControllers(context);
@@ -32,6 +34,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // Materialをクローン
         internal static Material[] CloneAllMaterials(BuildContext context)
         {
             CloneRendererMaterials(context);
@@ -109,6 +112,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // クローンしつつAssetContainerに登録
         private static Material CloneMaterial(Material material, BuildContext context)
         {
             if(!material) return material;

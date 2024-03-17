@@ -4,6 +4,8 @@ using UnityEngine.Animations;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // コメントを残すコンポーネント
+    // これ自体に機能はなく、PrefabやGameObjectに説明を残しておくことを想定しています。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Comment))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(Comment))]
     internal class Comment : AvatarTagComponent

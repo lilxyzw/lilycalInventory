@@ -14,6 +14,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var m in materials) RemoveUnusedProperties(m, propMap);
         }
 
+        // シェーダーで使われていないプロパティを除去
         private static void RemoveUnusedProperties(Material material, Dictionary<Shader, ShaderPropertyContainer> propMap)
         {
             var so = new SerializedObject(material);
@@ -54,6 +55,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // シェーダーのプロパティを検索して保持するクラス
     internal class ShaderPropertyContainer
     {
         internal List<string> textures = new List<string>();

@@ -12,10 +12,11 @@ namespace jp.lilxyzw.lilycalinventory
         private static readonly string PATH_PREF = $"{UnityEditorInternal.InternalEditorUtility.unityPreferencesFolder}/jp.lilxyzw";
         private static readonly string FILENAME_SETTING = ConstantValues.PACKAGE_NAME + ".json";
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
-
-        public bool useDirectBlendTree = false;
         private static ToolSettings m_Instance;
         internal static ToolSettings instance => m_Instance != null ? m_Instance : m_Instance = Load();
+
+        // 設定は現状DirectBlendTreeを使うかのみ
+        public bool useDirectBlendTree = false;
 
         [MenuItem(MENU_DIRECT_BLENDTREE)]
         private static void ToggleDirectBlendTree()

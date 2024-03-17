@@ -15,6 +15,7 @@ namespace jp.lilxyzw.lilycalinventory
             return name;
         }
 
+        // 衣装のメニュー名を取得
         private static string GetMenuName(this Costume costume, CostumeChanger changer)
         {
             if(!string.IsNullOrEmpty(costume.menuName)) return costume.menuName;
@@ -31,6 +32,7 @@ namespace jp.lilxyzw.lilycalinventory
             return null;
         }
 
+        // メニュー名を解決しつう重複がないかをチェック
         internal static void ResolveMenuName(this MenuBaseComponent[] components)
         {
             foreach(var component in components)
@@ -49,12 +51,14 @@ namespace jp.lilxyzw.lilycalinventory
             if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menuNameEmpty", objs.ToArray());
         }
 
+        // 親フォルダを検索
         internal static MenuFolder GetMenuParent(this MenuBaseComponent component)
         {
             if(component.parentOverride) return component.parentOverride;
             return component.gameObject.GetComponentInParentInAvatar<MenuFolder>();
         }
 
+        // メッシュが空っぽのときに全メッシュをアニメーション対象にするようにする
         internal static void CheckApplyToAll(ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers)
         {
             foreach(var toggler in togglers) toggler.parameter.CheckApplyToAll();
@@ -70,6 +74,7 @@ namespace jp.lilxyzw.lilycalinventory
                 blendShapeModifier.applyToAll = !blendShapeModifier.skinnedMeshRenderer;
         }
 
+        // アニメーション最適化のために無駄な操作項目を削除
         internal static void CheckUseless(ItemToggler[] togglers)
         {
             foreach(var toggler in togglers) toggler.parameter.CheckUseless();
@@ -80,6 +85,7 @@ namespace jp.lilxyzw.lilycalinventory
             parameters.objects = parameters.objects.Where(t => t.obj.activeSelf != t.value).ToArray();
         }
 
+        // 元のコンポーネントの設定値を変更しないようにクローン
         private static ParametersPerMenu Clone(this ParametersPerMenu parameters)
         {
             var p = new ParametersPerMenu();
@@ -97,6 +103,7 @@ namespace jp.lilxyzw.lilycalinventory
             return p;
         }
 
+        // AutoDresserをCostumeChangerに変換
         internal static Costume[] DresserToCostumes(this AutoDresser[] dressers, out Transform avatarRoot, AutoDresser dresserDefOverride = null)
         {
             avatarRoot = null;
@@ -119,15 +126,19 @@ namespace jp.lilxyzw.lilycalinventory
                 else if(!dresserDefOverride && obj.activeSelf)
                 {
                     if(def == null) def = cos;
+
+                    // 複数衣装がオンの場合にエラー
                     else ErrorHelper.Report("dialog.error.defaultDuplication", dressers);
                 }
                 else costumes.Add(cos);
             }
             if(def == null)
             {
+                // 全衣装がオフの場合にエラー
                 ErrorHelper.Report("dialog.error.allObjectOff", dressers);
                 return null;
             }
+            // アバターのルートが見つからない場合にエラー
             if(!avatarRoot) ErrorHelper.Report("dialog.error.avatarRootNofFound", dressers);
             costumes.Insert(0, def);
             return costumes.ToArray();
@@ -170,6 +181,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // PropをItemTogglerに変換
         internal static void PropToToggler(this Prop[] props)
         {
             if(props == null || props.Length == 0) return;
@@ -190,6 +202,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // ItemTogglerをnewするとUnityに怒られるためItemTogglerInternalを使用
         internal static ItemTogglerInternal PropToToggler(this Prop prop)
         {
             var obj = prop.gameObject;

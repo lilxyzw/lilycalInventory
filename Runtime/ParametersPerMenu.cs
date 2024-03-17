@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // CostumeChangerの各衣装に付けられるパラメーター
     [Serializable]
     internal class Costume : LILElement
     {
@@ -17,6 +18,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 
+    // SmoothChangerの各フレームに付けられるパラメーター
     [Serializable]
     internal class Frame : LILElement
     {
@@ -24,6 +26,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 
+    // 各メニュー操作コンポーネントの設定をまとめたクラス
     [Serializable]
     internal class ParametersPerMenu
     {
@@ -92,6 +95,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NoLabel] public bool disableW;
     }
 
+    // PropertyDrawerで制御するためのインターフェース
     interface LILElement {}
     interface LILElementWithoutChildrenFoldout {}
     interface LILElementSimple {}

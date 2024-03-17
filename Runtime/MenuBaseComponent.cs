@@ -3,6 +3,8 @@ using UnityEngine.Animations;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // 各メニュー生成コンポーネントのベースとなるクラス
+    // メニューに必須なプロパティはここにまとめています
     internal abstract class MenuBaseComponent : AvatarTagComponent
     {
         [NotKeyable] [MenuName] public string menuName;
