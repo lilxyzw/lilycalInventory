@@ -31,15 +31,18 @@ namespace jp.lilxyzw.lilycalinventory
         internal static Transform GetAvatarRoot(this GameObject gameObject)
         {
             #if LIL_VRCSDK3A
+                if(gameObject.GetComponent<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>()) return gameObject.transform;
                 var descriptor = gameObject.GetComponentInParentInRoot<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>(null);
                 if(descriptor) return descriptor.transform;
             #else
+                if(gameObject.GetComponent<Animator>()) return gameObject.transform;
                 var animator = gameObject.GetComponentInParentInRoot<Animator>(null);
                 if(animator) return animator.transform;
             #endif
             return null;
         }
 
+        // AnimationClip用のパス
         private static string GetPathFrom(this GameObject gameObject, Transform root)
         {
             var path = new StringBuilder();
@@ -63,16 +66,20 @@ namespace jp.lilxyzw.lilycalinventory
             return component.gameObject.GetPathInAvatar();
         }
 
+        // 指定の型に一致するコンポーネントをキャストしつつ取得
         internal static T[] SelectComponents<T>(this Component[] components) where T : MonoBehaviour
         {
             return components.Select(c => c as T).Where(c => c).ToArray();
         }
 
+        // Unityにないので
         internal static T LoadAssetByGUID<T>(string guid) where T : Object
         {
             return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
         }
 
+        // チェックボックスがオンなコンポーネントを取得
+        // ついでにEditorOnlyも除外
         internal static T[] GetActiveComponentsInChildren<T>(this GameObject gameObject, bool includeInactive) where T : MonoBehaviour
         {
             return gameObject.GetComponentsInChildren<T>(includeInactive).Where(c => c.enabled && !c.IsEditorOnly()).ToArray();

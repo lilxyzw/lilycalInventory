@@ -7,6 +7,7 @@ namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
+    // NDMFがない場合のダミー
     internal class BuildContext
     {
         internal GameObject AvatarRootObject;

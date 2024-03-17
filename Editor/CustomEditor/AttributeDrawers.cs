@@ -5,6 +5,7 @@ namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
+    // プレースホルダーで親フォルダを表示
     [CustomPropertyDrawer(typeof(MenuFolderOverrideAttribute))]
     internal class MenuFolderOverrideDrawer : PropertyDrawer
     {
@@ -16,6 +17,20 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 parentName = property.objectReferenceValue.name;
             }
+            else if(property.serializedObject.targetObject is AutoDresser)
+            {
+                var root = gameObject.GetAvatarRoot();
+                if(root)
+                {
+                    var settings = root.GetComponentInChildren<AutoDresserSettings>();
+                    if(settings) parentName = settings.GetMenuName();
+                    else parentName = "AutoDresser";
+                }
+                else
+                {
+                    parentName = "AutoDresser";
+                }
+            }
             else
             {
                 var parent = gameObject.GetComponentInParentInAvatar<MenuFolder>();
@@ -26,6 +41,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // Vector4を1行で表示
     [CustomPropertyDrawer(typeof(OneLineVectorAttribute))]
     internal class OneLineVectorDrawer : PropertyDrawer
     {
@@ -43,6 +59,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // ラベルなし
     [CustomPropertyDrawer(typeof(NoLabelAttribute))]
     internal class NoLabelDrawer : PropertyDrawer
     {
@@ -52,6 +69,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // プレースホルダーでメニュー名を表示
     [CustomPropertyDrawer(typeof(MenuNameAttribute))]
     internal class MenuNameDrawer : PropertyDrawer
     {
@@ -71,6 +89,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // プレースホルダーで衣装名を表示
     [CustomPropertyDrawer(typeof(CostumeNameAttribute))]
     internal class CostumeNameDrawer : PropertyDrawer
     {
@@ -174,6 +193,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // フレーム値をパーセント表記で表示
     [CustomPropertyDrawer(typeof(FrameAttribute))]
     internal class FrameDrawer : PropertyDrawer
     {
@@ -185,6 +205,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // プロパティをboxで囲んで表示
     [CustomPropertyDrawer(typeof(LILBoxAttribute))]
     internal class LILBoxDrawer : PropertyDrawer
     {

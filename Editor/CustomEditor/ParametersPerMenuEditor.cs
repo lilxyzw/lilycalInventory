@@ -7,6 +7,7 @@ namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
+    // 通常の要素
     [CustomPropertyDrawer(typeof(LILElement), true)]
     internal class LILElementDrawer : PropertyDrawer
     {
@@ -22,13 +23,17 @@ namespace jp.lilxyzw.lilycalinventory
             property.NextVisible(true);
             bool isObjectArray = property.isArray && property.arrayElementType.StartsWith("PPtr");
 
+            // Foldoutを閉じている場合
             if(!isExpanded)
             {
+                // Object名でラベルを表示
                 if(isObjectArray) EditorGUI.LabelField(position, string.Join(", ", property.GetAllObjectNames()));
+                // もしくはシンプルにプロパティを表示
                 else EditorGUI.PropertyField(position.SetHeight(property), property);
                 return;
             }
 
+            // Foldoutを開いている場合は後のプロパティを普通に表示
             if(drawFoldout && isObjectArray) position.Indent();
             position = GUIHelper.AutoField(position, property, drawFoldout);
             if(drawFoldout && !isObjectArray) position.Indent();
@@ -54,6 +59,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // 子の要素のFoldoutを表示しない
     [CustomPropertyDrawer(typeof(LILElementWithoutChildrenFoldout), true)]
     internal class LILElementWithoutChildrenFoldoutDrawer : PropertyDrawer
     {
@@ -77,7 +83,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
-    // Without foldout
+    // Foldout完全になし
     [CustomPropertyDrawer(typeof(LILElementSimple), true)]
     internal class LILElementSimpleDrawer : PropertyDrawer
     {
@@ -107,7 +113,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
-    // This need to set initialize value
+    // ParametersPerMenuはListの要素追加時に初期値を設定したいのでPropertyDrawerを作成
     [CustomPropertyDrawer(typeof(ParametersPerMenu))]
     internal class ParametersPerMenuDrawer : PropertyDrawer
     {
@@ -141,7 +147,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
-    // This need to draw property on 1-line
+    // オンオフ対象のオブジェクトとトグルを1行で表示
     [CustomPropertyDrawer(typeof(ObjectToggler))]
     internal class ObjectTogglerDrawer : PropertyDrawer
     {
@@ -154,6 +160,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // BlendShapeを表示
     [CustomPropertyDrawer(typeof(BlendShapeModifier))]
     internal class BlendShapeModifierDrawer : PropertyDrawer
     {
@@ -162,20 +169,27 @@ namespace jp.lilxyzw.lilycalinventory
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            // メッシュを選択
             var smr = property.FPR("skinnedMeshRenderer");
             EditorGUI.PropertyField(position.SingleLine(), smr);
             mesh = null;
             if(smr.objectReferenceValue) mesh = ((SkinnedMeshRenderer)smr.objectReferenceValue).sharedMesh;
+
+            // 後続のBlendShapeが正しく入力されているかどうかを判定するためにメッシュを渡す
             BlendShapeNameValueDrawer.mesh = mesh;
 
+            // Foldoutを表示
             if(!GUIHelper.FoldoutOnly(position, property)) return;
 
             var blendShapeNameValues = property.FPR("blendShapeNameValues");
             position = GUIHelper.List(position.NewLine(), blendShapeNameValues, false, prop =>
                 {
                     if(!mesh) return;
+                    // 追加ボタンデフォルトで行われる追加は一旦削除
                     blendShapeNameValues.arraySize--;
                     UpdateBlendShapes(mesh);
+
+                    // BlendShapeのサジェストを表示
                     EditorUtility.DisplayCustomMenu(new Rect(Event.current.mousePosition, Vector2.one), GUIHelper.CreateContents(blendShapes[mesh]), -1, (userData, options, selected) =>
                     {
                         var blendShapeNameValues2 = (((SerializedProperty,Mesh))userData).Item1;
@@ -197,6 +211,7 @@ namespace jp.lilxyzw.lilycalinventory
                 GUIHelper.GetSpaceHeight(2);
         }
 
+        // メッシュからBlendShapeを取得
         private void UpdateBlendShapes(Mesh mesh)
         {
             if(blendShapes.ContainsKey(mesh) && blendShapes[mesh].Length == mesh.blendShapeCount) return;
@@ -208,7 +223,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
-    // This need to draw property on 1-line
+    // BlendShapeと値を1行で表示
     [CustomPropertyDrawer(typeof(BlendShapeNameValue))]
     internal class BlendShapeNameValueDrawer : PropertyDrawer
     {
@@ -216,7 +231,10 @@ namespace jp.lilxyzw.lilycalinventory
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var colors = EditorStyles.textField.GetColors();
+
+            // BlendShape名が不正な場合は赤文字で警告
             if(mesh && mesh.GetBlendShapeIndex(property.FPR("name").stringValue) == -1) EditorStyles.textField.SetColors(Color.red);
+
             var nameRect = new Rect(position.x, position.y, position.width * 0.666f, position.height);
             var valueRect = new Rect(nameRect.xMax + 2, position.y, position.width * 0.333f - 2, position.height);
             EditorGUIUtility.labelWidth = 40;
@@ -227,6 +245,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // Rendererと置き換え先マテリアル
     [CustomPropertyDrawer(typeof(MaterialReplacer))]
     internal class MaterialReplacerDrawer : PropertyDrawer
     {
@@ -236,6 +255,7 @@ namespace jp.lilxyzw.lilycalinventory
             var replaceTo = property.FPR("replaceTo");
             GUIHelper.FieldOnly(position.SingleLine(), renderer);
 
+            // 配列のサイズをあわせる
             var materials = new Material[0];
             if(renderer.objectReferenceValue)
             {
@@ -254,6 +274,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // マテリアルのベクトルプロパティの表示
     [CustomPropertyDrawer(typeof(VectorModifier))]
     internal class VectorModifierDrawer : PropertyDrawer
     {
@@ -265,12 +286,16 @@ namespace jp.lilxyzw.lilycalinventory
             var disableY = property.FPR("disableY");
             var disableZ = property.FPR("disableZ");
             var disableW = property.FPR("disableW");
+
+            // プロパティ名
             GUIHelper.AutoField(position.SingleLine(), propertyName);
+
+            // ベクトル
             var fieldPosition = EditorGUI.PrefixLabel(position.NewLine(), Localization.G(value));
             var fieldWidth = fieldPosition.width * 0.25f;
-
             EditorGUIUtility.labelWidth = 12;
             fieldPosition.width = fieldWidth - 2;
+
             EditorGUI.BeginChangeCheck();
             var vec = value.vector4Value;
             vec.x = FloatField(ref fieldPosition, "X", vec.x, disableX.boolValue, fieldWidth);
@@ -281,6 +306,7 @@ namespace jp.lilxyzw.lilycalinventory
 
             EditorGUIUtility.labelWidth = 0;
 
+            // トグルをベクトルの各要素の位置に合わせて表示
             position.NewLine();
             position = EditorGUI.PrefixLabel(position, Localization.G("inspector.disable"));
             position.width *= 0.25f;
@@ -293,6 +319,7 @@ namespace jp.lilxyzw.lilycalinventory
             GUIHelper.AutoField(position, disableW);
         }
 
+        // 位置を更新しつつ表示する
         float FloatField(ref Rect rect, string label, float value, bool disabled, float fieldWidth)
         {
             if(disabled) EditorGUI.BeginDisabledGroup(true);
@@ -302,6 +329,7 @@ namespace jp.lilxyzw.lilycalinventory
             return value;
         }
 
+        // プロパティ名、ベクトル、トグルで3行
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return GUIHelper.propertyHeight * 3 + GUIHelper.GetSpaceHeight(3);

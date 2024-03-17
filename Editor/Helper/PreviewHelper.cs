@@ -19,37 +19,35 @@ namespace jp.lilxyzw.lilycalinventory
         private static bool doPreview = true;
         private static int previewIndex = 0;
         private static float previewFrame = 0;
+
+        // オブジェクト変更状況を外部から辿れるようにする
         private static readonly Dictionary<Object, Dictionary<string, object>> valueContainer = new Dictionary<Object, Dictionary<string, object>>();
 
         [SerializeField] private AnimationModeDriver driver;
         private AnimationModeDriver Driver => driver ? driver : driver = CreateDriver();
-        #if !UNITY_2020_1_OR_NEWER
-        private AnimationModeDriver CreateDriver() => CreateInstance(typeof(AnimationMode).Assembly.GetType("UnityEditor.AnimationModeDriver"));
-        #else
-        private AnimationModeDriver CreateDriver() => CreateInstance<AnimationModeDriver>();
-        #endif
-
         #if UNITY_2020_1_OR_NEWER
-            private static void StartAnimationMode(AnimationModeDriver driver) => AnimationMode.StartAnimationMode(driver);
-            private static void StopAnimationMode(AnimationModeDriver driver) => AnimationMode.StopAnimationMode(driver);
+        private AnimationModeDriver CreateDriver() => CreateInstance<AnimationModeDriver>();
+        private static void StartAnimationMode(AnimationModeDriver driver) => AnimationMode.StartAnimationMode(driver);
+        private static void StopAnimationMode(AnimationModeDriver driver) => AnimationMode.StopAnimationMode(driver);
         #else
-            private static MethodInfo startAnimationMode = null;
-            private static MethodInfo stopAnimationMode = null;
-            private static void StartAnimationMode(AnimationModeDriver driver)
-            {
-                if(startAnimationMode == null)
-                    startAnimationMode = typeof(AnimationMode).GetMethod("StartAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
-                if(startAnimationMode != null) startAnimationMode.Invoke(null, new object[]{driver});
-                else AnimationMode.StartAnimationMode();
-            }
+        private AnimationModeDriver CreateDriver() => CreateInstance(typeof(AnimationMode).Assembly.GetType("UnityEditor.AnimationModeDriver"));
+        private static MethodInfo startAnimationMode = null;
+        private static MethodInfo stopAnimationMode = null;
+        private static void StartAnimationMode(AnimationModeDriver driver)
+        {
+            if(startAnimationMode == null)
+                startAnimationMode = typeof(AnimationMode).GetMethod("StartAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
+            if(startAnimationMode != null) startAnimationMode.Invoke(null, new object[]{driver});
+            else AnimationMode.StartAnimationMode();
+        }
 
-            private static void StopAnimationMode(AnimationModeDriver driver)
-            {
-                if(stopAnimationMode == null)
-                    stopAnimationMode = typeof(AnimationMode).GetMethod("StopAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
-                if(stopAnimationMode != null) stopAnimationMode.Invoke(null, new object[]{driver});
-                else AnimationMode.StopAnimationMode();
-            }
+        private static void StopAnimationMode(AnimationModeDriver driver)
+        {
+            if(stopAnimationMode == null)
+                stopAnimationMode = typeof(AnimationMode).GetMethod("StopAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
+            if(stopAnimationMode != null) stopAnimationMode.Invoke(null, new object[]{driver});
+            else AnimationMode.StopAnimationMode();
+        }
         #endif
 
         private void StartPreview(ParametersPerMenu parameter)
@@ -144,16 +142,22 @@ namespace jp.lilxyzw.lilycalinventory
             return false;
         }
 
+        // プレビュー切り替え用のGUI
         internal void TogglePreview(Object obj)
         {
             var rect = EditorGUI.PrefixLabel(EditorGUILayout.GetControlRect(), Localization.G("inspector.previewAnimation"));
             EditorGUI.BeginChangeCheck();
             doPreview = GUI.Toolbar(rect, doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
-            if(EditorGUI.EndChangeCheck() && !doPreview) StopPreview();
+            var isChanged = EditorGUI.EndChangeCheck();
+
+            // 選択しているオブジェクト自体がアニメーションされている場合は警告を表示
             if(doPreview && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
                 EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);
+
+            if(isChanged && !doPreview) StopPreview();
         }
 
+        // プレビュー衣装切り替え用のGUI
         private void DrawIndex(int size, string key)
         {
             EditorGUI.BeginDisabledGroup(size == 0);
@@ -165,6 +169,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(previewIndex < 0) previewIndex = 0;
         }
 
+        // プレビューフレーム切り替え用のGUI
         private void DrawIndex(string key)
         {
             EditorGUI.BeginChangeCheck();
@@ -182,6 +187,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // ParametersPerMenuから設定を読み取って実際にアニメーションさせる
         internal void SampleParameters()
         {
             var gameObject = target.gameObject.GetAvatarRoot().gameObject;
@@ -241,12 +247,12 @@ namespace jp.lilxyzw.lilycalinventory
                 if(modified) replacer.renderer.sharedMaterials = materials;
             }
 
-            // MaterialPropertyModifier as replacer
+            // MaterialPropertyModifierはマテリアル置き換えで動作
             foreach(var modifier in m_Parameters.materialPropertyModifiers)
             {
                 var renderers = modifier.renderers;
                 if(renderers.Length == 0)
-                    renderers = gameObject.GetComponentsInChildren<Renderer>(false).ToArray(); // Slows down when there are a large number of costumes, so false 
+                    renderers = gameObject.GetComponentsInChildren<Renderer>(false).ToArray(); // 大量の衣装がある場合に遅くなるので非表示のメッシュは無視
 
                 foreach(var renderer in renderers)
                 {
@@ -281,6 +287,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // 外部から変更状況を見れるように同時にDictionaryへの登録も行う
         private static void AddPropertyModification(EditorCurveBinding binding, Object target, string propertyPath, Object value)
         {
             AddToContainer(target, propertyPath, value);
@@ -324,6 +331,7 @@ namespace jp.lilxyzw.lilycalinventory
             return valueContainer[target][propertyPath];
         }
 
+        // SmoothChangerで使用するフレーム間の補間
         private ParametersPerMenu Interpolate(Frame[] frames)
         {
             if(frames.Length == 0) return null;
@@ -369,7 +377,7 @@ namespace jp.lilxyzw.lilycalinventory
                 obj.value = isNearMax ? max : min;
             }
 
-            var defaultValues = parameters.blendShapeModifiers.Select(m => (m.skinnedMeshRenderer, m.blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value))).ToHashSet();
+            var defaultValues = parameters.blendShapeModifiers.Select(m => (m.skinnedMeshRenderer, m.blendShapeNameValues.ToDictionary(nv => nv.name, nv => nv.value))).Distinct().ToList();
             var renderers = nearestMin.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer).Union(
                 nearestMax.parametersPerMenu.blendShapeModifiers.Select(m => m.skinnedMeshRenderer)
             ).ToArray();

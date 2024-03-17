@@ -16,6 +16,8 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal class MenuGenerator
     {
+        // メニューの追加処理
+        // 順序処理を追加するにあたって大幅な書き換えを予定
         internal static void Generate(BuildContext ctx, MenuFolder[] folders, ItemToggler[] togglers, SmoothChanger[] smoothChangers, CostumeChanger[] costumeChangers
         #if LIL_VRCSDK3A
         , VRCExpressionsMenu menu, Dictionary<MenuFolder, VRCExpressionsMenu> dic
@@ -30,24 +32,28 @@ namespace jp.lilxyzw.lilycalinventory
                 return menu;
             }
 
+            // 親フォルダを生成
             foreach(var folder in folders)
             {
                 if(folder.parentOverrideMA) continue;
                 TryGetMenuFolder(ctx, folder, menu, dic);
             }
 
+            // ItemTogglerを追加
             foreach(var toggler in togglers)
             {
                 if(toggler.parentOverrideMA) continue;
                 FindParent(toggler).controls.CreateAndAdd(toggler.menuName, toggler.icon, ControlType.Toggle, toggler.menuName);
             }
 
+            // SmoothChangerを追加
             foreach(var changer in smoothChangers)
             {
                 if(changer.parentOverrideMA || changer.frames.Length == 0) continue;
                 FindParent(changer).controls.CreateAndAdd(changer.menuName, changer.icon, ControlType.RadialPuppet, changer.menuName);
             }
 
+            // CostumeChangerを追加
             foreach(var changer in costumeChangers)
             {
                 if(changer.parentOverrideMA || changer.costumes.Length == 0) continue;

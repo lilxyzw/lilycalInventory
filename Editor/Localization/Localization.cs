@@ -11,9 +11,12 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal class Localization
     {
+        // 設定ファイルの保存先
         private static readonly string PATH_PREF = $"{UnityEditorInternal.InternalEditorUtility.unityPreferencesFolder}/jp.lilxyzw";
         private static readonly string FILENAME_SETTING = ConstantValues.PACKAGE_NAME + ".language.conf";
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
+
+        // 言語
         private static List<Dictionary<string, string>> languages = new List<Dictionary<string, string>>();
         private static List<string> codes = new List<string>();
         private static string[] names;
@@ -29,6 +32,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var langData = File.ReadAllText(path);
                 var lang = JsonDictionaryParser.Deserialize<string>(langData);
                 if(lang == null) continue;
+
+                // 言語ファイルの名前が言語コードと一致していることを期待
                 var code = Path.GetFileNameWithoutExtension(path).ToLower(CultureInfo.InvariantCulture);
                 languages.Add(lang);
                 codes.Add(code);
@@ -64,6 +69,7 @@ namespace jp.lilxyzw.lilycalinventory
             return index;
         }
 
+        // 単純にキーから翻訳を取得
         private static string S(string key, int index)
         {
             return languages[index].TryGetValue(key, out string o) ? o : null;
@@ -89,6 +95,7 @@ namespace jp.lilxyzw.lilycalinventory
             return S($"inspector.{property.name}");
         }
 
+        // tooltip付きのGUIContentを生成
         internal static GUIContent G(string key)
         {
             if(DragAndDrop.objectReferences != null && DragAndDrop.objectReferences.Length > 0) return new GUIContent(S(key) ?? key);
@@ -100,6 +107,7 @@ namespace jp.lilxyzw.lilycalinventory
             return G($"inspector.{property.name}");
         }
 
+        // 各所で表示される言語設定GUI
         internal static bool SelectLanguageGUI()
         {
             EditorGUI.BeginChangeCheck();
@@ -119,6 +127,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(EditorGUI.EndChangeCheck()) SaveLanguageSettings();
         }
 
+        // 設定ファイルの読み込みと保存
         private static string LoadLanguageSettings()
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
@@ -133,6 +142,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // なるべく安全に保存・読み込み
     internal class SafeIO
     {
         internal static void SaveFile(string path, string content)

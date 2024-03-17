@@ -14,12 +14,14 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static class Processor
     {
-        // Common
+        // lilycalInventoryの処理を行うか
         private static bool shouldModify;
-        // Material
+
+        // Material系コンポーネント
         private static MaterialModifier[] modifiers;
         private static MaterialOptimizer[] optimizers;
-        // Menu
+
+        // メニュー系コンポーネント
         private static AvatarTagComponent[] components;
         private static AutoDresserSettings[] dresserSettings;
         private static AutoDresser[] dressers;
@@ -30,13 +32,15 @@ namespace jp.lilxyzw.lilycalinventory
         private static SmoothChanger[] smoothChangers;
         private static Material[] materials;
         private static HashSet<string> parameterNames;
+
+        // 強制アクティブにするオブジェクトとそのオブジェクトの元のアクティブ状態の配列
         private static (GameObject,bool)[] actives;
 
         internal static void FindComponent(BuildContext ctx)
         {
             Cloner.materialMap = new Dictionary<Material, Material>();
 
-            // Remove Comment Component
+            // Commentコンポーネントを削除
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
                 Object.DestroyImmediate(component);
 
@@ -44,16 +48,17 @@ namespace jp.lilxyzw.lilycalinventory
             props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>(true);
             actives = dressers.Select(d => (d.gameObject,d.gameObject.activeSelf)).Union(props.Select(p => (p.gameObject,p.gameObject.activeSelf))).ToArray();
 
-            // Resolve Dresser
+            // AutoDresserをCostumeChangerに変換
             dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(false);
             if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
             dressers.ResolveMenuName();
             dressers.DresserToChanger(dresserSettings);
-            // Resolve Prop
+
+            // PropをItemTogglerに変換
             props.ResolveMenuName();
             props.PropToToggler();
 
-            // Set force active recursive
+            // 子が強制アクティブな場合はメニューの親フォルダを再帰的にアクティブ化
             void ForceActive(MenuBaseComponent component)
             {
                 var parent = component.GetMenuParent();
@@ -61,13 +66,15 @@ namespace jp.lilxyzw.lilycalinventory
                 parent.forceActive = true;
                 ForceActive(parent);
             }
-
             foreach(var component in ctx.AvatarRootObject.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => c.forceActive).ToArray())
                 ForceActive(component);
 
+            // 一時的にアクティブにして子のコンポーネントが探索されるようにする
             foreach(var a in actives) a.Item1.SetActive(true);
             components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).Where(c => c.gameObject.activeInHierarchy || c.forceActive).ToArray();
             foreach(var a in actives) a.Item1.SetActive(a.Item2);
+
+            // 各コンポーネントを取得
             modifiers = components.SelectComponents<MaterialModifier>();
             optimizers = components.SelectComponents<MaterialOptimizer>();
             folders = components.SelectComponents<MenuFolder>();
@@ -76,20 +83,29 @@ namespace jp.lilxyzw.lilycalinventory
             smoothChangers = components.SelectComponents<SmoothChanger>();
             shouldModify = components.Length != 0;
             if(!shouldModify) return;
+
+            // メニュー名を解決
             components.SelectComponents<MenuBaseComponent>().ResolveMenuName();
             components.SelectComponents<CostumeChanger>().ResolveMenuName();
+
+            // 全メッシュに処理を適用するかを確認
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
+
+            // 無駄な設定を除去
             ObjHelper.CheckUseless(togglers);
 
+            // 再帰的にMenuGroup配下に
             ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers);
         }
 
+        // AnimatorControllerとExpressionsMenuとExpressionParametersをクローン
         internal static void CloneAssets(BuildContext ctx)
         {
             if(!shouldModify) return;
             Cloner.DeepCloneAssets(ctx);
         }
 
+        // アニメーション系コンポーネントの処理
         internal static void ModifyPreProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
@@ -102,49 +118,63 @@ namespace jp.lilxyzw.lilycalinventory
                 var parameters = VRChatHelper.CreateParameters(ctx);
                 var menuDic = new Dictionary<MenuFolder, VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu>();
 
+                // パラメーター名の重複チェック
                 parameterNames = new HashSet<string>();
                 if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
                 if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
                 var parameterDuplicates = components.SelectComponents<MenuBaseComponent>().Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).Select(c => c.gameObject).ToArray();
                 if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
+                // DirectBlendTreeのルートを作成
                 BlendTree tree = null;
                 if(ToolSettings.instance.useDirectBlendTree)
                 {
                     AnimationHelper.CreateLayer(controller, out tree);
                     AssetDatabase.AddObjectToAsset(tree, ctx.AssetContainer);
                 }
+
+                // 各コンポーネントの処理
                 Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
                 Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, parameters);
                 Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, parameters);
                 Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, parameters);
+
+                // DirectBlendTreeの子のパラメーターを設定
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
+
+                // メニューを生成
                 MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, menu, menuDic);
+
+                // 生成したメニュー・パラメーターをマージ
                 ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
             }
             #else
-            // Not supported
+            // 各SNSごとに処理を追加していく必要あり
             #endif
         }
 
+        // Materialのクローン
         internal static void CloneMaterials(BuildContext ctx)
         {
             if(!shouldModify) return;
             materials = Cloner.CloneAllMaterials(ctx);
         }
 
+        // マテリアルを編集
         internal static void ModifyPostProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
             Modifier.ApplyMaterialModifier(materials, modifiers);
         }
 
+        // 後の最適化ツールが正しく動作するようにコンポーネントをここで除去
         internal static void RemoveComponent(BuildContext ctx)
         {
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true))
                 Object.DestroyImmediate(component);
         }
 
+        // マテリアルから不要なプロパティを除去
         internal static void Optimize(BuildContext ctx)
         {
             if(shouldModify && optimizers.Length != 0) Optimizer.OptimizeMaterials(materials);

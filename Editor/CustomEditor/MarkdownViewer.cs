@@ -42,6 +42,10 @@ namespace jp.lilxyzw.lilycalinventory
             private const float FONT_SIZE = 14f;
             private static Dictionary<MouseCursor, Cursor> cursors = new Dictionary<MouseCursor, Cursor>();
 
+            // ----------------------------------------------------------------
+            // UIElementsで日本語フォントが壊れているため生成して上書き
+            // 以下を参考にして書き直したほうがいいかも
+            // https://github.com/Unity-Technologies/UnityCsReference/blob/2022.3/Modules/LocalizationEditor/LocalizedEditorFontManager.cs
             private static readonly string[] fontNamesEn = {"Inter", "Arial"};
             private static readonly string[] fontNamesJp = {"Yu Gothic UI", "Meiryo UI"};
             private static bool isInitialized = false;
@@ -83,6 +87,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(fontAsset) style.unityFontDefinition = fontDefinition;
             }
 
+            // マウスを重ねたときにテキスト選択用のカーソルに変えたいので必要
             private static Cursor GetDefaultCursor(MouseCursor mouseCursor)
             {
                 if(cursors.ContainsKey(mouseCursor)) return cursors[mouseCursor];
@@ -141,9 +146,11 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
         #else
+        // Unity 2019ではIMGUIで代替
         private static PropertyInfo hyperlinkInfos;
         private static bool isInitializedReflection = false;
 
+        // クリック可能なURL用コールバック
         [InitializeOnLoadMethod]
         private static void AddLILHref()
         {
@@ -244,22 +251,26 @@ namespace jp.lilxyzw.lilycalinventory
         }
         #endif
 
+        // リスト用にマーカーとラベルを表示
         internal class MDList : VisualElement
         {
             private MDLabel veMarker;
             private MDLabel veLabel;
             internal MDList(string label, string marker, bool enableSpace, int depth)
             {
+                // マーカーとラベルを横並びに
                 style.flexDirection = FlexDirection.Row;
                 style.marginLeft = depth * 24;
                 if(enableSpace) style.marginTop = 12;
 
+                // マーカーは右揃えにして整った見た目になるように
                 veMarker = new MDLabel(marker);
                 veMarker.style.unityTextAlign = TextAnchor.UpperRight;
                 veMarker.style.width = 24;
                 veMarker.style.paddingTop = veMarker.style.paddingTop.value.value + 1;
                 Add(veMarker);
 
+                // ラベルは通常同様に表示
                 veLabel = new MDLabel(label, MDType.p, false);
                 veLabel.style.paddingRight = veLabel.style.paddingRight.value.value + 20;
                 veLabel.style.flexGrow = 1;
@@ -267,6 +278,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // 引用
         internal class Blockquote : Box
         {
             internal Blockquote(bool enableSpace)
@@ -285,16 +297,20 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // 描画
         internal static VisualElement Draw(string markdown)
         {
             var root = new VisualElement();
-            var mds = Get(markdown);
-            var prevtype = MDType.p;
-            int prevDepth = 0;
-            var listCounts = new Dictionary<int,int>();
+            var mds = Get(markdown); // Markdownを要素ごとに分解
+            var prevtype = MDType.p; // 直前の要素の種類
+            int prevDepth = 0; // 多重引用の深さ
+            var listCounts = new Dictionary<int,int>(); // 連番リストの深さと番号
+
             foreach(var mdpart in mds)
             {
                 bool enableSpace = true;
+
+                // 通常のテキストやリストの場合は改行でスペースを開けない
                 switch(mdpart.Item1)
                 {
                     case MDType.p:
@@ -303,8 +319,10 @@ namespace jp.lilxyzw.lilycalinventory
                         enableSpace = prevtype != mdpart.Item1;
                         break;
                 }
+
                 if(mdpart.Item3 > prevDepth)
                 {
+                    // 引用の深度が直前より大きい場合は子にBlockquoteを追加してそれを親にする
                     enableSpace = true;
                     for(int i = 0; i < mdpart.Item3 - prevDepth; i++)
                     {
@@ -316,12 +334,15 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 else if(mdpart.Item3 < prevDepth)
                 {
+                    // 引用の深度が直前より浅い場合は親に戻る
                     for(int i = 0; i < prevDepth - mdpart.Item3; i++)
                     {
                         root = root.parent;
                     }
                     enableSpace = true;
                 }
+
+                // 要素の追加
                 switch(mdpart.Item1)
                 {
                     case MDType.ul:
@@ -350,63 +371,92 @@ namespace jp.lilxyzw.lilycalinventory
             return root;
         }
 
+        // Markdownを要素で分解する関数
         private static List<(MDType,string,int,int)> Get(string markdown)
         {
             if(mdlist.ContainsKey(markdown)) return mdlist[markdown];
+
             var temp = new List<(MDType,string,int,int)>();
-            var sr = new StringReader(markdown);
-            string line;
-            var sb = new StringBuilder();
-            int prevDepth = 0;
+            int prevDepth = 0; // 多重引用の深さ
             bool isNewline = false;
-            int listSpace = 1;
+            int listSpace = 1; // listのインデント
+
+            var sr = new StringReader(markdown);
+            var sb = new StringBuilder();
+            string line;
+
             while((line = sr.ReadLine()) != null)
             {
                 var mdpart = CheckType(line);
+
+                // 通常のテキストである場合の処理
                 if(mdpart.type == MDType.p)
                 {
+                    // 引用の深さが異なる場合は要素を分割
                     if(prevDepth != mdpart.blockquoteDepth) isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
+
+                    // 行頭でない場合は改行時に空白を入れる
                     if(!isNewline) sb.Append(" ");
                     sb.Append(mdpart.text);
                     isNewline = false;
+
+                    // 末尾がスペース2つ以上で終わる場合かつ既存テキストが空白でない場合は改行
                     if(mdpart.isBr && sb.Length > 0)
                     {
                         sb.AppendLine();
                         isNewline = true;
                     }
                 }
+
+                // リストである場合の処理
                 else if(mdpart.type == MDType.ul || mdpart.type == MDType.ol)
                 {
                     isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
                     if(listSpace == 1 && mdpart.listDepth > 1) listSpace = mdpart.listDepth;
                     temp.AddFixed((mdpart.type, mdpart.text, mdpart.blockquoteDepth, mdpart.listDepth / listSpace));
                 }
-                else if(mdpart.type != MDType.br && mdpart.type != MDType.h1line && mdpart.type != MDType.h2line)
-                {
-                    isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
-                    temp.AddFixed((mdpart.type, mdpart.text, mdpart.blockquoteDepth, 0));
-                }
+
+                // 改行である場合の処理
                 else if(mdpart.type == MDType.br)
                 {
+                    // 引用の深さが異なる場合は要素を分割
                     if(prevDepth != mdpart.blockquoteDepth) isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
+
+                    // そうでない場合かつ既存テキストが空白でない場合は改行
                     else if(sb.Length > 0)
                     {
                         sb.AppendLine();
                         isNewline = true;
                     }
                 }
-                else
+
+                // ヘッダー用のラインである場合の処理
+                else if(mdpart.type == MDType.h1line || mdpart.type == MDType.h2line)
                 {
                     if(mdpart.type == MDType.h1line) isNewline = temp.AddFixed((MDType.h1,sb,prevDepth,0));
                     if(mdpart.type == MDType.h2line) isNewline = temp.AddFixed((MDType.h2,sb,prevDepth,0));
                 }
+
+                // それ以外の処理
+                else
+                {
+                    // 既存テキストを追加
+                    isNewline = temp.AddFixed((MDType.p,sb,prevDepth,0));
+
+                    // 現在の要素を追加
+                    temp.AddFixed((mdpart.type, mdpart.text, mdpart.blockquoteDepth, 0));
+                }
+
+                // リスト出ない場合はインデントを戻す
                 if(mdpart.type != MDType.ul && mdpart.type != MDType.ol) listSpace = 1;
                 prevDepth = mdpart.blockquoteDepth;
             }
+
             temp.AddFixed((MDType.p,sb,prevDepth,0));
             return mdlist[markdown] = temp;
         }
 
+        // StringBuilderを空にしつつ処理
         private static bool AddFixed(this List<(MDType, string, int, int)> list, (MDType, StringBuilder, int, int) item)
         {
             if(item.Item2.Length == 0) return false;
@@ -419,8 +469,12 @@ namespace jp.lilxyzw.lilycalinventory
         private static void AddFixed(this List<(MDType, string, int, int)> list, (MDType, string, int, int) item)
         {
             var s = item.Item2.Trim();
+
+            // マルチバイト文字を含む場合はスペースを置き換えて変な改行をされないように
             bool hasMultiByte = s.Length != encSjis.GetByteCount(s);
             if(hasMultiByte) s = s.Replace(" ", "\u00A0");
+
+            // マークダウン構文をHTML構文に置換
             s = s.Replace("<br>", System.Environment.NewLine);
             s = s.Replace("``", string.Empty);
             ReplaceSyntax(ref s, "**", "<b>", "</b>");
@@ -434,9 +488,11 @@ namespace jp.lilxyzw.lilycalinventory
             #if !UNITY_2022_3_OR_NEWER
             s = s.Replace("<a href=", "<a lilhref=");
             #endif
+
             list.Add((item.Item1,s,item.Item3,item.Item4));
         }
 
+        // 構文の置換
         private static void ReplaceSyntax(ref string s, string syntax, string start, string end)
         {
             while(true)
@@ -464,6 +520,7 @@ namespace jp.lilxyzw.lilycalinventory
             s = Regex.Replace(s, @"(?<!<a href="")https?://[^\s\n\\\(\)\^\[\]`<>#""%（）{}|]*", m =>  $"<a href=\"{m.Value}\">{m.Value}</a>");
         }
 
+        // 行頭から要素の種類を判定
         private static MDPart CheckType(string line)
         {
             bool isBr = line.EndsWith("  ");

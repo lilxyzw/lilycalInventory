@@ -5,11 +5,13 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
+    // Layerで処理
+    // AnimationHelper.DirectBlendTree.cs と対になっています
     internal static partial class AnimationHelper
     {
-
         internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name)
         {
+            // オンオフアニメーションを追加
             var stateDefault = new AnimatorState
             {
                 motion = clipDefault,
@@ -25,7 +27,6 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             var stateMachine = new AnimatorStateMachine();
-
             stateMachine.AddState(stateDefault, stateMachine.entryPosition + new Vector3(200,0,0));
             stateMachine.AddState(stateChanged, stateMachine.entryPosition + new Vector3(450,0,0));
             stateMachine.defaultState = stateDefault;
@@ -54,6 +55,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             var stateMachine = new AnimatorStateMachine();
 
+            // 衣装の数だけアニメーションを追加
             for(int i = 0; i < clips.Length; i++)
             {
                 var clip = clips[i];
@@ -94,6 +96,7 @@ namespace jp.lilxyzw.lilycalinventory
                 useAutomaticThresholds = false
             };
 
+            // フレームの数だけアニメーションを追加
             for(int i = 0; i < clips.Length; i++)
                 tree.AddChild(clips[i], frames[i]);
 
@@ -119,7 +122,8 @@ namespace jp.lilxyzw.lilycalinventory
                 controller.AddParameter(name, AnimatorControllerParameterType.Float);
         }
 
-        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, string[] bools, (string,int,(int,bool)[])[] ints, bool isActive)
+        // 複数コンポーネントから操作されるオブジェクト用
+        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive)
         {
             var stateDefault = new AnimatorState
             {
@@ -155,7 +159,7 @@ namespace jp.lilxyzw.lilycalinventory
             controller.AddLayer(layer);
         }
 
-        private static void AddConditions(AnimatorState stateDefault, AnimatorState stateChanged, string[] bools, (string,int,(int,bool)[])[] ints, bool isActive)
+        private static void AddConditions(AnimatorState stateDefault, AnimatorState stateChanged, string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive)
         {
 
             var toChangeds = ints.Select(i => i.Item3.Length).Aggregate((a, b) => a * b);
@@ -167,6 +171,7 @@ namespace jp.lilxyzw.lilycalinventory
                 transitionToChangeds[i].duration = 0;
             }
 
+            // Boolはand条件で処理
             foreach(var b in bools)
             {
                 foreach(var transitionToChanged in transitionToChangeds)
@@ -177,18 +182,19 @@ namespace jp.lilxyzw.lilycalinventory
                 transitionToDefault.AddCondition(isActive ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, b);
             }
 
+            // Intもand条件だが、Int内の各数値はor条件
             int offset = 1;
             foreach(var b in ints)
             {
                 for(int i = 0; i < b.Item3.Length; i++)
-                    transitionToChangeds[i*offset].AddCondition(!b.Item3[i].Item2 ? AnimatorConditionMode.NotEqual : AnimatorConditionMode.Equals, b.Item3[i].Item1, b.Item1);
+                    transitionToChangeds[i*offset].AddCondition(!b.Item3[i].isActive ? AnimatorConditionMode.NotEqual : AnimatorConditionMode.Equals, b.Item3[i].value, b.name);
 
                 offset *= b.Item3.Length;
 
                 var transitionToDefault = stateChanged.AddTransition(stateDefault);
                 transitionToDefault.duration = 0;
                 foreach(var c in b.Item3)
-                    transitionToDefault.AddCondition(!c.Item2 ? AnimatorConditionMode.Equals : AnimatorConditionMode.NotEqual, c.Item1, b.Item1);
+                    transitionToDefault.AddCondition(!c.isActive ? AnimatorConditionMode.Equals : AnimatorConditionMode.NotEqual, c.value, b.name);
             }
         }
     }

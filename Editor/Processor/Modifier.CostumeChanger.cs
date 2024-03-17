@@ -28,6 +28,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var name = changer.menuName;
                 var clipDefaults = new InternalClip[changer.costumes.Length];
                 var clipChangeds = new InternalClip[changer.costumes.Length];
+
+                // 各衣装の設定値とprefab初期値を取得したAnimationClipを作成
                 for(int i = 0; i < changer.costumes.Length; i++)
                 {
                     var costume = changer.costumes[i];
@@ -35,11 +37,17 @@ namespace jp.lilxyzw.lilycalinventory
                     clipDefaults[i] = clip2.Item1;
                     clipChangeds[i] = clip2.Item2;
                 }
+
+                // 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
                 foreach(var toggler in changer.costumes[0].parametersPerMenu.objects)
                 {
                     if(toggler.obj) toggler.obj.SetActive(toggler.value);
                 }
+
+                // prefab初期値AnimationClipをマージ
                 var clipDefault = InternalClip.MergeAndCreate(clipDefaults);
+
+                // 各衣装の未設定値をprefab初期値で埋める
                 var clips = new AnimationClip[clipChangeds.Length];
                 for(int i = 0; i < clipChangeds.Length; i++)
                 {
@@ -48,10 +56,13 @@ namespace jp.lilxyzw.lilycalinventory
                     clips[i] = clipChangeds[i].ToClip();
                     AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
                 }
+
+                // AnimatorControllerに追加
                 if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, name, root);
                 else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, name);
 
                 #if LIL_VRCSDK3A
+                // パラメーターを追加
                 parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave);
                 #endif
             }

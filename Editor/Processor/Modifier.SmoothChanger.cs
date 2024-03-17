@@ -30,6 +30,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var clipDefaults = new InternalClip[changer.frames.Length];
                 var clipChangeds = new InternalClip[changer.frames.Length];
                 var frames = new float[changer.frames.Length];
+
+                // 各フレームの設定値とprefab初期値を取得したAnimationClipを作成
                 for(int i = 0; i < changer.frames.Length; i++)
                 {
                     var frame = changer.frames[i];
@@ -40,7 +42,10 @@ namespace jp.lilxyzw.lilycalinventory
                     frames[i] = frameValue;
                 }
 
+                // prefab初期値AnimationClipをマージ
                 var clipDefault = InternalClip.MergeAndCreate(clipDefaults);
+
+                // 各フレームの未設定値をprefab初期値で埋める
                 var clips = new AnimationClip[clipChangeds.Length];
                 for(int i = 0; i < clipChangeds.Length; i++)
                 {
@@ -49,10 +54,13 @@ namespace jp.lilxyzw.lilycalinventory
                     clips[i] = clipChangeds[i].ToClip();
                     AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
                 }
+
+                // AnimatorControllerに追加
                 if(root) AnimationHelper.AddSmoothChangerTree(controller, clips, frames, name, root);
                 else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clips, frames, name, changer);
 
                 #if LIL_VRCSDK3A
+                // パラメーターを追加
                 parameters.AddParameterFloat(name, changer.isLocalOnly, changer.isSave, changer.defaultFrameValue);
                 #endif
             }

@@ -2,14 +2,15 @@ using System;
 using System.Globalization;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
-    using UnityEditor.UIElements;
 
+    // コメント表示だけ速度を考慮してUIElementsを使用
     [CustomEditor(typeof(Comment))]
     internal class CommentEditor : Editor
     {
@@ -34,6 +35,7 @@ namespace jp.lilxyzw.lilycalinventory
             isEditing = false;
         }
 
+        // 初期化
         public override VisualElement CreateInspectorGUI()
         {
             veRoot = new VisualElement();
@@ -85,6 +87,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // 初期化
         private void UpdateGUI()
         {
             veRoot.Clear();
@@ -93,30 +96,37 @@ namespace jp.lilxyzw.lilycalinventory
             veComment.Clear();
             veCommentRoot.Clear();
 
+            // 編集用のGUI
             veEditmode.Add(new CustomHelpBox(Localization.S("inspector.commentInformation"), MessageType.Info));
             veEditmode.Add(new IMGUIContainer(() => {
                 GUIHelper.AutoField(serializedObject.FindProperty("messageType"));
                 GUIHelper.AutoField(serializedObject.FindProperty("comments"));
                 serializedObject.ApplyModifiedProperties();
             }));
+
+            // コメントが無い場合のGUI
             veNoComment.Add(new Label(Localization.S("inspector.commentNo")));
+
+            // コメントがある場合のGUI
             veComment.Add(new Label(Localization.S("inspector.commentRoot")));
             veComment.Add(veCommentRoot);
 
+            // 編集ボタンと適用ボタン
             veButtonEdit = new Button(() => {
                 isEditing = !isEditing;
-                UpdateUI();
+                ToggleGUI();
             }){
                 text = Localization.S("inspector.edit")
             };
 
             veButtonApply = new Button(() => {
                 isEditing = !isEditing;
-                UpdateUI();
+                ToggleGUI();
             }){
                 text = Localization.S("inspector.apply")
             };
 
+            // Rootに各要素を追加
             veRoot.Add(new IMGUIContainer(() => {if(Localization.SelectLanguageGUI()) UpdateGUI();}));
             veRoot.Add(veEditmode);
             veRoot.Add(veNoComment);
@@ -124,10 +134,11 @@ namespace jp.lilxyzw.lilycalinventory
             veRoot.Add(veButtonEdit);
             veRoot.Add(veButtonApply);
 
-            UpdateUI();
+            ToggleGUI();
         }
 
-        void UpdateUI()
+        // 編集モードと閲覧モードでGUIの切り替え
+        void ToggleGUI()
         {
             if(isEditing)
             {
@@ -180,26 +191,34 @@ namespace jp.lilxyzw.lilycalinventory
         }
     }
 
+    // テキストを選択可能なヘルプボックス
+    // UIElementsだと複雑化してしまうためIMGUIで代替
     internal class CustomHelpBox : VisualElement
     {
         private static GUIStyle styleText;
         private static bool isInitialized = false;
         internal CustomHelpBox(string label, MessageType type, bool isComment = false)
         {
+            // 通常はこっちで普通のヘルプボックスを表示
             if(!isComment)
             {
                 Add(new IMGUIContainer(() => EditorGUILayout.HelpBox(label, type)));
                 return;
             }
+
+            // コメントである場合はテキストを選択可能なヘルプボックスを表示
+            // HTML構文のサポートを行ったり、文字サイズを通常のラベルに合わせて読みやすくしたり
             if(!isInitialized)
             {
                 styleText = new GUIStyle(EditorStyles.label){richText = true, wordWrap = true};
                 styleText.SetColors(styleText.normal.textColor);
             }
+
             Add(new IMGUIContainer(() => {
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
                 if(type != MessageType.None)
                 {
+                    // アイコンが必要な場合は表示
                     var icon = GetIconContent(type);
                     EditorGUILayout.BeginVertical(GUILayout.Width(icon.image.width));
                     GUILayout.FlexibleSpace();

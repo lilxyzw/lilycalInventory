@@ -9,6 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
 {
     internal static partial class GUIHelper
     {
+        // プロパティごとの固有IDとListを保存して再生成を防ぐ
         private static readonly Dictionary<string, ReorderableList> reorderableLists = new Dictionary<string, ReorderableList>();
         internal static void ResetList() => reorderableLists.Clear();
 
@@ -24,8 +25,11 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static Rect InternalList(Rect position, SerializedProperty property, bool drawFoldout, Action<SerializedProperty> initializeFunction)
         {
+            // Foldoutの表示
             if(!Foldout(position.SingleLine(), property, drawFoldout)) return position.NewLine();
             position.NewLine();
+
+            // Listの表示
             var reorderableList = TryGetReorderableList(property, initializeFunction);
             position.height = reorderableList.GetHeight();
             reorderableList.DoList(position);
@@ -72,12 +76,12 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 draggable = true,
                 headerHeight = 0,
-                //footerHeight = 0,
+                //footerHeight = 0, // みやすさのためにあえて余白を残す
                 #if UNITY_2021_1_OR_NEWER
                 multiSelect = true,
                 #endif
                 elementHeightCallback = index => EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(index)),
-                onAddCallback = list => property.ResizeArray(property.arraySize + 1, initializeFunction),
+                onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction),
                 drawHeaderCallback = rect => headerRect = rect,
                 drawElementCallback = (rect, index, isActive, isFocused) =>
                 {
@@ -89,6 +93,9 @@ namespace jp.lilxyzw.lilycalinventory
                     EditorGUI.PropertyField(rect, elementProperty);
                 }
             };
+
+            // フッターはヘッダーの位置にずらして操作しやすく
+            // ついでに表示もカスタマイズ
             list.drawFooterCallback = rect =>
             {
                 headerRect.height = EditorGUIUtility.singleLineHeight;
@@ -98,6 +105,7 @@ namespace jp.lilxyzw.lilycalinventory
             return list;
         }
 
+        // プロパティごとに固有の名前を生成
         private static string GetUniqueName(this SerializedProperty property)
         {
             return $"{property.serializedObject.targetObject.GetInstanceID()}.{property.propertyPath}";
@@ -108,6 +116,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static bool isInitialized = false;
         private static void DrawFooter(Rect rect, ReorderableList list)
         {
+            // どうしようもないのでReflectionを使用
             if(!isInitialized)
             {
                 isInitialized = true;
@@ -118,18 +127,26 @@ namespace jp.lilxyzw.lilycalinventory
                 if(m_scheduleRemove == null) Debug.LogError("m_scheduleRemove == null");
             }
 
-            bool isOverMaxMultiEditLimit = list.serializedProperty != null && list.serializedProperty.minArraySize > list.serializedProperty.serializedObject.maxArraySizeForMultiEditing && list.serializedProperty.serializedObject.isEditingMultipleObjects;
+            bool isOverMaxMultiEditLimit = list.serializedProperty != null &&
+                #if UNITY_2022_3_OR_NEWER
+                list.serializedProperty.minArraySize > list.serializedProperty.serializedObject.maxArraySizeForMultiEditing &&
+                #endif
+                list.serializedProperty.serializedObject.isEditingMultipleObjects;
 
             var rectNum = new Rect(rect.xMax - EditorGUIUtility.fieldWidth + EditorGUIUtility.standardVerticalSpacing * 3, rect.y, EditorGUIUtility.fieldWidth, rect.height);
             var rectRem = new Rect(rectNum.x - 40 - EditorGUIUtility.standardVerticalSpacing, rect.y, 40, rect.height);
             var rectAdd = new Rect(rectRem.x - 40 - EditorGUIUtility.standardVerticalSpacing, rect.y, 40, rect.height);
             var rectBack = new Rect(rectAdd.x, rect.y, rect.xMax - rectAdd.x, EditorGUIUtility.singleLineHeight);
+
+            // Foldoutのラベルと重なることを防ぐために上からRectを描画
             EditorGUI.DrawRect(rectBack, EditorGUIUtility.isProSkin ? new Color(0.219f,0.219f,0.219f,1) : new Color(0.784f,0.784f,0.784f,1));
 
+            // 配列の要素数を表示
             EditorGUI.BeginChangeCheck();
             var size = EditorGUI.IntField(rectNum, list.serializedProperty.arraySize);
             if(EditorGUI.EndChangeCheck()) list.serializedProperty.arraySize = size;
 
+            // 追加ボタン、削除ボタンの再実装
             if(list.displayAdd)
             {
                 bool cantAdd = list.onCanAddCallback != null && !list.onCanAddCallback(list) || isOverMaxMultiEditLimit;

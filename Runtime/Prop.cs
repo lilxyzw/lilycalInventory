@@ -3,6 +3,8 @@ using UnityEngine.Animations;
 
 namespace jp.lilxyzw.lilycalinventory.runtime
 {
+    // 付けたオブジェクトをオンオフするコンポーネント
+    // ビルド時にItemTogglerに変換されます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Prop))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(Prop))]
     internal class Prop : MenuBaseDisallowMultipleComponent, IGenerateParameter

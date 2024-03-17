@@ -1,12 +1,12 @@
+using System;
+using System.IO;
+using System.Collections;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
-using System.IO;
-using System.Collections;
 
 namespace jp.lilxyzw.lilycalinventory
 {
-    using System;
     using runtime;
 
     internal class VersionChecker : ScriptableSingleton<VersionChecker>
@@ -22,11 +22,13 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(instance.latest > instance.current)
                 {
+                    // 更新がある場合は最新バージョンも合わせて表示、赤字で強調
                     label = new GUIContent($"{ConstantValues.TOOL_NAME} {instance.current} => {instance.latest}");
                     style = GUIHelper.boldRedStyle;
                 }
                 else
                 {
+                    // ツール名+バージョン番号を表示
                     label = new GUIContent($"{ConstantValues.TOOL_NAME} {instance.current}");
                     style = EditorStyles.boldLabel;
                 }
@@ -39,12 +41,14 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(instance.current == null)
             {
+                // package.jsonをここでは読み込まずdelayCallで安全に読み込む
                 EditorApplication.delayCall -= GetCurrentVersion;
                 EditorApplication.delayCall += GetCurrentVersion;
                 CoroutineHandler.StartStaticCoroutine(GetLatestVersionInfo());
             }
         }
 
+        // インストールしているバージョンを取得
         private static void GetCurrentVersion()
         {
             EditorApplication.delayCall -= GetCurrentVersion;
@@ -59,6 +63,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
+        // 最新版をGitHubから取得
         private static IEnumerator GetLatestVersionInfo()
         {
             using(UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_PACKAGE_JSON))

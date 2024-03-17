@@ -46,6 +46,8 @@ namespace jp.lilxyzw.lilycalinventory
             };
         }
 
+        // AnimatorControllerでWriteDefaultsが使われているか
+        // 使われている場合はlilycalInventoryの方でもWriteDefaultsをオンにします
         internal static bool HasWriteDefaultsState(this AnimatorController controller)
         {
             foreach(var layer in controller.layers)

@@ -5,6 +5,7 @@
         "jp.lilxyzw.lilycalinventory.runtime",
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime",
+        "nadena.dev.ndmf.vrchat",
         "nadena.dev.modular-avatar.core"
     ],
     "includePlatforms": [
@@ -17,7 +18,8 @@
         "VRCSDKBase-Editor.dll",
         "VRCSDKBase.dll",
         "VRCSDK3A.dll",
-        "VRCSDK3A-Editor.dll"
+        "VRCSDK3A-Editor.dll",
+        "System.Collections.Immutable.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
@@ -41,6 +43,11 @@
             "name": "jp.lilxyzw.avatarmodifier",
             "expression": "",
             "define": "LIL_AVATAR_MODIFIER"
+        },
+        {
+            "name": "nadena.dev.ndmf",
+            "expression": "1.4.0-rc.0",
+            "define": "LIL_NDMF_1_4_0"
         }
     ],
     "noEngineReferences": false
