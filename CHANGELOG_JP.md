@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.7] - 2023-04-09
+
+### 追加
+- UI全般の向上
+- パラメーター数の確認機能を追加
+- SmoothChangerのプレビューでフレーム間の補間を追加
+- AutoDresserのエディタ上に警告を追加
+- Altキーを押しながらFoldoutをクリックしたときに一括で開閉できるようにした
+- バージョン確認システムを追加
+- 変更履歴確認ウィンドウを追加
+- AutoDresserSettingsにプロパティの保存とローカルオンリーの設定を追加
+- コードにコメントを追加
+- AnimationClipの挿入に対応
+
+### 変更
+- フレーム値をパーセント表記にするようにした
+- ビルド時にアクティブでないオブジェクトについたコンポーネントを除外するように（AutoDresserとPropを除く）
+- DirectBlendTreeによる最適化をデフォルトでオンにした
+
+### 修正
+- LI Commentの表示バグを修正
+- Foldoutの表示バグを修正
+- ビルド時に警告が表示されていたのを修正
+- プレビュー時にエラーが出ていたのを修正
+- BlendShapeのサジェストが正しくないのを修正
+- 全てのAutoDresserがオフのときのエラーを修正
+
 ## [0.3.6] - 2023-03-09
 
 ### 追加

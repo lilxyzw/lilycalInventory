@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.7] - 2023-04-09
+
+### Added
+- General UI improvements.
+- Added feature to check the number of parameters.
+- Added interpolation between frames in SmoothChanger preview.
+- Added warnings in the editor for AutoDresser.
+- Enabled bulk opening and closing of Foldouts by holding Alt key while clicking.
+- Implemented version check system.
+- Added change history review window.
+- Added property saving and local-only setting to AutoDresserSettings.
+- Added comments to the code.
+- Supported insertion of AnimationClips.
+
+### Changed
+- Changed frame values to be represented in percentage.
+- Excluded components attached to inactive objects during build (excluding AutoDresser and Prop).
+- Enabled optimization via DirectBlendTree by default.
+
+### 修正
+- Display bug in LI Comment.
+- Display bug in Foldout.
+- Rectified warnings displayed during build.
+- Error occurring during preview.
+- Improper suggestions for BlendShape.
+- Error occurring when all AutoDressers are turned off.
+
 ## [0.3.6] - 2023-03-09
 
 ### Added
