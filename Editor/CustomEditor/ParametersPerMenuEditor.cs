@@ -119,22 +119,23 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            position = GUIHelper.DragAndDropList(position, property.FPR(ParametersPerMenu.N_objects), true, "obj", prop =>
+            position = GUIHelper.DragAndDropList(position, property.FPR("objects"), true, "obj", prop =>
             {
                 prop.FPR("obj").objectReferenceValue = null;
                 prop.FPR("value").boolValue = true;
             });
-            position = GUIHelper.DragAndDropList<SkinnedMeshRenderer>(position, property.FPR(ParametersPerMenu.N_blendShapeModifiers), true, "skinnedMeshRenderer", prop =>
+            position = GUIHelper.DragAndDropList<SkinnedMeshRenderer>(position, property.FPR("blendShapeModifiers"), true, "skinnedMeshRenderer", prop =>
             {
                 prop.FPR("skinnedMeshRenderer").objectReferenceValue = null;
                 prop.FPR("blendShapeNameValues").arraySize = 0;
             });
-            position = GUIHelper.DragAndDropList<Renderer>(position, property.FPR(ParametersPerMenu.N_materialReplacers), true, "renderer", prop =>
+            position = GUIHelper.DragAndDropList<Renderer>(position, property.FPR("materialReplacers"), true, "renderer", prop =>
             {
                 prop.FPR("renderer").objectReferenceValue = null;
                 prop.FPR("replaceTo").arraySize = 0;
             });
-            position = GUIHelper.List(position, property.FPR(ParametersPerMenu.N_materialPropertyModifiers));
+            position = GUIHelper.List(position, property.FPR("materialPropertyModifiers"));
+            position = GUIHelper.List(position, property.FPR("clips"));
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -143,6 +144,7 @@ namespace jp.lilxyzw.lilycalinventory
                 GUIHelper.GetListHeight(property.FPR("blendShapeModifiers")) +
                 GUIHelper.GetListHeight(property.FPR("materialReplacers")) +
                 GUIHelper.GetListHeight(property.FPR("materialPropertyModifiers")) +
+                GUIHelper.GetListHeight(property.FPR("clips")) +
                 GUIHelper.GetSpaceHeight(3);
         }
     }

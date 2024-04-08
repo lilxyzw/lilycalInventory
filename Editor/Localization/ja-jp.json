@@ -59,6 +59,9 @@
   "inspector.value": "値",
   "inspector.disable": "無効化",
 
+  "inspector.clips": "AnimationClipの差し込み",
+  "inspector.clips.tooltip": "ここにAnimationClipを設定することでlilycalInventoryで操作できない項目をアニメーションさせることができます。値はAnimationClipの最初のフレーム目からコピーされます。",
+
   "inspector.costumes": "コスチューム",
 
   "inspector.defaultFrameValue": "パペット初期値 (%)",

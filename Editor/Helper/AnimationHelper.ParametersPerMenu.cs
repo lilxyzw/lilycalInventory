@@ -68,6 +68,12 @@ namespace jp.lilxyzw.lilycalinventory
                 modifier.ToClipDefault(clipOff);
                 modifier.ToClip(clipOn, clipOff);
             }
+
+            foreach(var clip in parameter.clips)
+            {
+                clipOff.AddDefault(clip, gameObject);
+                clipOn.Add(clip);
+            }
             return (clipOff, clipOn);
         }
 

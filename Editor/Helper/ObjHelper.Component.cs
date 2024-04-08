@@ -95,11 +95,13 @@ namespace jp.lilxyzw.lilycalinventory
                 if(parameters.blendShapeModifiers != null) p.blendShapeModifiers = (BlendShapeModifier[])parameters.blendShapeModifiers.Clone();
                 if(parameters.materialReplacers != null) p.materialReplacers = (MaterialReplacer[])parameters.materialReplacers.Clone();
                 if(parameters.materialPropertyModifiers != null) p.materialPropertyModifiers = (MaterialPropertyModifier[])parameters.materialPropertyModifiers.Clone();
+                if(parameters.clips != null) p.clips = (AnimationClip[])parameters.clips.Clone();
             }
             if(p.objects == null) p.objects = new ObjectToggler[]{};
             if(p.blendShapeModifiers == null) p.blendShapeModifiers = new BlendShapeModifier[]{};
             if(p.materialReplacers == null) p.materialReplacers = new MaterialReplacer[]{};
             if(p.materialPropertyModifiers == null) p.materialPropertyModifiers = new MaterialPropertyModifier[]{};
+            if(p.clips == null) p.clips = new AnimationClip[]{};
             return p;
         }
 

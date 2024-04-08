@@ -59,6 +59,9 @@
   "inspector.value": "Value",
   "inspector.disable": "Disable",
 
+  "inspector.clips": "Insert AnimationClip",
+  "inspector.clips.tooltip": "By setting AnimationClip here, you can animate properties that cannot be changed with lilycalInventory. The value is copied from the first frame of the AnimationClip.",
+
   "inspector.costumes": "Costumes",
 
   "inspector.defaultFrameValue": "Default Frame Value (%)",

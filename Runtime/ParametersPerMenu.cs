@@ -34,10 +34,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         public BlendShapeModifier[] blendShapeModifiers = new BlendShapeModifier[]{};
         public MaterialReplacer[] materialReplacers = new MaterialReplacer[]{};
         public MaterialPropertyModifier[] materialPropertyModifiers = new MaterialPropertyModifier[]{};
-        public const string N_objects = nameof(objects);
-        public const string N_blendShapeModifiers = nameof(blendShapeModifiers);
-        public const string N_materialReplacers = nameof(materialReplacers);
-        public const string N_materialPropertyModifiers = nameof(materialPropertyModifiers);
+        public AnimationClip[] clips = new AnimationClip[]{};
     }
 
     [Serializable]
