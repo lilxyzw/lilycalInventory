@@ -8,21 +8,9 @@ lilycalInventory
 
 このツールは非破壊でVRChatのアバターを編集するツールです。オブジェクトのオンオフ、BlendShapeの切り替え、マテリアルの置き換え・プロパティ操作・プロパティ統一などができます。VRChatでの同期周りの事故も意識されており、全パラメーターがオフときの見た目がprefabの状態と一致するようになっています。
 
-## Install
+## インストール
 
-現在はUPMからのみインストールできます。
-
-```
-https://github.com/lilxyzw/lilycalInventory.git
-```
-
-もしgitをインストールしていない場合は[zip](https://github.com/lilxyzw/lilycalInventory/archive/refs/heads/main.zip)をダウンロードし、プロジェクトのPackagesフォルダ配下に配置することでインストールできます。ディレクトリが以下のようになるように配置してください。
-
-- Packages
-  - lilycalInventory
-    - Editor
-    - Prefabs
-    - ...
+[Release](https://github.com/lilxyzw/lilycalInventory/releases)からunitypackageをダウンロードしてインポートしてください。1.0.0リリース時にはVPMでのダウンロードに対応予定です。
 
 ## 使用方法
 
