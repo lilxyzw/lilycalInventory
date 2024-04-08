@@ -46,7 +46,7 @@
         },
         {
             "name": "nadena.dev.ndmf",
-            "expression": "1.4.0-rc.0",
+            "expression": "1.4.0",
             "define": "LIL_NDMF_1_4_0"
         }
     ],

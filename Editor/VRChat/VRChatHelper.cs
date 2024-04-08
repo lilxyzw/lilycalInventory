@@ -230,6 +230,7 @@ namespace jp.lilxyzw.lilycalinventory
     internal static class ParameterViewer
     {
         #if LIL_VRCSDK3A
+        private static bool isInitialized = false;
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
         private static bool isExpandedDetails = false;
         private static GameObject avatarRoot;
@@ -239,7 +240,22 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void Draw(MenuBaseComponent component)
         {
+            try
+            {
+                DrawInternal(component);
+            }
+            catch(Exception e)
+            {
+                Debug.LogException(e);
+                avatarRoot = null;
+            }
+        }
+
+        private static void DrawInternal(MenuBaseComponent component)
+        {
             // アバターでない場合は何も表示しない
+            if(isInitialized && !avatarRoot) return;
+            isInitialized = true;
             var root = component.gameObject.GetAvatarRoot();
             if(!root) return;
             avatarRoot = root.gameObject;
@@ -292,6 +308,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void Reset()
         {
+            isInitialized = false;
         }
         #else
         private static bool isInitialized = false;
