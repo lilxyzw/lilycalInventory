@@ -1,4 +1,6 @@
 {
+  "inspector.changelog": "Changelog",
+  "inspector.changelogLoadFailed": "Failed to load changelog.",
   "inspector.noProperty": "This component has no properties.",
   "inspector.componentDisabled": "The component is disabled and will be ignored during the build. Check the checkbox for the component if you want to enable it.",
 

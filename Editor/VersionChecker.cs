@@ -33,7 +33,11 @@ namespace jp.lilxyzw.lilycalinventory
                     style = EditorStyles.boldLabel;
                 }
             }
+
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(label, style);
+            if(GUILayout.Button(Localization.G("inspector.changelog"))) ChangeLogWindow.Init();
+            EditorGUILayout.EndHorizontal();
         }
 
         [InitializeOnLoadMethod]
@@ -45,6 +49,8 @@ namespace jp.lilxyzw.lilycalinventory
                 EditorApplication.delayCall -= GetCurrentVersion;
                 EditorApplication.delayCall += GetCurrentVersion;
                 CoroutineHandler.StartStaticCoroutine(GetLatestVersionInfo());
+                CoroutineHandler.StartStaticCoroutine(ChangeLogViewer.GetChangelogEn());
+                CoroutineHandler.StartStaticCoroutine(ChangeLogViewer.GetChangelogJp());
             }
         }
 
