@@ -34,7 +34,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(lang == null) continue;
 
                 // 言語ファイルの名前が言語コードと一致していることを期待
-                var code = Path.GetFileNameWithoutExtension(path).ToLower(CultureInfo.InvariantCulture);
+                var code = Path.GetFileNameWithoutExtension(path);
                 languages.Add(lang);
                 codes.Add(code);
                 try
@@ -64,7 +64,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static int GetIndexByCode(string code)
         {
             var index = codes.IndexOf(code);
-            if(index == -1) index = codes.IndexOf("en-us");
+            if(index == -1) index = codes.IndexOf("en-US");
             if(index == -1) number = 0;
             return index;
         }
@@ -131,7 +131,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static string LoadLanguageSettings()
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
-            if(!File.Exists(PATH_SETTING)) File.WriteAllText(PATH_SETTING, CultureInfo.CurrentCulture.Name.ToLower());
+            if(!File.Exists(PATH_SETTING)) File.WriteAllText(PATH_SETTING, CultureInfo.CurrentCulture.Name);
             return SafeIO.LoadFile(PATH_SETTING);
         }
 
