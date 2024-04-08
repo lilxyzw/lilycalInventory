@@ -234,6 +234,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
         private static bool isExpandedDetails = false;
         private static GameObject avatarRoot;
+        private static IGrouping<PluginBase, ProvidedParameter>[] groups;
 
         #if LIL_NDMF_1_4_0
         private static Dictionary<PluginBase,bool> isExpandeds = new Dictionary<PluginBase, bool>();
@@ -261,7 +262,7 @@ namespace jp.lilxyzw.lilycalinventory
             avatarRoot = root.gameObject;
 
             // アバターからNDMF経由でプロパティを取得
-            var groups = ParameterInfo.ForUI.GetParametersForObject(avatarRoot).GroupBy(p => p.Plugin).OrderBy(g => g.Key.DisplayName).ToArray();
+            if(groups == null) groups = ParameterInfo.ForUI.GetParametersForObject(avatarRoot).GroupBy(p => p.Plugin).OrderBy(g => g.Key.DisplayName).ToArray();
             int costSum = groups.Sum(g => g.Sum(p => p.BitUsage));
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -309,6 +310,7 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void Reset()
         {
             isInitialized = false;
+            groups = null;
         }
         #else
         private static bool isInitialized = false;
