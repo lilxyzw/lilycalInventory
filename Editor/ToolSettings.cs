@@ -16,7 +16,7 @@ namespace jp.lilxyzw.lilycalinventory
         internal static ToolSettings instance => m_Instance != null ? m_Instance : m_Instance = Load();
 
         // 設定は現状DirectBlendTreeを使うかのみ
-        public bool useDirectBlendTree = false;
+        public bool useDirectBlendTree = true;
 
         [MenuItem(MENU_DIRECT_BLENDTREE)]
         private static void ToggleDirectBlendTree()
