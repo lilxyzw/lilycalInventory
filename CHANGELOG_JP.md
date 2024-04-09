@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.8] - 2023-04-09
+
+### 修正
+- Unity 2019でのエラーを修正
+
 ## [0.3.7] - 2023-04-09
 
 ### 追加

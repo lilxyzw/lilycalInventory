@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.8] - 2023-04-09
+
+### Fixed
+- Error in Unity 2019
+
 ## [0.3.7] - 2023-04-09
 
 ### Added
@@ -23,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Excluded components attached to inactive objects during build (excluding AutoDresser and Prop).
 - Enabled optimization via DirectBlendTree by default.
 
-### 修正
+### Fixed
 - Display bug in LI Comment.
 - Display bug in Foldout.
 - Rectified warnings displayed during build.

@@ -1,10 +1,10 @@
 {
   "name": "jp.lilxyzw.lilycalinventory",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "displayName": "lilycalInventory",
   "description": "Modify avatar at build time.",
   "unity": "2019.4",
   "license": "MIT",
-  "url" : "https://github.com/lilxyzw/lilycalInventory/releases/download/0.3.7/jp.lilxyzw.lilycalinventory-0.3.7.zip?",
+  "url" : "https://github.com/lilxyzw/lilycalInventory/releases/download/0.3.8/jp.lilxyzw.lilycalinventory-0.3.8.zip?",
   "repo" : "https://lilxyzw.github.io/vpm-repos/vpm.json"
 }
