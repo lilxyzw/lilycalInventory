@@ -313,7 +313,6 @@ namespace jp.lilxyzw.lilycalinventory
             groups = null;
         }
         #else
-        private static bool isInitialized = false;
         private static int costBool = VRCExpressionParameters.TypeCost(ValueType.Bool);
         private static int costInt = VRCExpressionParameters.TypeCost(ValueType.Int);
         private static int costFloat = VRCExpressionParameters.TypeCost(ValueType.Float);
