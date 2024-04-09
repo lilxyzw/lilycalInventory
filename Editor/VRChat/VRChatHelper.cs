@@ -234,9 +234,9 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costMax = VRCExpressionParameters.MAX_PARAMETER_COST;
         private static bool isExpandedDetails = false;
         private static GameObject avatarRoot;
-        private static IGrouping<PluginBase, ProvidedParameter>[] groups;
 
         #if LIL_NDMF_1_4_0
+        private static IGrouping<PluginBase, ProvidedParameter>[] groups;
         private static Dictionary<PluginBase,bool> isExpandeds = new Dictionary<PluginBase, bool>();
 
         internal static void Draw(MenuBaseComponent component)
