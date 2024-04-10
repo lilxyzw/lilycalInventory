@@ -65,7 +65,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             var index = codes.IndexOf(code);
             if(index == -1) index = codes.IndexOf("en-US");
-            if(index == -1) number = 0;
+            if(index == -1) index = 0;
             return index;
         }
 
