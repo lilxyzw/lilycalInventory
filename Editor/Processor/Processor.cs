@@ -30,6 +30,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static ItemToggler[] togglers;
         private static CostumeChanger[] costumeChangers;
         private static SmoothChanger[] smoothChangers;
+        private static MenuBaseComponent[] menuBaseComponents;
         private static Material[] materials;
         private static HashSet<string> parameterNames;
 
@@ -81,12 +82,13 @@ namespace jp.lilxyzw.lilycalinventory
             togglers = components.SelectComponents<ItemToggler>();
             costumeChangers = components.SelectComponents<CostumeChanger>();
             smoothChangers = components.SelectComponents<SmoothChanger>();
+            menuBaseComponents = components.SelectComponents<MenuBaseComponent>();
             shouldModify = components.Length != 0;
             if(!shouldModify) return;
 
             // メニュー名を解決
-            components.SelectComponents<MenuBaseComponent>().ResolveMenuName();
-            components.SelectComponents<CostumeChanger>().ResolveMenuName();
+            menuBaseComponents.ResolveMenuName();
+            costumeChangers.ResolveMenuName();
 
             // 全メッシュに処理を適用するかを確認
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
@@ -116,13 +118,12 @@ namespace jp.lilxyzw.lilycalinventory
                 var hasWriteDefaultsState = controller.HasWriteDefaultsState();
                 var menu = VRChatHelper.CreateMenu(ctx);
                 var parameters = VRChatHelper.CreateParameters(ctx);
-                var menuDic = new Dictionary<MenuFolder, VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu>();
 
                 // パラメーター名の重複チェック
                 parameterNames = new HashSet<string>();
                 if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
                 if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
-                var parameterDuplicates = components.SelectComponents<MenuBaseComponent>().Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).Select(c => c.gameObject).ToArray();
+                var parameterDuplicates = menuBaseComponents.Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).Select(c => c.gameObject).ToArray();
                 if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
 
                 // DirectBlendTreeのルートを作成
@@ -143,7 +144,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
 
                 // メニューを生成
-                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, menu, menuDic);
+                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, menuBaseComponents, menu);
 
                 // 生成したメニュー・パラメーターをマージ
                 ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);

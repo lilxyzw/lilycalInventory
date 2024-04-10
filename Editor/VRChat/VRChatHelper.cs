@@ -170,11 +170,6 @@ namespace jp.lilxyzw.lilycalinventory
             );
         }
 
-        internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, MenuBaseComponent component)
-        {
-            menu.AddMenu(menu2, component.icon);
-        }
-
         internal static void AddParameter(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, float defaultValue, VRCExpressionParameters.ValueType type)
         {
             if(!parameters.parameters.Any(p => p.name == name))
@@ -220,9 +215,15 @@ namespace jp.lilxyzw.lilycalinventory
             return control;
         }
 
-        internal static void CreateAndAdd(this List<Control> controls, string name, Texture2D icon, ControlType type, string parameterName, float value = 1)
+        internal static Control CreateControl(string name, Texture2D icon, VRCExpressionsMenu subMenu)
         {
-            controls.Add(CreateControl(name, icon, type, parameterName, value));
+            return new Control
+            {
+                icon = icon,
+                name = name,
+                type = ControlType.SubMenu,
+                subMenu = subMenu
+            };
         }
     }
     #endif
