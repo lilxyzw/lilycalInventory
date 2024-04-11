@@ -136,20 +136,25 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // メニューの子を再帰的に表示
-        private static void DrawChildren(MenuFolder folder)
+        private static void DrawChildren(MenuFolder root, MenuFolder current = null)
         {
             EditorGUILayout.BeginVertical();
+            var folder = current == null ? root : current;
             var components = menuChildren[folder];
             foreach(var c in components)
             {
                 if(c.GetMenuParent() != folder) continue;
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 ParamsPerChildren(c);
-                if(c is MenuFolder f)
+                if(c == root)
+                {
+                    EditorGUILayout.HelpBox(Localization.S("inspector.folderContentsCircularReference"), MessageType.Error);
+                }
+                else if(c is MenuFolder f)
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.Space(6, false);
-                    DrawChildren(f);
+                    DrawChildren(root, f);
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUILayout.EndVertical();

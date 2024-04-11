@@ -29,6 +29,7 @@
   "inspector.menuSettings": "# Menu Settings",
   "inspector.animationSettings": "# Animation Settings",
   "inspector.folderContents": "# Folder Contents",
+  "inspector.folderContentsCircularReference": "Circular reference detected. Please change the parent folder.",
   "inspector.parametersWith": "# Parameters that work together (Advanced)",
 
   "inspector.isSave": "Save state",

@@ -29,6 +29,7 @@
   "inspector.menuSettings": "# メニュー設定",
   "inspector.animationSettings": "# アニメーション設定",
   "inspector.folderContents": "# フォルダの中身",
+  "inspector.folderContentsCircularReference": "循環参照が検出されました。親フォルダを変更してください。",
   "inspector.parametersWith": "# 一緒に操作するパラメーター（拡張設定）",
 
   "inspector.isSave": "有効状態を保存",
