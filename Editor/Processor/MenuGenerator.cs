@@ -95,6 +95,43 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 (parent != null ? menus[parent] : menu).controls.Add(control);
             }
+
+            // 循環参照を検出
+            var childFolders = menus.Keys
+                .OfType<MenuFolder>()
+                .GroupBy(x => x.GetMenuParent())
+                .Where(x => x.Key != null)
+                .ToDictionary(x => x.Key, x => x.ToArray());
+            var circularFolders = menus.Keys
+                .OfType<MenuFolder>()
+                .SelectMany(x => FindCircularFolders(x))
+                .ToArray();
+            if(circularFolders.Length > 0)
+            {
+                ErrorHelper.Report("dialog.error.menuCircularReference", circularFolders);
+            }
+
+            IEnumerable<MenuFolder> FindCircularFolders(MenuFolder root, MenuFolder current = null)
+            {
+                var folder = current == null ? root : current;
+                if(childFolders.ContainsKey(folder))
+                {
+                    foreach(var childFolder in childFolders[folder])
+                    {
+                        if(childFolder == root)
+                        {
+                            yield return childFolder;
+                        }
+                        else
+                        {
+                            foreach(var circularFolder in FindCircularFolders(root, childFolder))
+                            {
+                                yield return circularFolder;
+                            }
+                        }
+                    }
+                }
+            }
             #endif
         }
     }
