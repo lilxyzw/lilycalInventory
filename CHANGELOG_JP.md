@@ -4,17 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.9] - 2023-04-09
+## [0.3.9] - 2024-04-09
 
 ### 修正
 - 古いNDMFを使用している場合にエラーになるのを修正
 
-## [0.3.8] - 2023-04-09
+## [0.3.8] - 2024-04-09
 
 ### 修正
 - Unity 2019でのエラーを修正
 
-## [0.3.7] - 2023-04-09
+## [0.3.7] - 2024-04-09
 
 ### 追加
 - UI全般の向上
@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BlendShapeのサジェストが正しくないのを修正
 - 全てのAutoDresserがオフのときのエラーを修正
 
-## [0.3.6] - 2023-03-09
+## [0.3.6] - 2024-03-09
 
 ### 追加
 - 一部プロパティで複数オブジェクトをドラッグ＆ドロップで一括追加できるように
@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MaterialModifierの除外機能が正しく動作していなかったのを修正
 - NDMFのバージョンが古い場合にエラーになっていたのを修正
 
-## [0.3.5] - 2023-03-07
+## [0.3.5] - 2024-03-07
 
 ### 修正
 - 言語変更時にLI Commentの一部プロパティが見えなくなってしまう問題を修正
@@ -71,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MenuFolderコンポーネントと他コンポーネントを同時に付けられるように
 - アクティブでないGameObjectのコンポーネントも処理対象にするように戻した
 
-## [0.3.4] - 2023-03-06
+## [0.3.4] - 2024-03-06
 
 ### 追加
 - コンポーネントがアクティブでない場合にビルド時に無視される旨のヘルプボックスを表示するように
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 変更
 - ビルド時にアクティブでないオブジェクトについたコンポーネントを除外するように（AutoDresserとPropを除く）
 
-## [0.3.3] - 2023-03-02
+## [0.3.3] - 2024-03-02
 
 ### 追加
 - Modular AvatarのMenu Group内にメニューを生成できるように
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 変更
 - ビルド時にEditorOnlyのオブジェクトについたコンポーネントを除外するように
 
-## [0.3.2] - 2023-03-02
+## [0.3.2] - 2024-03-02
 
 ### 追加
 - Direct Blend Treeによる最適化機能を追加
@@ -96,7 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 変更
 - ビルド時の処理を高速化
 
-## [0.3.0] - 2023-02-29
+## [0.3.0] - 2024-02-29
 
 ## 追加
 - コンポーネントをつけるだけで着替えができるAutoDresserコンポーネントを追加

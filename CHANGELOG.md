@@ -4,17 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.9] - 2023-04-09
+## [0.3.9] - 2024-04-09
 
 ### Fixed
 - Error in legacy NDMF
 
-## [0.3.8] - 2023-04-09
+## [0.3.8] - 2024-04-09
 
 ### Fixed
 - Error in Unity 2019
 
-## [0.3.7] - 2023-04-09
+## [0.3.7] - 2024-04-09
 
 ### Added
 - General UI improvements.
@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improper suggestions for BlendShape.
 - Error occurring when all AutoDressers are turned off.
 
-## [0.3.6] - 2023-03-09
+## [0.3.6] - 2024-03-09
 
 ### Added
 - Enabled bulk addition of multiple objects via drag and drop in certain properties.
@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Malfunction of MaterialModifier's exclusion function.
 - Error occurring when NDMF version was outdated.
 
-## [0.3.5] - 2023-03-07
+## [0.3.5] - 2024-03-07
 
 ### Fixed
 - Issue causing some properties of LI Comment to become invisible upon language change
@@ -71,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled simultaneous attachment of MenuFolder component with other components
 - Restored processing of components for inactive GameObjects
 
-## [0.3.4] - 2023-03-06
+## [0.3.4] - 2024-03-06
 
 ### Added
 - Implemented helpbox displaying message about components being ignored during build if inactive
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Excluded components attached to inactive objects during build (excluding AutoDresser and Prop)
 
-## [0.3.3] - 2023-03-02
+## [0.3.3] - 2024-03-02
 
 ### Added
 - Enabled generation of menus within Menu Group of Modular Avatar
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Excluded components attached to EditorOnly objects during build
 
-## [0.3.2] - 2023-03-02
+## [0.3.2] - 2024-03-02
 
 ### Added
 - Optimization feature via Direct Blend Tree
@@ -96,7 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Speed up processing during build
 
-## [0.3.0] - 2023-02-29
+## [0.3.0] - 2024-02-29
 
 ### Added
 - AutoDresser component for easy changing of clothes just by attaching the component
