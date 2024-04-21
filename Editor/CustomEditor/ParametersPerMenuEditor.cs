@@ -155,10 +155,21 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var valueRect = new Rect(position.x, position.y, 16, position.height);
-            var objRect = new Rect(valueRect.xMax + 4, position.y, position.width - 20, position.height);
-            GUIHelper.ChildFieldOnly(valueRect, property, "value");
+            var valueRect = new Rect(position.x, position.y, 80, position.height);
+            var objRect = new Rect(valueRect.xMax + 4, position.y, position.width - valueRect.width - 4, position.height);
+
+            var value = property.FPR("value");
+            int valueInt = value.boolValue ? 1 : 0;
+            EditorGUI.BeginChangeCheck();
+            valueInt = EditorGUI.Popup(valueRect, valueInt, new[]{Localization.S("inspector.turnOff"), Localization.S("inspector.turnOn")});
+            if(EditorGUI.EndChangeCheck()) value.boolValue = valueInt == 1 ? true : false;
+
+            EditorGUI.BeginChangeCheck();
             GUIHelper.ChildFieldOnly(objRect, property, "obj");
+            if(EditorGUI.EndChangeCheck() && property.FPR("obj").objectReferenceValue is GameObject gameObject)
+            {
+                value.boolValue = !gameObject.activeSelf;
+            }
         }
     }
 

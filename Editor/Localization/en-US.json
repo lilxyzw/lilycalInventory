@@ -40,6 +40,8 @@
   "inspector.objects": "Object to toggle (Multiple added in D&D here)",
   "inspector.objects.tooltip": "The object specified here will be turned on or off when the menu is activated. You can also add multiple objects at once by dragging and dropping them here. When selecting multiple objects, click the lock icon at the top right of the Inspector to prevent the screen from switching. If you want to go back to switching screens, click the lock icon again to unlock it.",
   "inspector.dragAndDrop": "Add items by drop",
+  "inspector.turnOn": "Turn On",
+  "inspector.turnOff": "Turn Off",
 
   "inspector.blendShapeModifiers": "BlendShape Modifier",
   "inspector.blendShapeModifiers.tooltip": "The BlendShape specified here will be set to the specified value when the menu is activated.",
