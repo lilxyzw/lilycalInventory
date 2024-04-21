@@ -74,17 +74,6 @@ namespace jp.lilxyzw.lilycalinventory
                 blendShapeModifier.applyToAll = !blendShapeModifier.skinnedMeshRenderer;
         }
 
-        // アニメーション最適化のために無駄な操作項目を削除
-        internal static void CheckUseless(ItemToggler[] togglers)
-        {
-            foreach(var toggler in togglers) toggler.parameter.CheckUseless();
-        }
-
-        private static void CheckUseless(this ParametersPerMenu parameters)
-        {
-            parameters.objects = parameters.objects.Where(t => t.obj.activeSelf != t.value).ToArray();
-        }
-
         // 元のコンポーネントの設定値を変更しないようにクローン
         private static ParametersPerMenu Clone(this ParametersPerMenu parameters)
         {

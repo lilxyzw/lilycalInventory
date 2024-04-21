@@ -93,9 +93,6 @@ namespace jp.lilxyzw.lilycalinventory
             // 全メッシュに処理を適用するかを確認
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
 
-            // 無駄な設定を除去
-            ObjHelper.CheckUseless(togglers);
-
             // 再帰的にMenuGroup配下に
             ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers);
         }
