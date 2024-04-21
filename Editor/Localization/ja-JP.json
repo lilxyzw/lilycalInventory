@@ -29,6 +29,7 @@
   "inspector.menuSettings": "# メニュー設定",
   "inspector.animationSettings": "# アニメーション設定",
   "inspector.folderContents": "# フォルダの中身",
+  "inspector.folderContentsCircularReference": "循環参照が検出されました。親フォルダを変更してください。",
   "inspector.parametersWith": "# 一緒に操作するパラメーター（拡張設定）",
 
   "inspector.isSave": "有効状態を保存",
@@ -106,5 +107,6 @@
   "dialog.error.defaultDuplication": "複数のAutoDresserが付いたオブジェクトがオンになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.allObjectOff": "全てのAutoDresserが付いたオブジェクトがオフになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。",
+  "dialog.error.menuCircularReference": "MenuFolderに循環参照があります。親フォルダを変更してください。",
   "dialog.error.menuMADuplication": "MA Menu Itemが複数コンポーネントから参照されています。それぞれのコンポーネントにつき1つのMA Menu Itemを作成するようにしてください。"
 }
