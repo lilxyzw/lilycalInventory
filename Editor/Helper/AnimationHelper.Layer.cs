@@ -15,14 +15,14 @@ namespace jp.lilxyzw.lilycalinventory
             var stateDefault = new AnimatorState
             {
                 motion = clipDefault,
-                name = "Off",
+                name = clipDefault.name,
                 writeDefaultValues = hasWriteDefaultsState
             };
 
             var stateChanged = new AnimatorState
             {
                 motion = clipChanged,
-                name = "On",
+                name = clipChanged.name,
                 writeDefaultValues = hasWriteDefaultsState
             };
 
@@ -128,14 +128,14 @@ namespace jp.lilxyzw.lilycalinventory
             var stateDefault = new AnimatorState
             {
                 motion = clipDefault,
-                name = isActive ? "On" : "Off",
+                name = clipDefault.name,
                 writeDefaultValues = hasWriteDefaultsState
             };
 
             var stateChanged = new AnimatorState
             {
                 motion = clipChanged,
-                name = isActive ? "Off" : "On",
+                name = clipChanged.name,
                 writeDefaultValues = hasWriteDefaultsState
             };
 

@@ -14,18 +14,18 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class AnimationHelper
     {
-        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
         {
-            var clipOff = new InternalClip();
-            var clipOn = new InternalClip();
-            clipOff.name = $"{name}_Off";
-            clipOn.name = $"{name}_On";
+            var clipDefault = new InternalClip();
+            var clipChanged = new InternalClip();
+            clipDefault.name = $"{name}_Default";
+            clipChanged.name = $"{name}_Changed";
 
             foreach(var toggler in parameter.objects)
             {
                 if(!toggler.obj) continue;
-                toggler.ToClipDefault(clipOff);
-                toggler.ToClip(clipOn);
+                toggler.ToClipDefault(clipDefault);
+                toggler.ToClip(clipChanged);
             }
 
             foreach(var modifier in parameter.blendShapeModifiers)
@@ -39,8 +39,8 @@ namespace jp.lilxyzw.lilycalinventory
                         foreach(var namevalue in modifier.blendShapeNameValues)
                         {
                             if(renderer.sharedMesh.GetBlendShapeIndex(namevalue.name) == -1) continue;
-                            namevalue.ToClipDefault(clipOff, renderer);
-                            namevalue.ToClip(clipOn, renderer);
+                            namevalue.ToClipDefault(clipDefault, renderer);
+                            namevalue.ToClip(clipChanged, renderer);
                         }
                     }
                     continue;
@@ -48,16 +48,16 @@ namespace jp.lilxyzw.lilycalinventory
                 if(!modifier.skinnedMeshRenderer) continue;
                 foreach(var namevalue in modifier.blendShapeNameValues)
                 {
-                    namevalue.ToClipDefault(clipOff, modifier.skinnedMeshRenderer);
-                    namevalue.ToClip(clipOn, modifier.skinnedMeshRenderer);
+                    namevalue.ToClipDefault(clipDefault, modifier.skinnedMeshRenderer);
+                    namevalue.ToClip(clipChanged, modifier.skinnedMeshRenderer);
                 }
             }
 
             foreach(var replacer in parameter.materialReplacers)
             {
                 if(!replacer.renderer) continue;
-                replacer.ToClipDefault(clipOff);
-                replacer.ToClip(clipOn);
+                replacer.ToClipDefault(clipDefault);
+                replacer.ToClip(clipChanged);
             }
 
             foreach(var modifier in parameter.materialPropertyModifiers)
@@ -65,19 +65,19 @@ namespace jp.lilxyzw.lilycalinventory
                 if(modifier.renderers.Length == 0)
                     modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
 
-                modifier.ToClipDefault(clipOff);
-                modifier.ToClip(clipOn, clipOff);
+                modifier.ToClipDefault(clipDefault);
+                modifier.ToClip(clipChanged, clipDefault);
             }
 
             foreach(var clip in parameter.clips)
             {
-                clipOff.AddDefault(clip, gameObject);
-                clipOn.Add(clip);
+                clipDefault.AddDefault(clip, gameObject);
+                clipChanged.Add(clip);
             }
-            return (clipOff, clipOn);
+            return (clipDefault, clipChanged);
         }
 
-        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
         {
             return parameter.CreateClip(ctx.AvatarRootObject, name);
         }

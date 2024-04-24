@@ -65,10 +65,9 @@ namespace jp.lilxyzw.lilycalinventory
                 var isActive = c.Key.isActive;
 
                 var name = c.Value.ElementAt(0).name;
-                var clipOff = new InternalClip();
-                var clipOn = new InternalClip();
-                clipOff.name = $"{name}_Off";
-                clipOn.name = $"{name}_On";
+                var clips = (clipDefault: new InternalClip(), clipChanged: new InternalClip());
+                clips.clipDefault.name = $"{name}_Default";
+                clips.clipChanged.name = $"{name}_Changed";
                 foreach(var o in c.Value)
                 {
                     var toggler = new ObjectToggler
@@ -76,16 +75,16 @@ namespace jp.lilxyzw.lilycalinventory
                         obj = o,
                         value = !isActive
                     };
-                    toggler.ToClipDefault(clipOff);
-                    toggler.ToClip(clipOn);
+                    toggler.ToClipDefault(clips.clipDefault);
+                    toggler.ToClip(clips.clipChanged);
                 }
-                var clipOff2 = clipOff.ToClip();
-                var clipOn2 = clipOn.ToClip();
+                var clipDefault = clips.clipDefault.ToClip();
+                var clipChanged = clips.clipChanged.ToClip();
 
-                AssetDatabase.AddObjectToAsset(clipOff2, ctx.AssetContainer);
-                AssetDatabase.AddObjectToAsset(clipOn2, ctx.AssetContainer);
-                if(root) AnimationHelper.AddMultiConditionTree(controller, clipOff2, clipOn2, bools, ints, root, isActive);
-                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipOff2, clipOn2, name, bools, ints, isActive);
+                AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
+                AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
+                if(root) AnimationHelper.AddMultiConditionTree(controller, clipDefault, clipChanged, bools, ints, root, isActive);
+                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, bools, ints, isActive);
             }
         }
 

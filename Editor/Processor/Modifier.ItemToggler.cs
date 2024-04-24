@@ -30,13 +30,13 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     // コンポーネントの設定値とprefab初期値を取得したAnimationClipを作成
                     var clips = toggler.parameter.CreateClip(ctx, name);
-                    var clips2 = (clips.Item1.ToClip(), clips.Item2.ToClip());
-                    AssetDatabase.AddObjectToAsset(clips2.Item1, ctx.AssetContainer);
-                    AssetDatabase.AddObjectToAsset(clips2.Item2, ctx.AssetContainer);
+                    var (clipDefault, clipChanged) = (clips.clipDefault.ToClip(), clips.clipChanged.ToClip());
+                    AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
 
                     // AnimatorControllerに追加
-                    if(root) AnimationHelper.AddItemTogglerTree(controller, clips2.Item1, clips2.Item2, name, root);
-                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clips2.Item1, clips2.Item2, name);
+                    if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, root);
+                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name);
                 }
                 else
                 {
