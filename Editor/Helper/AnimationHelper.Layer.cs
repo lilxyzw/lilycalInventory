@@ -199,16 +199,6 @@ namespace jp.lilxyzw.lilycalinventory
                 foreach(var value in valueToChangeds)
                     transitionToDefault.AddCondition(AnimatorConditionMode.NotEqual, value, name);
 
-                foreach(var value in Enumerable.Range(0, isChanges.Length).Except(valueToChangeds))
-                {
-                    foreach(var transitionToChanged in transitionToChangeds)
-                        transitionToChanged.AddCondition(AnimatorConditionMode.NotEqual, value, name);
-
-                    transitionToDefault = stateChanged.AddTransition(stateDefault);
-                    transitionToDefault.duration = 0;
-                    transitionToDefault.AddCondition(AnimatorConditionMode.Equals, value, name);
-                }
-
                 if(!controller.parameters.Any(p => p.name == name))
                     controller.AddParameter(name, AnimatorControllerParameterType.Int);
             }
