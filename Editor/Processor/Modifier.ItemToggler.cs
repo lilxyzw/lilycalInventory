@@ -1,7 +1,5 @@
-using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
-using UnityEngine;
 
 #if LIL_NDMF
 using nadena.dev.ndmf;
@@ -37,12 +35,6 @@ namespace jp.lilxyzw.lilycalinventory
                     // AnimatorControllerに追加
                     if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, root);
                     else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name);
-                }
-                else
-                {
-                    // 全オブジェクトが複数条件で操作される場合はパラメーターだけ追加
-                    if(!controller.parameters.Any(p => p.name == name))
-                        controller.AddParameter(name, AnimatorControllerParameterType.Float);
                 }
 
                 #if LIL_VRCSDK3A

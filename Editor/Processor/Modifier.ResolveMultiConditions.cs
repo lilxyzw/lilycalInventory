@@ -17,11 +17,14 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void ResolveMultiConditions(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, CostumeChanger[] costumeChangers, BlendTree root)
         {
             // 複数コンポーネントから操作されるオブジェクトを見つける
-            var toggleBools = new Dictionary<GameObject, HashSet<string>>();
-            var toggleInts = new Dictionary<GameObject, Dictionary<string, (int,HashSet<(int,bool)>)>>();
+            var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool isChange)>>();
+            var toggleInts = new Dictionary<GameObject, HashSet<(string name, bool[] isChanges)>>();
             togglers.GatherConditions(toggleBools);
             costumeChangers.GatherConditions(toggleInts);
-            var multiConditionObjects = toggleBools.Select(b => b.Key).Concat(toggleInts.Select(i => i.Key)).GroupBy(o => o).Where(g => g.Count() > 1).Select(g => g.ElementAt(0)).ToArray();
+            var multiConditionObjects = toggleBools.Keys.Concat(toggleInts.Keys)
+                .Distinct()
+                .Where(o => (toggleBools.TryGetValue(o, out var b) ? b.Count : 0) + (toggleInts.TryGetValue(o, out var i) ? i.Count : 0) > 1)
+                .ToArray();
 
             // 各コンポーネントからそのオブジェクトを除去
             foreach(var t in togglers)
@@ -31,29 +34,21 @@ namespace jp.lilxyzw.lilycalinventory
                     t.parametersPerMenu.objects = t.parametersPerMenu.objects.Where(o => !multiConditionObjects.Contains(o.obj)).ToArray();
 
             // 同一条件のオブジェクトをまとめる
-            var conditionAndObjects = new Dictionary<(string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive), List<GameObject>>();
-            var conditions = new HashSet<(string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive)>();
+            var conditionAndObjects = new Dictionary<((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints), List<GameObject>>();
             foreach(var o in multiConditionObjects)
             {
-                var bools = new string[]{};
-                if(toggleBools.ContainsKey(o)) bools = toggleBools[o].OrderBy(a => a).ToArray();
-                var ints = new (string name, int range,(int value, bool isActive)[])[]{};
-                if(toggleInts.ContainsKey(o)) ints = toggleInts[o].Select(b => (b.Key,b.Value.Item1,b.Value.Item2.OrderBy(a => a).ToArray())).OrderBy(a => a.Item1).ToArray();
-                var key = (bools,ints,o.activeSelf);
-                bool isAdded = false;
-                foreach(var c in conditions)
+                var bools = new (string name, bool isChange)[0];
+                if(toggleBools.ContainsKey(o)) bools = toggleBools[o].OrderBy(b => b.name).ToArray();
+                var ints = new (string name, bool[] isChanges)[0];
+                if(toggleInts.ContainsKey(o)) ints = toggleInts[o].OrderBy(i => i.name).ToArray();
+                var key = conditionAndObjects.Keys.Where(x => IsSameConditions(x, (bools, ints))).DefaultIfEmpty((bools, ints)).Single();
+                if(conditionAndObjects.ContainsKey(key))
                 {
-                    if(IsSameConditions(c, key))
-                    {
-                        conditionAndObjects[c].Add(o);
-                        isAdded = true;
-                        break;
-                    }
+                    conditionAndObjects[key].Add(o);
                 }
-                if(!isAdded)
+                else
                 {
                     conditionAndObjects[key] = new List<GameObject>{o};
-                    conditions.Add(key);
                 }
             }
 
@@ -62,7 +57,6 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 var bools = c.Key.bools;
                 var ints = c.Key.ints;
-                var isActive = c.Key.isActive;
 
                 var name = c.Value.ElementAt(0).name;
                 var clips = (clipDefault: new InternalClip(), clipChanged: new InternalClip());
@@ -73,7 +67,7 @@ namespace jp.lilxyzw.lilycalinventory
                     var toggler = new ObjectToggler
                     {
                         obj = o,
-                        value = !isActive
+                        value = !o.activeSelf
                     };
                     toggler.ToClipDefault(clips.clipDefault);
                     toggler.ToClip(clips.clipChanged);
@@ -83,20 +77,18 @@ namespace jp.lilxyzw.lilycalinventory
 
                 AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
                 AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
-                if(root) AnimationHelper.AddMultiConditionTree(controller, clipDefault, clipChanged, bools, ints, root, isActive);
-                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, bools, ints, isActive);
+                if(root) AnimationHelper.AddMultiConditionTree(controller, clipDefault, clipChanged, bools, ints, root);
+                else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, bools, ints);
             }
         }
 
-        private static bool IsSameConditions((string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive) a, (string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, bool isActive) b)
+        private static bool IsSameConditions(((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints) a, ((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints) b)
         {
             if(!a.bools.SequenceEqual(b.bools)) return false;
             if(!a.ints.Select(k => k.name).SequenceEqual(b.ints.Select(k => k.name))) return false;
-            if(!a.ints.Select(k => k.range).SequenceEqual(b.ints.Select(k => k.range))) return false;
-            if(a.isActive != b.isActive) return false;
             for(int i = 0; i < a.ints.Length; i++)
             {
-                if(!a.ints[i].Item3.SequenceEqual(b.ints[i].Item3)) return false;
+                if(!a.ints[i].isChanges.SequenceEqual(b.ints[i].isChanges)) return false;
             }
             return true;
         }
