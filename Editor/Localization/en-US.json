@@ -31,6 +31,7 @@
   "inspector.folderContents": "# Folder Contents",
   "inspector.folderContentsCircularReference": "Circular reference detected. Please change the parent folder.",
   "inspector.parametersWith": "# Parameters that work together (Advanced)",
+  "inspector.detailSettings": "# Detail Settings",
 
   "inspector.isSave": "Save state",
   "inspector.isSave.tooltip": "If you turn this on, the state will be saved even if the avatar is loaded.",
@@ -67,7 +68,14 @@
   "inspector.clips": "Insert AnimationClip",
   "inspector.clips.tooltip": "By setting AnimationClip here, you can animate properties that cannot be changed with lilycalInventory. The value is copied from the first frame of the AnimationClip.",
 
+  "inspector.flipToggle": "Flip Toggle",
+  "inspector.flipToggle.tooltip": "If you turn this on, the avatar's state will change when the menu is disabled.",
+  "inspector.flipToggleNonZeroWarning": "Flipping toggle may result in unintended states if synchronization fails.",
+
   "inspector.costumes": "Costumes",
+  "inspector.defaultCostume": "Default Costume",
+  "inspector.defaultCostume.tooltip": "When you reset your avatar, the costume set here will be selected.",
+  "inspector.defaultCostumeNonZeroWarning": "Setting a value other than 0 may result in unintended states if synchronization fails.",
 
   "inspector.defaultFrameValue": "Default Frame Value (%)",
   "inspector.defaultFrameValue.tooltip": "When you reset your avatar, the frame value will be the value you set here.",

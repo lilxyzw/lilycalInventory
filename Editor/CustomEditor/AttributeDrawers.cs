@@ -227,4 +227,58 @@ namespace jp.lilxyzw.lilycalinventory
             return parametersPerMenuDrawer.GetPropertyHeight(property, label) + EditorStyles.helpBox.padding.vertical * 2;
         }
     }
+
+    // パラメータの値を表示
+    [CustomPropertyDrawer(typeof(ParameterValueAttribute))]
+    internal class ParameterValueDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var attr = attribute as ParameterValueAttribute;
+            var isNonZero = false;
+            switch(property.propertyType)
+            {
+                case SerializedPropertyType.Boolean:
+                    EditorGUI.PropertyField(position.SingleLine(), property, Localization.G(property));
+                    isNonZero = property.boolValue;
+                    break;
+                case SerializedPropertyType.Integer:
+                    if(string.IsNullOrEmpty(attr.RangeArrayName))
+                    {
+                        EditorGUI.PropertyField(position.SingleLine(), property, Localization.G(property));
+                    }
+                    else
+                    {
+                        var range = property.serializedObject.FindProperty(attr.RangeArrayName).arraySize;
+                        property.intValue = EditorGUI.IntSlider(position.SingleLine(), Localization.G(property), property.intValue, 0, range - 1);
+                    }
+                    isNonZero = property.intValue != 0;
+                    break;
+            }
+            if(attr.NonZeroWarning && isNonZero)
+            {
+                position.NewLine();
+                position.height = GUIHelper.propertyHeight * 2;
+                EditorGUI.HelpBox(position, Localization.S($"inspector.{property.name}NonZeroWarning"), MessageType.Warning);
+            }
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            var attr = attribute as ParameterValueAttribute;
+            var isNonZero = false;
+            switch(property.propertyType)
+            {
+                case SerializedPropertyType.Boolean:
+                    isNonZero = property.boolValue;
+                    break;
+                case SerializedPropertyType.Integer:
+                    isNonZero = property.intValue != 0;
+                    break;
+            }
+            return attr.NonZeroWarning && isNonZero
+                ? GUIHelper.propertyHeight + GUIHelper.GetSpaceHeight() * GUIHelper.propertyHeight * 2
+                : GUIHelper.propertyHeight;
+        }
+    }
 }

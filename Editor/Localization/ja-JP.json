@@ -31,6 +31,7 @@
   "inspector.folderContents": "# フォルダの中身",
   "inspector.folderContentsCircularReference": "循環参照が検出されました。親フォルダを変更してください。",
   "inspector.parametersWith": "# 一緒に操作するパラメーター（拡張設定）",
+  "inspector.detailSettings": "# 詳細設定",
 
   "inspector.isSave": "有効状態を保存",
   "inspector.isSave.tooltip": "これをオンにするとアバター読み込み直してもメニューの状態が保存されます。",
@@ -67,7 +68,14 @@
   "inspector.clips": "AnimationClipの差し込み",
   "inspector.clips.tooltip": "ここにAnimationClipを設定することでlilycalInventoryで操作できない項目をアニメーションさせることができます。値はAnimationClipの最初のフレーム目からコピーされます。",
 
+  "inspector.flipToggle": "メニュー操作を反転",
+  "inspector.flipToggle.tooltip": "これをオンにするとメニューを無効化したときにアバターの状態が変わるようになります。",
+  "inspector.flipToggleNonZeroWarning": "メニュー操作を反転すると同期が正常に行われなかった場合に意図しない状態になる可能性があります。",
+
   "inspector.costumes": "コスチューム",
+  "inspector.defaultCostume": "デフォルトのコスチューム",
+  "inspector.defaultCostume.tooltip": "アバターを初期化したときにここに設定したコスチュームが選択されます。",
+  "inspector.defaultCostumeNonZeroWarning": "0以外に設定すると同期が正常に行われなかった場合に意図しない状態になる可能性があります。",
 
   "inspector.defaultFrameValue": "パペット初期値 (%)",
   "inspector.defaultFrameValue.tooltip": "アバターを初期化したときにパペットの値がここに設定した値になります。",

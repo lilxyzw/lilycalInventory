@@ -14,5 +14,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
         [NotKeyable] public Costume[] costumes = new Costume[]{};
+        [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
+        [NotKeyable] [ParameterValue(true, "costumes")] public int defaultCostume = 0;
     }
 }

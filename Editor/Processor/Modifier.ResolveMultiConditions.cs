@@ -17,8 +17,8 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void ResolveMultiConditions(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, CostumeChanger[] costumeChangers, BlendTree root)
         {
             // 複数コンポーネントから操作されるオブジェクトを見つける
-            var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool isChange)>>();
-            var toggleInts = new Dictionary<GameObject, HashSet<(string name, bool[] isChanges)>>();
+            var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool isChange, bool flipState)>>();
+            var toggleInts = new Dictionary<GameObject, HashSet<(string name, bool[] isChanges, int defaultState)>>();
             togglers.GatherConditions(toggleBools);
             costumeChangers.GatherConditions(toggleInts);
             var multiConditionObjects = toggleBools.Keys.Concat(toggleInts.Keys)
@@ -34,12 +34,12 @@ namespace jp.lilxyzw.lilycalinventory
                     t.parametersPerMenu.objects = t.parametersPerMenu.objects.Where(o => !multiConditionObjects.Contains(o.obj)).ToArray();
 
             // 同一条件のオブジェクトをまとめる
-            var conditionAndObjects = new Dictionary<((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints), List<GameObject>>();
+            var conditionAndObjects = new Dictionary<((string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints), List<GameObject>>();
             foreach(var o in multiConditionObjects)
             {
-                var bools = new (string name, bool isChange)[0];
+                var bools = new (string name, bool isChange, bool flipState)[0];
                 if(toggleBools.ContainsKey(o)) bools = toggleBools[o].OrderBy(b => b.name).ToArray();
-                var ints = new (string name, bool[] isChanges)[0];
+                var ints = new (string name, bool[] isChanges, int defaultState)[0];
                 if(toggleInts.ContainsKey(o)) ints = toggleInts[o].OrderBy(i => i.name).ToArray();
                 var key = conditionAndObjects.Keys.Where(x => IsSameConditions(x, (bools, ints))).DefaultIfEmpty((bools, ints)).Single();
                 if(conditionAndObjects.ContainsKey(key))
@@ -82,7 +82,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        private static bool IsSameConditions(((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints) a, ((string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints) b)
+        private static bool IsSameConditions(((string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints) a, ((string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints) b)
         {
             if(!a.bools.SequenceEqual(b.bools)) return false;
             if(!a.ints.Select(k => k.name).SequenceEqual(b.ints.Select(k => k.name))) return false;
@@ -90,6 +90,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(!a.ints[i].isChanges.SequenceEqual(b.ints[i].isChanges)) return false;
             }
+            if(!a.ints.Select(k => k.defaultState).SequenceEqual(b.ints.Select(k => k.defaultState))) return false;
             return true;
         }
     }

@@ -25,6 +25,18 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     internal class LILBoxAttribute : PropertyAttribute {}
 
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    internal class ParameterValueAttribute : PropertyAttribute
+    {
+        public readonly bool NonZeroWarning;
+        public readonly string RangeArrayName;
+        public ParameterValueAttribute(bool nonZeroWarning = false, string rangeArrayName = null)
+        {
+            NonZeroWarning = nonZeroWarning;
+            RangeArrayName = rangeArrayName;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     internal class LILLocalizeAttribute : PropertyAttribute
     {
         public readonly string name;

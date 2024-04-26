@@ -9,7 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
     // AnimationHelper.DirectBlendTree.cs と対になっています
     internal static partial class AnimationHelper
     {
-        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name)
+        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, bool flipState)
         {
             // オンオフアニメーションを追加
             var stateDefault = new AnimatorState
@@ -32,10 +32,10 @@ namespace jp.lilxyzw.lilycalinventory
             stateMachine.defaultState = stateDefault;
 
             var transitionToChanged = stateDefault.AddTransition(stateChanged);
-            transitionToChanged.AddCondition(AnimatorConditionMode.If, 0, name);
+            transitionToChanged.AddCondition(flipState ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
             transitionToChanged.duration = 0;
             var transitionToDefault = stateChanged.AddTransition(stateDefault);
-            transitionToDefault.AddCondition(AnimatorConditionMode.IfNot, 0, name);
+            transitionToDefault.AddCondition(flipState ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
             transitionToDefault.duration = 0;
 
             var layer = new AnimatorControllerLayer
@@ -48,10 +48,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Bool);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = flipState });
         }
 
-        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name)
+        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name, int defaultState)
         {
             var stateMachine = new AnimatorStateMachine();
 
@@ -66,6 +66,8 @@ namespace jp.lilxyzw.lilycalinventory
                     writeDefaultValues = hasWriteDefaultsState
                 };
                 stateMachine.AddState(state, stateMachine.entryPosition + new Vector3(200,clips.Length*25-i*50,0));
+                if(i == defaultState) stateMachine.defaultState = state;
+
                 stateMachine.AddEntryTransition(state).AddCondition(AnimatorConditionMode.Equals, i, name);
                 var toExit = state.AddExitTransition();
                 toExit.AddCondition(AnimatorConditionMode.NotEqual, i, name);
@@ -82,10 +84,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Int);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultState });
         }
 
-        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, SmoothChanger changer)
+        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, float defaultValue)
         {
             var stateMachine = new AnimatorStateMachine();
             var tree = new BlendTree
@@ -119,11 +121,11 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints)
+        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints)
         {
             var stateDefault = new AnimatorState
             {
@@ -158,7 +160,7 @@ namespace jp.lilxyzw.lilycalinventory
             controller.AddLayer(layer);
         }
 
-        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints)
+        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints)
         {
 
             var toChangeds = ints.Select(i => i.isChanges.Count(c => c)).Aggregate(1, (a, b) => a * b);
@@ -171,22 +173,22 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             // Boolはand条件で処理
-            foreach(var (name, isChange) in bools)
+            foreach(var (name, isChange, flipState) in bools)
             {
                 foreach(var transitionToChanged in transitionToChangeds)
-                    transitionToChanged.AddCondition(isChange ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
+                    transitionToChanged.AddCondition(isChange ^ flipState ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
 
                 var transitionToDefault = stateChanged.AddTransition(stateDefault);
                 transitionToDefault.duration = 0;
-                transitionToDefault.AddCondition(isChange ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
+                transitionToDefault.AddCondition(isChange ^ flipState ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Bool);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = flipState });
             }
 
             // Intもand条件だが、Int内の各数値はor条件
             int offset = 1;
-            foreach(var (name, isChanges) in ints)
+            foreach(var (name, isChanges, defaultState) in ints)
             {
                 var valueToChangeds = Enumerable.Range(0, isChanges.Length).Where(i => isChanges[i]).ToArray();
                 for(var i = 0; i < transitionToChangeds.Length; i++)
@@ -200,7 +202,7 @@ namespace jp.lilxyzw.lilycalinventory
                     transitionToDefault.AddCondition(AnimatorConditionMode.NotEqual, value, name);
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Int);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultState });
             }
         }
     }

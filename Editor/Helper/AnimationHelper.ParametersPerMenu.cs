@@ -265,18 +265,18 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // TODO: Support other than toggler
-        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool isChange)>> dic)
+        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool isChange, bool flipState)>> dic)
         {
             foreach(var itemToggler in itemTogglers)
                 foreach(var toggler in itemToggler.parameter.objects)
-                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value != toggler.obj.activeSelf));
+                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value != toggler.obj.activeSelf, itemToggler.flipToggle));
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] isChanges)>> dic)
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] isChanges, int defaultState)>> dic)
         {
             foreach(var costumeChanger in costumeChangers)
                 foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Distinct())
-                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => (c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf) != obj.activeSelf).ToArray()));
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => (c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf) != obj.activeSelf).ToArray(), costumeChanger.defaultCostume));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)

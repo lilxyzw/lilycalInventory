@@ -24,10 +24,7 @@ namespace jp.lilxyzw.lilycalinventory
                     break;
                 }
             }
-            controller.AddParameter(parameterName, AnimatorControllerParameterType.Float);
-            var parameters = controller.parameters;
-            parameters[controller.parameters.Length-1].defaultFloat = 1;
-            controller.parameters = parameters;
+            controller.AddParameter(new AnimatorControllerParameter() { name = parameterName, type = AnimatorControllerParameterType.Float, defaultFloat = 1 });
 
             // 各コンポーネントで生成されるBlendTreeの追加先のBlendTree
             root = new BlendTree
@@ -71,7 +68,7 @@ namespace jp.lilxyzw.lilycalinventory
             root.children = children;
         }
 
-        internal static void AddItemTogglerTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, BlendTree root)
+        internal static void AddItemTogglerTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, bool flipState, BlendTree root)
         {
             var layer = new BlendTree
             {
@@ -82,16 +79,16 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             // オンオフアニメーションを追加
-            layer.AddChild(clipDefault);
-            layer.AddChild(clipChanged);
+            layer.AddChild(flipState ? clipChanged : clipDefault);
+            layer.AddChild(flipState ? clipDefault : clipChanged);
 
             root.AddChild(layer);
 
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = flipState ? 1 : 0 });
         }
 
-        internal static void AddCostumeChangerTree(AnimatorController controller, AnimationClip[] clips, string name, BlendTree root)
+        internal static void AddCostumeChangerTree(AnimatorController controller, AnimationClip[] clips, string name, int defaultState, BlendTree root)
         {
             var layer = new BlendTree
             {
@@ -108,10 +105,10 @@ namespace jp.lilxyzw.lilycalinventory
             root.AddChild(layer);
 
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultState });
         }
 
-        internal static void AddSmoothChangerTree(AnimatorController controller, AnimationClip[] clips, float[] frames, string name, BlendTree root)
+        internal static void AddSmoothChangerTree(AnimatorController controller, AnimationClip[] clips, float[] frames, string name, float defaultValue, BlendTree root)
         {
             var layer = new BlendTree
             {
@@ -128,11 +125,11 @@ namespace jp.lilxyzw.lilycalinventory
             root.AddChild(layer);
 
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints, BlendTree root)
+        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, (string name, bool isChange, bool flipState)[] bools, (string name, bool[] isChanges, int defaultState)[] ints, BlendTree root)
         {
             AddTree(root);
 
@@ -142,14 +139,14 @@ namespace jp.lilxyzw.lilycalinventory
 
                 if(index < bools.Length)
                 {
-                    AddBoolTree(parent, depth, value, bools[index].name, bools[index].isChange);
+                    AddBoolTree(parent, depth, value, bools[index].name, bools[index].isChange, bools[index].flipState);
                     return;
                 }
                 index -= bools.Length;
 
                 if(index < ints.Length)
                 {
-                    AddIntTree(parent, depth, value, ints[index].name, ints[index].isChanges);
+                    AddIntTree(parent, depth, value, ints[index].name, ints[index].isChanges, ints[index].defaultState);
                     return;
                 }
                 index -= ints.Length;
@@ -158,7 +155,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             // Boolはand条件で処理
-            void AddBoolTree(BlendTree parent, int depth, int value, string name, bool isChange)
+            void AddBoolTree(BlendTree parent, int depth, int value, string name, bool isChange, bool flipState)
             {
                 var layer = new BlendTree
                 {
@@ -170,9 +167,9 @@ namespace jp.lilxyzw.lilycalinventory
                 parent.AddChild(layer, value);
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = flipState ? 1 : 0 });
 
-                if(isChange)
+                if(isChange ^ flipState)
                 {
                     layer.AddChild(clipDefault);
                     AddTree(layer, depth + 1);
@@ -185,7 +182,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             // Intもand条件だが、Int内の各数値はor条件
-            void AddIntTree(BlendTree parent, int depth, int value, string name, bool[] isChanges)
+            void AddIntTree(BlendTree parent, int depth, int value, string name, bool[] isChanges, int defaultState)
             {
                 var layer = new BlendTree
                 {
@@ -197,7 +194,7 @@ namespace jp.lilxyzw.lilycalinventory
                 parent.AddChild(layer, value);
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultState });
 
                 for(var i = 0; i < isChanges.Length; i++)
                 {
