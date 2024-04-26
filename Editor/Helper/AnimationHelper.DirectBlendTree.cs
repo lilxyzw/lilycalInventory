@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using jp.lilxyzw.lilycalinventory.runtime;
 using UnityEditor.Animations;
@@ -133,87 +132,79 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string[] bools, (string name, int range,(int value, bool isActive)[])[] ints, BlendTree root, bool isActive)
+        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints, BlendTree root)
         {
-            BlendTree parent = root;
-            BlendTree layer = null;
+            AddTree(root);
 
-            // Boolはand条件で処理
-            for(int i = 0; i < bools.Length; i++)
+            void AddTree(BlendTree parent, int depth = 0, int value = 0)
             {
-                layer = new BlendTree
+                var index = depth;
+
+                if(index < bools.Length)
+                {
+                    AddBoolTree(parent, depth, value, bools[index].name, bools[index].isChange);
+                    return;
+                }
+                index -= bools.Length;
+
+                if(index < ints.Length)
+                {
+                    AddIntTree(parent, depth, value, ints[index].name, ints[index].isChanges);
+                    return;
+                }
+                index -= ints.Length;
+
+                parent.AddChild(clipChanged, value);
+            }
+
+            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
+            void AddBoolTree(BlendTree parent, int depth, int value, string name, bool isChange)
+            {
+                var layer = new BlendTree
                 {
                     blendType = BlendTreeType.Simple1D,
-                    blendParameter = bools[i],
-                    name = bools[i],
+                    blendParameter = name,
+                    name = name,
                     useAutomaticThresholds = true
                 };
-                if(parent != root)
+                parent.AddChild(layer, value);
+
+                if(!controller.parameters.Any(p => p.name == name))
+                    controller.AddParameter(name, AnimatorControllerParameterType.Float);
+
+                if(!isChange)
                 {
-                    if(isActive)
-                    {
-                        parent.AddChild(layer);
-                        parent.AddChild(clipChanged);
-                    }
-                    else
-                    {
-                        if(parent != root) parent.AddChild(clipDefault);
-                        parent.AddChild(layer);
-                    }
+                    AddTree(layer, depth + 1);
+                    layer.AddChild(clipDefault);
                 }
                 else
                 {
-                    parent.AddChild(layer);
+                    layer.AddChild(clipDefault);
+                    AddTree(layer, depth + 1);
                 }
-                if(!controller.parameters.Any(p => p.name == bools[i]))
-                    controller.AddParameter(bools[i], AnimatorControllerParameterType.Float);
-                parent = layer;
             }
-            var boolEnd = parent;
-            if(!isActive) boolEnd.AddChild(clipDefault);
 
-            // Intもand条件だが、Int内の各数値はor条件
-            var prev = new HashSet<int>{0};
-            int loops = 1;
-            for(int i = 0; i < ints.Length; i++)
+            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
+            void AddIntTree(BlendTree parent, int depth, int value, string name, bool[] isChanges)
             {
-                var newInts = new HashSet<int>(ints[i].Item3.Where(p => p.isActive).Select(p => p.value));
-                var inv = ints[i].Item3.Where(p => !p.isActive).Select(p => p.value);
-                if(inv.Count() > 0) newInts.UnionWith(Enumerable.Range(0,ints[i].range).Except(inv));
-                layer = new BlendTree
+                var layer = new BlendTree
                 {
                     blendType = BlendTreeType.Simple1D,
-                    blendParameter = ints[i].name,
-                    name = ints[i].name,
+                    blendParameter = name,
+                    name = name,
                     useAutomaticThresholds = false
                 };
+                parent.AddChild(layer, value);
 
-                if(i > 0) loops = ints[i-1].range;
-                if(parent != root)
+                if(!controller.parameters.Any(p => p.name == name))
+                    controller.AddParameter(name, AnimatorControllerParameterType.Float);
+
+                for(var i = 0; i < isChanges.Length; i++)
                 {
-                    for(int j = 0; j < loops; j++)
-                    {
-                        if(prev.Contains(j)) parent.AddChild(layer, j);
-                        else parent.AddChild(isActive ? clipChanged : clipDefault, j);
-                    }
+                    if(!isChanges[i]) layer.AddChild(clipDefault, i);
+                    else AddTree(layer, depth + 1, i);
                 }
-                else
-                {
-                    parent.AddChild(layer);
-                }
-                prev = newInts;
-
-                if(!controller.parameters.Any(p => p.name == ints[i].name))
-                    controller.AddParameter(ints[i].name, AnimatorControllerParameterType.Float);
-                parent = layer;
             }
-            for(int j = 0; j < ints[ints.Length-1].range; j++)
-            {
-                if(prev.Contains(j)) parent.AddChild(isActive ? clipDefault : clipChanged, j);
-                else parent.AddChild(isActive ? clipChanged : clipDefault, j);
-            }
-
-            if(isActive) boolEnd.AddChild(clipChanged);
         }
     }
 }

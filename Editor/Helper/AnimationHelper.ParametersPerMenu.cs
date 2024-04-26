@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -265,44 +264,23 @@ namespace jp.lilxyzw.lilycalinventory
             return parameter;
         }
 
-        // TODO: Support other than toggler
-        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<string>> dic)
+        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool isChange)>> dic)
         {
             foreach(var itemToggler in itemTogglers)
                 foreach(var toggler in itemToggler.parameter.objects)
-                    dic.GetOrAdd(toggler.obj).Add(itemToggler.menuName);
+                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value != toggler.obj.activeSelf));
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, Dictionary<string, (int,HashSet<(int,bool)>)>> dic)
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] isChanges)>> dic)
         {
             foreach(var costumeChanger in costumeChangers)
-            {
-                for(int i = 0; i < costumeChanger.costumes.Length; i++)
-                {
-                    var parameter = costumeChanger.costumes[i].parametersPerMenu;
-                    foreach(var toggler in parameter.objects)
-                    {
-                        dic.GetOrAdd(toggler.obj).GetOrAdd(costumeChanger.menuName, costumeChanger.costumes.Length).Item2.Add((i, toggler.value));
-                    }
-                }
-            }
-        }
-
-        private static Dictionary<TValue,TValue2> GetOrAdd<TKey,TValue,TValue2>(this Dictionary<TKey,Dictionary<TValue,TValue2>> dic, TKey key)
-        {
-            if(!dic.ContainsKey(key)) dic[key] = new Dictionary<TValue,TValue2>();
-            return dic[key];
+                foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Distinct())
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => (c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf) != obj.activeSelf).ToArray()));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
         {
             if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
-            return dic[key];
-        }
-
-        private static (int,HashSet<TValue>) GetOrAdd<TKey,TValue>(this Dictionary<TKey,(int,HashSet<TValue>)> dic, TKey key, int value)
-        {
-            if(!dic.ContainsKey(key)) dic[key] = (value,new HashSet<TValue>());
             return dic[key];
         }
     }
