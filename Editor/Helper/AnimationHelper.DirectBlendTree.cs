@@ -132,8 +132,11 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints, BlendTree root)
+        internal static void AddMultiConditionTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, (string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, BlendTree root, bool isActive)
         {
+            var clipActive = isActive ? clipDefault : clipChanged;
+            var clipInactive = isActive ? clipChanged : clipDefault;
+
             AddTree(root);
 
             void AddTree(BlendTree parent, int depth = 0, int value = 0)
@@ -142,23 +145,24 @@ namespace jp.lilxyzw.lilycalinventory
 
                 if(index < bools.Length)
                 {
-                    AddBoolTree(parent, depth, value, bools[index].name, bools[index].isChange);
+                    AddBoolTree(parent, depth, value, bools[index].name, bools[index].toActive);
                     return;
                 }
                 index -= bools.Length;
 
                 if(index < ints.Length)
                 {
-                    AddIntTree(parent, depth, value, ints[index].name, ints[index].isChanges);
+                    AddIntTree(parent, depth, value, ints[index].name, ints[index].toActives);
                     return;
                 }
                 index -= ints.Length;
 
-                parent.AddChild(clipChanged, value);
+                parent.AddChild(clipActive, value);
             }
 
-            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
-            void AddBoolTree(BlendTree parent, int depth, int value, string name, bool isChange)
+            // 非アクティブにする条件をor、アクティブにする条件をandにする
+            // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
+            void AddBoolTree(BlendTree parent, int depth, int value, string name, bool toActive)
             {
                 var layer = new BlendTree
                 {
@@ -172,20 +176,21 @@ namespace jp.lilxyzw.lilycalinventory
                 if(!controller.parameters.Any(p => p.name == name))
                     controller.AddParameter(name, AnimatorControllerParameterType.Float);
 
-                if(!isChange)
+                if(!toActive)
                 {
                     AddTree(layer, depth + 1);
-                    layer.AddChild(clipDefault);
+                    layer.AddChild(clipInactive);
                 }
                 else
                 {
-                    layer.AddChild(clipDefault);
+                    layer.AddChild(clipInactive);
                     AddTree(layer, depth + 1);
                 }
             }
 
-            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
-            void AddIntTree(BlendTree parent, int depth, int value, string name, bool[] isChanges)
+            // 非アクティブにする条件をor、アクティブにする条件をandにする
+            // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
+            void AddIntTree(BlendTree parent, int depth, int value, string name, bool[] toActives)
             {
                 var layer = new BlendTree
                 {
@@ -199,9 +204,9 @@ namespace jp.lilxyzw.lilycalinventory
                 if(!controller.parameters.Any(p => p.name == name))
                     controller.AddParameter(name, AnimatorControllerParameterType.Float);
 
-                for(var i = 0; i < isChanges.Length; i++)
+                for(var i = 0; i < toActives.Length; i++)
                 {
-                    if(!isChanges[i]) layer.AddChild(clipDefault, i);
+                    if(!toActives[i]) layer.AddChild(clipInactive, i);
                     else AddTree(layer, depth + 1, i);
                 }
             }

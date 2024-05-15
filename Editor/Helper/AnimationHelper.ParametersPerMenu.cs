@@ -264,18 +264,18 @@ namespace jp.lilxyzw.lilycalinventory
             return parameter;
         }
 
-        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool isChange)>> dic)
+        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool toActive)>> dic)
         {
             foreach(var itemToggler in itemTogglers)
                 foreach(var toggler in itemToggler.parameter.objects)
-                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value != toggler.obj.activeSelf));
+                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value));
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] isChanges)>> dic)
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] toActives)>> dic)
         {
             foreach(var costumeChanger in costumeChangers)
                 foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Distinct())
-                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => (c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf) != obj.activeSelf).ToArray()));
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf).ToArray()));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)

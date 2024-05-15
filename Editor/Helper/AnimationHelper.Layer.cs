@@ -123,7 +123,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints)
+        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive)
         {
             var stateDefault = new AnimatorState
             {
@@ -145,7 +145,7 @@ namespace jp.lilxyzw.lilycalinventory
             stateMachine.AddState(stateChanged, stateMachine.entryPosition + new Vector3(450,0,0));
             stateMachine.defaultState = stateDefault;
 
-            AddConditions(controller, stateDefault, stateChanged, bools, ints);
+            AddConditions(controller, stateDefault, stateChanged, bools, ints, isActive);
 
             var layer = new AnimatorControllerLayer
             {
@@ -158,36 +158,41 @@ namespace jp.lilxyzw.lilycalinventory
             controller.AddLayer(layer);
         }
 
-        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool isChange)[] bools, (string name, bool[] isChanges)[] ints)
+        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive)
         {
-            var transitionToChanged = stateDefault.AddTransition(stateChanged);
-            transitionToChanged.duration = 0;
+            var stateActive = isActive ? stateDefault : stateChanged;
+            var stateInactive = isActive ? stateChanged : stateDefault;
 
-            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
-            foreach(var (name, isChange) in bools)
+            var transitionToActive = stateInactive.AddTransition(stateActive);
+            transitionToActive.duration = 0;
+
+            // 非アクティブにする条件をor、アクティブにする条件をandにする
+            // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
+            foreach(var (name, toActive) in bools)
             {
-                var transitionToDefault = stateChanged.AddTransition(stateDefault);
-                transitionToDefault.duration = 0;
-                transitionToDefault.AddCondition(!isChange ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
+                var transitionToInactive = stateActive.AddTransition(stateInactive);
+                transitionToInactive.duration = 0;
+                transitionToInactive.AddCondition(!toActive ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
 
-                transitionToChanged.AddCondition(!isChange ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
+                transitionToActive.AddCondition(!toActive ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
 
                 if(!controller.parameters.Any(p => p.name == name))
                     controller.AddParameter(name, AnimatorControllerParameterType.Bool);
             }
 
-            // デフォルトに戻す条件をor、デフォルトから変更する条件をandにする
-            foreach(var (name, isChanges) in ints)
+            // 非アクティブにする条件をor、アクティブにする条件をandにする
+            // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
+            foreach(var (name, toActives) in ints)
             {
-                // デフォルトから変更する値を使うと両方の遷移でandとorの組み合わせを考えることになるが、
-                // デフォルトに戻す値を使うと一方の遷移はorだけ、もう一方の遷移はandだけ考えればよくなる
-                foreach(var value in Enumerable.Range(0, isChanges.Length).Where(i => !isChanges[i]))
+                // アクティブにする値を使うと両方の遷移でandとorの組み合わせを考えることになるが、
+                // 非アクティブにする値を使うと一方の遷移はorだけ、もう一方の遷移はandだけ考えればよくなる
+                foreach(var value in Enumerable.Range(0, toActives.Length).Where(i => !toActives[i]))
                 {
-                    var transitionToDefault = stateChanged.AddTransition(stateDefault);
-                    transitionToDefault.duration = 0;
-                    transitionToDefault.AddCondition(AnimatorConditionMode.Equals, value, name);
+                    var transitionToInactive = stateActive.AddTransition(stateInactive);
+                    transitionToInactive.duration = 0;
+                    transitionToInactive.AddCondition(AnimatorConditionMode.Equals, value, name);
 
-                    transitionToChanged.AddCondition(AnimatorConditionMode.NotEqual, value, name);
+                    transitionToActive.AddCondition(AnimatorConditionMode.NotEqual, value, name);
                 }
 
                 if(!controller.parameters.Any(p => p.name == name))
