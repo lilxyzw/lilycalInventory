@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -14,18 +13,18 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class AnimationHelper
     {
-        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
         {
-            var clipOff = new InternalClip();
-            var clipOn = new InternalClip();
-            clipOff.name = $"{name}_Off";
-            clipOn.name = $"{name}_On";
+            var clipDefault = new InternalClip();
+            var clipChanged = new InternalClip();
+            clipDefault.name = $"{name}_Default";
+            clipChanged.name = $"{name}_Changed";
 
             foreach(var toggler in parameter.objects)
             {
                 if(!toggler.obj) continue;
-                toggler.ToClipDefault(clipOff);
-                toggler.ToClip(clipOn);
+                toggler.ToClipDefault(clipDefault);
+                toggler.ToClip(clipChanged);
             }
 
             foreach(var modifier in parameter.blendShapeModifiers)
@@ -39,8 +38,8 @@ namespace jp.lilxyzw.lilycalinventory
                         foreach(var namevalue in modifier.blendShapeNameValues)
                         {
                             if(renderer.sharedMesh.GetBlendShapeIndex(namevalue.name) == -1) continue;
-                            namevalue.ToClipDefault(clipOff, renderer);
-                            namevalue.ToClip(clipOn, renderer);
+                            namevalue.ToClipDefault(clipDefault, renderer);
+                            namevalue.ToClip(clipChanged, renderer);
                         }
                     }
                     continue;
@@ -48,16 +47,16 @@ namespace jp.lilxyzw.lilycalinventory
                 if(!modifier.skinnedMeshRenderer) continue;
                 foreach(var namevalue in modifier.blendShapeNameValues)
                 {
-                    namevalue.ToClipDefault(clipOff, modifier.skinnedMeshRenderer);
-                    namevalue.ToClip(clipOn, modifier.skinnedMeshRenderer);
+                    namevalue.ToClipDefault(clipDefault, modifier.skinnedMeshRenderer);
+                    namevalue.ToClip(clipChanged, modifier.skinnedMeshRenderer);
                 }
             }
 
             foreach(var replacer in parameter.materialReplacers)
             {
                 if(!replacer.renderer) continue;
-                replacer.ToClipDefault(clipOff);
-                replacer.ToClip(clipOn);
+                replacer.ToClipDefault(clipDefault);
+                replacer.ToClip(clipChanged);
             }
 
             foreach(var modifier in parameter.materialPropertyModifiers)
@@ -65,19 +64,19 @@ namespace jp.lilxyzw.lilycalinventory
                 if(modifier.renderers.Length == 0)
                     modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
 
-                modifier.ToClipDefault(clipOff);
-                modifier.ToClip(clipOn, clipOff);
+                modifier.ToClipDefault(clipDefault);
+                modifier.ToClip(clipChanged, clipDefault);
             }
 
             foreach(var clip in parameter.clips)
             {
-                clipOff.AddDefault(clip, gameObject);
-                clipOn.Add(clip);
+                clipDefault.AddDefault(clip, gameObject);
+                clipChanged.Add(clip);
             }
-            return (clipOff, clipOn);
+            return (clipDefault, clipChanged);
         }
 
-        internal static (InternalClip,InternalClip) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
         {
             return parameter.CreateClip(ctx.AvatarRootObject, name);
         }
@@ -265,44 +264,23 @@ namespace jp.lilxyzw.lilycalinventory
             return parameter;
         }
 
-        // TODO: Support other than toggler
-        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<string>> dic)
+        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool toActive)>> dic)
         {
             foreach(var itemToggler in itemTogglers)
                 foreach(var toggler in itemToggler.parameter.objects)
-                    dic.GetOrAdd(toggler.obj).Add(itemToggler.menuName);
+                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value));
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, Dictionary<string, (int,HashSet<(int,bool)>)>> dic)
+        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] toActives)>> dic)
         {
             foreach(var costumeChanger in costumeChangers)
-            {
-                for(int i = 0; i < costumeChanger.costumes.Length; i++)
-                {
-                    var parameter = costumeChanger.costumes[i].parametersPerMenu;
-                    foreach(var toggler in parameter.objects)
-                    {
-                        dic.GetOrAdd(toggler.obj).GetOrAdd(costumeChanger.menuName, costumeChanger.costumes.Length).Item2.Add((i, toggler.value));
-                    }
-                }
-            }
-        }
-
-        private static Dictionary<TValue,TValue2> GetOrAdd<TKey,TValue,TValue2>(this Dictionary<TKey,Dictionary<TValue,TValue2>> dic, TKey key)
-        {
-            if(!dic.ContainsKey(key)) dic[key] = new Dictionary<TValue,TValue2>();
-            return dic[key];
+                foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Distinct())
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf).ToArray()));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
         {
             if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
-            return dic[key];
-        }
-
-        private static (int,HashSet<TValue>) GetOrAdd<TKey,TValue>(this Dictionary<TKey,(int,HashSet<TValue>)> dic, TKey key, int value)
-        {
-            if(!dic.ContainsKey(key)) dic[key] = (value,new HashSet<TValue>());
             return dic[key];
         }
     }
