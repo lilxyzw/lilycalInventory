@@ -56,8 +56,8 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 // AnimatorControllerに追加
-                if(root) AnimationHelper.AddSmoothChangerTree(controller, clips, frames, name, root);
-                else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clips, frames, name, changer);
+                if(root) AnimationHelper.AddSmoothChangerTree(controller, clips, frames, name, changer.defaultFrameValue, root);
+                else AnimationHelper.AddSmoothChangerLayer(controller, hasWriteDefaultsState, clips, frames, name, changer.defaultFrameValue);
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加

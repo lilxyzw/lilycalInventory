@@ -31,11 +31,18 @@
   "inspector.folderContents": "# Folder Contents",
   "inspector.folderContentsCircularReference": "Circular reference detected. Please change the parent folder.",
   "inspector.parametersWith": "# Parameters that work together (Advanced)",
+  "inspector.detailSettings": "# Detail Settings",
 
   "inspector.isSave": "Save state",
   "inspector.isSave.tooltip": "If you turn this on, the state will be saved even if the avatar is loaded.",
   "inspector.isLocalOnly": "Local only",
   "inspector.isLocalOnly.tooltip": "If you turn this on, objects will only be turned on and off from your perspective.",
+  "inspector.defaultBool": "Parameter value for default state",
+  "inspector.defaultBool.tooltip": "When you reset your avatar, the parameter value will be the value you set here. The avatar will be in the default state when the parameter value is the value you set here, otherwise it will be in the animation settings state.",
+  "inspector.defaultBoolNonZeroWarning": "Setting a value other than False may result in unintended states if synchronization fails.",
+  "inspector.defaultInt": "Parameter value for default state",
+  "inspector.defaultInt.tooltip": "When you reset your avatar, the parameter value will be the value you set here.",
+  "inspector.defaultIntNonZeroWarning": "Setting a value other than 0 may result in unintended states if synchronization fails.",
 
   "inspector.objects": "Object to toggle (Multiple added in D&D here)",
   "inspector.objects.tooltip": "The object specified here will be turned on or off when the menu is activated. You can also add multiple objects at once by dragging and dropping them here. When selecting multiple objects, click the lock icon at the top right of the Inspector to prevent the screen from switching. If you want to go back to switching screens, click the lock icon again to unlock it.",

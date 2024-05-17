@@ -37,7 +37,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 // 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
-                foreach(var toggler in changer.costumes[0].parametersPerMenu.objects)
+                foreach(var toggler in changer.costumes[changer.defaultValue].parametersPerMenu.objects)
                 {
                     if(toggler.obj) toggler.obj.SetActive(toggler.value);
                 }
@@ -56,12 +56,12 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 // AnimatorControllerに追加
-                if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, name, root);
-                else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, name);
+                if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, name, changer.defaultValue, root);
+                else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, name, changer.defaultValue);
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加
-                parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave);
+                parameters.AddParameterInt(name, changer.isLocalOnly, changer.isSave, changer.defaultValue);
                 #endif
             }
         }

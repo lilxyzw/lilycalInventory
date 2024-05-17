@@ -25,6 +25,14 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     internal class LILBoxAttribute : PropertyAttribute {}
 
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    internal class DefaultValueAttribute : PropertyAttribute
+    {
+        public readonly string array;
+        public DefaultValueAttribute() => array = null;
+        public DefaultValueAttribute(string array) => this.array = array;
+    }
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     internal class LILLocalizeAttribute : PropertyAttribute
     {
         public readonly string name;

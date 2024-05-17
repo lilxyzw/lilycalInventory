@@ -186,12 +186,12 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal static void AddParameterToggle(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, float defaultValue = 0)
+        internal static void AddParameterToggle(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, bool defaultValue = false)
         {
-            parameters.AddParameter(name, isLocalOnly, isSave, defaultValue, ValueType.Bool);
+            parameters.AddParameter(name, isLocalOnly, isSave, defaultValue ? 1 : 0, ValueType.Bool);
         }
 
-        internal static void AddParameterInt(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, float defaultValue = 0)
+        internal static void AddParameterInt(this VRCExpressionParameters parameters, string name, bool isLocalOnly, bool isSave, int defaultValue = 0)
         {
             parameters.AddParameter(name, isLocalOnly, isSave, defaultValue, ValueType.Int);
         }

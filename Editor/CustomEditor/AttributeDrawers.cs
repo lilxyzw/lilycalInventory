@@ -227,4 +227,67 @@ namespace jp.lilxyzw.lilycalinventory
             return parametersPerMenuDrawer.GetPropertyHeight(property, label) + EditorStyles.helpBox.padding.vertical * 2;
         }
     }
+
+    // パラメーターのデフォルト値を表示
+    [CustomPropertyDrawer(typeof(DefaultValueAttribute))]
+    internal class DefaultValueDrawer : PropertyDrawer
+    {
+        private static readonly GUIContent[] boolOptions = new[] { new GUIContent(false.ToString()), new GUIContent(true.ToString()) };
+        private GUIContent boolNonZeroWarningContent => EditorGUIUtility.TrTextContentWithIcon(Localization.S($"inspector.defaultBoolNonZeroWarning"), MessageType.Warning);
+        private GUIContent intNonZeroWarningContent => EditorGUIUtility.TrTextContentWithIcon(Localization.S($"inspector.defaultIntNonZeroWarning"), MessageType.Warning);
+        private float boolNonZeroWarningContentHeight => EditorStyles.helpBox.CalcHeight(boolNonZeroWarningContent, EditorGUIUtility.currentViewWidth);
+        private float intNonZeroWarningContentHeight => EditorStyles.helpBox.CalcHeight(intNonZeroWarningContent, EditorGUIUtility.currentViewWidth);
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            position.SingleLine();
+            switch(property.propertyType)
+            {
+                case SerializedPropertyType.Boolean:
+                    property.boolValue = EditorGUI.Popup(position, Localization.G("inspector.defaultBool"), property.boolValue ? 1 : 0, boolOptions) == 1;
+                    if(property.boolValue)
+                    {
+                        position.NewLine();
+                        position.height = boolNonZeroWarningContentHeight;
+                        GUI.Label(position, boolNonZeroWarningContent, EditorStyles.helpBox);
+                    }
+                    break;
+                case SerializedPropertyType.Integer:
+                    var attr = attribute as DefaultValueAttribute;
+                    var size = property.serializedObject.FindProperty(attr.array).arraySize;
+                    property.intValue = EditorGUI.IntSlider(position, Localization.G("inspector.defaultInt"), property.intValue, 0, size - 1);
+                    if(property.intValue != 0)
+                    {
+                        position.NewLine();
+                        position.height = intNonZeroWarningContentHeight;
+                        GUI.Label(position, intNonZeroWarningContent, EditorStyles.helpBox);
+                    }
+                    break;
+            }
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            var position = new Rect();
+            position.SingleLine();
+            switch(property.propertyType)
+            {
+                case SerializedPropertyType.Boolean:
+                    if(property.boolValue)
+                    {
+                        position.NewLine();
+                        position.height = boolNonZeroWarningContentHeight;
+                    }
+                    break;
+                case SerializedPropertyType.Integer:
+                    if(property.intValue != 0)
+                    {
+                        position.NewLine();
+                        position.height = intNonZeroWarningContentHeight;
+                    }
+                    break;
+            }
+            return position.yMax;
+        }
+    }
 }

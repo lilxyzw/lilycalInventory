@@ -33,13 +33,13 @@ namespace jp.lilxyzw.lilycalinventory
                     AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
 
                     // AnimatorControllerに追加
-                    if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, root);
-                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name);
+                    if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, toggler.defaultValue, root);
+                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, toggler.defaultValue);
                 }
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加
-                parameters.AddParameterToggle(name, toggler.isLocalOnly, toggler.isSave);
+                parameters.AddParameterToggle(name, toggler.isLocalOnly, toggler.isSave, toggler.defaultValue);
                 #endif
             }
         }
