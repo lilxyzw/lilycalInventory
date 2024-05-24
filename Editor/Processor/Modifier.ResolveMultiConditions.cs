@@ -23,7 +23,7 @@ namespace jp.lilxyzw.lilycalinventory
             costumeChangers.GatherConditions(toggleInts);
             var multiConditionObjects = toggleBools.Keys.Concat(toggleInts.Keys)
                 .Distinct()
-                .Where(o => toggleBools.TryGetValue(o, out var b) && b.Any() || toggleInts.TryGetValue(o, out var i) && i.Any())
+                .Where(o => (toggleBools.TryGetValue(o, out var b) ? b.Count() : 0) + (toggleInts.TryGetValue(o, out var i) ? i.Count() : 0) > 1)
                 .ToArray();
 
             // 各コンポーネントからそのオブジェクトを除去
