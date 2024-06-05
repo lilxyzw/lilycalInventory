@@ -13,6 +13,8 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
         [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
+        [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
+        [NotKeyable] [DefaultValue] public bool defaultValue = false;
     }
 
     // こちらは上記と全く同じフィールドを持つクラスです。

@@ -9,7 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
     // AnimationHelper.DirectBlendTree.cs と対になっています
     internal static partial class AnimationHelper
     {
-        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name)
+        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, bool defaultValue)
         {
             // オンオフアニメーションを追加
             var stateDefault = new AnimatorState
@@ -31,11 +31,18 @@ namespace jp.lilxyzw.lilycalinventory
             stateMachine.AddState(stateChanged, stateMachine.entryPosition + new Vector3(450,0,0));
             stateMachine.defaultState = stateDefault;
 
+            // ItemTogglerにはアバターアップロード/リセット時の状態からメニューを操作したときにどういう状態にするかが設定されているため、
+            // パラメーターのデフォルト値がfalseならパラメーターがtrueのとき、
+            // パラメーターのデフォルト値がtrueならパラメーターがfalseのとき、
+            // ItemTogglerに設定されている状態にする必要がある
+            // ゆえに、
+            // defaultValueがfalseの場合、ItemTogglerに設定されている状態にする条件はAnimatorConditionMode.Ifとなり、
+            // defaultValueがtrueの場合、ItemTogglerに設定されている状態にする条件はAnimatorConditionMode.IfNotとなる
             var transitionToChanged = stateDefault.AddTransition(stateChanged);
-            transitionToChanged.AddCondition(AnimatorConditionMode.If, 0, name);
+            transitionToChanged.AddCondition(!defaultValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
             transitionToChanged.duration = 0;
             var transitionToDefault = stateChanged.AddTransition(stateDefault);
-            transitionToDefault.AddCondition(AnimatorConditionMode.IfNot, 0, name);
+            transitionToDefault.AddCondition(!defaultValue ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
             transitionToDefault.duration = 0;
 
             var layer = new AnimatorControllerLayer
@@ -48,10 +55,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Bool);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = defaultValue });
         }
 
-        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name)
+        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name, int defaultValue)
         {
             var stateMachine = new AnimatorStateMachine();
 
@@ -66,6 +73,8 @@ namespace jp.lilxyzw.lilycalinventory
                     writeDefaultValues = hasWriteDefaultsState
                 };
                 stateMachine.AddState(state, stateMachine.entryPosition + new Vector3(200,clips.Length*25-i*50,0));
+                if(i == defaultValue) stateMachine.defaultState = state;
+
                 stateMachine.AddEntryTransition(state).AddCondition(AnimatorConditionMode.Equals, i, name);
                 var toExit = state.AddExitTransition();
                 toExit.AddCondition(AnimatorConditionMode.NotEqual, i, name);
@@ -82,10 +91,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Int);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultValue });
         }
 
-        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, SmoothChanger changer)
+        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, float defaultValue)
         {
             var stateMachine = new AnimatorStateMachine();
             var tree = new BlendTree
@@ -119,11 +128,11 @@ namespace jp.lilxyzw.lilycalinventory
 
             controller.AddLayer(layer);
             if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(name, AnimatorControllerParameterType.Float);
+                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
-        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive)
+        internal static void AddMultiConditionLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, (string name, bool toActive, bool defaultValue)[] bools, (string name, bool[] toActives, int defaultValue)[] ints, bool isActive)
         {
             var stateDefault = new AnimatorState
             {
@@ -158,7 +167,7 @@ namespace jp.lilxyzw.lilycalinventory
             controller.AddLayer(layer);
         }
 
-        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive)
+        private static void AddConditions(AnimatorController controller, AnimatorState stateDefault, AnimatorState stateChanged, (string name, bool toActive, bool defaultValue)[] bools, (string name, bool[] toActives, int defaultValue)[] ints, bool isActive)
         {
             var stateActive = isActive ? stateDefault : stateChanged;
             var stateInactive = isActive ? stateChanged : stateDefault;
@@ -168,21 +177,35 @@ namespace jp.lilxyzw.lilycalinventory
 
             // 非アクティブにする条件をor、アクティブにする条件をandにする
             // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
-            foreach(var (name, toActive) in bools)
+            foreach(var (name, toActive, defaultValue) in bools)
             {
+                // ItemTogglerにはアバターアップロード/リセット時の状態からメニューを操作したときにどういう状態にするかが設定されているため、
+                // パラメーターのデフォルト値がfalseならパラメーターがtrueのとき、
+                // パラメーターのデフォルト値がtrueならパラメーターがfalseのとき、
+                // ItemTogglerに設定されている状態にする必要がある
+                // よって、
+                // ItemTogglerに非アクティブが設定されていてパラメーターのデフォルト値がfalseであるか、
+                // ItemTogglerにアクティブが設定されていてパラメーターのデフォルト値がtrueである場合、
+                // 非アクティブにするのはパラメーターがtrueのときであり、
+                // ItemTogglerに非アクティブが設定されていてパラメーターのデフォルト値がtrueであるか、
+                // ItemTogglerにアクティブが設定されていてパラメーターのデフォルト値がfalseである場合、
+                // 非アクティブにするのはパラメーターがfalseのときである
+                // ゆえに、
+                // toActiveとdefaultValueが等しい場合、非アクティブにする条件はAnimatorConditionMode.Ifとなり、
+                // toActiveとdefaultValueが異なる場合、非アクティブにする条件はAnimatorConditionMode.IfNotとなる
                 var transitionToInactive = stateActive.AddTransition(stateInactive);
                 transitionToInactive.duration = 0;
-                transitionToInactive.AddCondition(!toActive ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
+                transitionToInactive.AddCondition(toActive == defaultValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
 
-                transitionToActive.AddCondition(!toActive ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
+                transitionToActive.AddCondition(toActive == defaultValue ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Bool);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = defaultValue });
             }
 
             // 非アクティブにする条件をor、アクティブにする条件をandにする
             // https://github.com/lilxyzw/lilycalInventory/pull/70#issuecomment-2107029075
-            foreach(var (name, toActives) in ints)
+            foreach(var (name, toActives, defaultValue) in ints)
             {
                 // アクティブにする値を使うと両方の遷移でandとorの組み合わせを考えることになるが、
                 // 非アクティブにする値を使うと一方の遷移はorだけ、もう一方の遷移はandだけ考えればよくなる
@@ -196,7 +219,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(name, AnimatorControllerParameterType.Int);
+                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultValue });
             }
         }
     }

@@ -31,11 +31,18 @@
   "inspector.folderContents": "# フォルダの中身",
   "inspector.folderContentsCircularReference": "循環参照が検出されました。親フォルダを変更してください。",
   "inspector.parametersWith": "# 一緒に操作するパラメーター（拡張設定）",
+  "inspector.detailSettings": "# 詳細設定",
 
   "inspector.isSave": "有効状態を保存",
   "inspector.isSave.tooltip": "これをオンにするとアバター読み込み直してもメニューの状態が保存されます。",
   "inspector.isLocalOnly": "ローカルのみにする",
   "inspector.isLocalOnly.tooltip": "これをオンにすると自分視点でのみオブジェクトのオンオフがされるようになります。",
+  "inspector.defaultBool": "デフォルト状態のパラメーターの値",
+  "inspector.defaultBool.tooltip": "アバターを初期化したときにパラメーターの値がここに設定した値になります。アバターはパラメーターの値がここに設定した値のときにデフォルト状態となり、そうでないときにアニメーション設定の状態となります。",
+  "inspector.defaultBoolNonZeroWarning": "False以外の値を設定すると同期が正常に行われなかった場合に意図しない状態になる可能性があります。",
+  "inspector.defaultInt": "デフォルト状態のパラメーターの値",
+  "inspector.defaultInt.tooltip": "アバターを初期化したときにパラメーターの値がここに設定した値になります。",
+  "inspector.defaultIntNonZeroWarning": "0以外の値を設定すると同期が正常に行われなかった場合に意図しない状態になる可能性があります。",
 
   "inspector.objects": "オブジェクトのオンオフ（ここにD&Dで一括追加可能）",
   "inspector.objects.tooltip": "ここに指定したオブジェクトはメニューを有効化したときオンまたはオフになります。ここに複数オブジェクトをドラッグ&ドロップすることで一括で追加することもできます。複数オブジェクトを選択する際はInspector右上の鍵のアイコンをクリックして画面が切り替わらないようにしてください。画面が切り替わる状態に戻したい場合はもう一度鍵のアイコンをクリックすることでロックを解除できます。",

@@ -17,8 +17,8 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void ResolveMultiConditions(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, CostumeChanger[] costumeChangers, BlendTree root)
         {
             // 複数コンポーネントから操作されるオブジェクトを見つける
-            var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool toActive)>>();
-            var toggleInts = new Dictionary<GameObject, HashSet<(string name, bool[] toActives)>>();
+            var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool toActive, bool defaultValue)>>();
+            var toggleInts = new Dictionary<GameObject, HashSet<(string name, bool[] toActives, int defaultValue)>>();
             togglers.GatherConditions(toggleBools);
             costumeChangers.GatherConditions(toggleInts);
             var multiConditionObjects = toggleBools.Keys.Concat(toggleInts.Keys)
@@ -34,11 +34,11 @@ namespace jp.lilxyzw.lilycalinventory
                     t.parametersPerMenu.objects = t.parametersPerMenu.objects.Where(o => !multiConditionObjects.Contains(o.obj)).ToArray();
 
             // 同一条件のオブジェクトをまとめる
-            var conditionAndObjects = new Dictionary<((string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive), List<GameObject>>();
+            var conditionAndObjects = new Dictionary<((string name, bool toActive, bool defaultValue)[] bools, (string name, bool[] toActives, int defaultValue)[] ints, bool isActive), List<GameObject>>();
             foreach(var o in multiConditionObjects)
             {
-                var bools = toggleBools.ContainsKey(o) ? toggleBools[o].OrderBy(b => b.name).ToArray() : new (string name, bool toActive)[0];
-                var ints = toggleInts.ContainsKey(o) ? toggleInts[o].OrderBy(i => i.name).ToArray() : new (string name, bool[] toActives)[0];
+                var bools = toggleBools.ContainsKey(o) ? toggleBools[o].OrderBy(b => b.name).ToArray() : new (string name, bool toActive, bool defaultValue)[0];
+                var ints = toggleInts.ContainsKey(o) ? toggleInts[o].OrderBy(i => i.name).ToArray() : new (string name, bool[] toActives, int defaultValue)[0];
                 var isActive = o.activeSelf;
                 var key = conditionAndObjects.Keys.Where(x => IsSameConditions(x, (bools, ints, isActive))).DefaultIfEmpty((bools, ints, isActive)).Single();
                 if(conditionAndObjects.ContainsKey(key))
@@ -82,7 +82,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        private static bool IsSameConditions(((string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive) a, ((string name, bool toActive)[] bools, (string name, bool[] toActives)[] ints, bool isActive) b)
+        private static bool IsSameConditions(((string name, bool toActive, bool defaultValue)[] bools, (string name, bool[] toActives, int defaultValue)[] ints, bool isActive) a, ((string name, bool toActive, bool defaultValue)[] bools, (string name, bool[] toActives, int defaultValue)[] ints, bool isActive) b)
         {
             if(!a.bools.SequenceEqual(b.bools)) return false;
             if(!a.ints.Select(k => k.name).SequenceEqual(b.ints.Select(k => k.name))) return false;
@@ -90,6 +90,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(!a.ints[i].toActives.SequenceEqual(b.ints[i].toActives)) return false;
             }
+            if(!a.ints.Select(k => k.defaultValue).SequenceEqual(b.ints.Select(k => k.defaultValue))) return false;
             return a.isActive == b.isActive;
         }
     }
