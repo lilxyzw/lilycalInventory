@@ -16,7 +16,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         private static Component target;
         private static ParametersPerMenu m_Parameters;
-        private static bool doPreview = true;
+        private static bool doPreview = false;
         private static int previewIndex = 0;
         private static float previewFrame = 0;
 
