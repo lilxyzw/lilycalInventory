@@ -20,7 +20,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             GUIHelper.ResetList();
             PreviewHelper.instance.StopPreview();
-            PreviewHelper.doPreview = false;
+            if(PreviewHelper.doPreview == 1) PreviewHelper.doPreview = 0;
             ParameterViewer.Reset();
             menuChildren.Clear();
         }

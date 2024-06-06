@@ -84,8 +84,9 @@
   "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき100になります。",
 
   "inspector.previewAnimation": "アニメーションのプレビュー",
-  "inspector.preview": "プレビュー",
   "inspector.previewStop": "ストップ",
+  "inspector.preview": "プレビュー",
+  "inspector.previewAlways": "常時プレビュー",
   "inspector.previewWarn": "このコンポーネントを付けたオブジェクト本体をオンオフしたい場合はプレビューを停止してください。",
   "inspector.previewCostume": "プレビューするコスチューム",
   "inspector.previewFrame": "プレビューするパペット値 (%)",

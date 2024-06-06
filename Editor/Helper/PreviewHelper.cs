@@ -14,7 +14,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal class PreviewHelper : ScriptableSingleton<PreviewHelper>
     {
-        internal static bool doPreview = false;
+        internal static int doPreview = 0; // Off, On, Always
         private static Component target;
         private static ParametersPerMenu m_Parameters;
         private static int previewIndex = 0;
@@ -102,7 +102,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal void StartPreview(Object obj)
         {
-            if(!obj || target == obj || !doPreview || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot() || !((Component)obj).gameObject.scene.IsValid()) return;
+            if(!obj || target == obj || doPreview == 0 || AnimationMode.InAnimationMode() || !((Component)obj).gameObject.GetAvatarRoot() || !((Component)obj).gameObject.scene.IsValid()) return;
             target = (Component)obj;
             switch(obj)
             {
@@ -147,14 +147,14 @@ namespace jp.lilxyzw.lilycalinventory
         {
             var rect = EditorGUI.PrefixLabel(EditorGUILayout.GetControlRect(), Localization.G("inspector.previewAnimation"));
             EditorGUI.BeginChangeCheck();
-            doPreview = GUI.Toolbar(rect, doPreview ? 0 : 1, new[]{Localization.G("inspector.preview"), Localization.G("inspector.previewStop")}) == 0;
+            doPreview = GUI.Toolbar(rect, doPreview, new[]{Localization.G("inspector.previewStop"), Localization.G("inspector.preview"), Localization.G("inspector.previewAlways")});
             var isChanged = EditorGUI.EndChangeCheck();
 
             // 選択しているオブジェクト自体がアニメーションされている場合は警告を表示
-            if(doPreview && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
+            if(doPreview != 0 && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
                 EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);
 
-            if(isChanged && !doPreview) StopPreview();
+            if(isChanged && doPreview == 0) StopPreview();
         }
 
         // プレビュー衣装切り替え用のGUI
