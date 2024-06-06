@@ -14,9 +14,9 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal class PreviewHelper : ScriptableSingleton<PreviewHelper>
     {
+        internal static bool doPreview = false;
         private static Component target;
         private static ParametersPerMenu m_Parameters;
-        private static bool doPreview = false;
         private static int previewIndex = 0;
         private static float previewFrame = 0;
 
