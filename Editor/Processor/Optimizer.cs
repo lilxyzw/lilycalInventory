@@ -4,14 +4,38 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+#if LIL_NDMF
+using nadena.dev.ndmf;
+#endif
+
 namespace jp.lilxyzw.lilycalinventory
 {
     internal class Optimizer
     {
-        internal static void OptimizeMaterials(Material[] materials)
+        internal static void OptimizeMaterials(Material[] materials, BuildContext ctx)
         {
             var propMap = materials.Select(m => m.shader).Distinct().Where(s => s).ToDictionary(s => s, s => new ShaderPropertyContainer(s));
-            foreach(var m in materials) RemoveUnusedProperties(m, propMap);
+
+            #if LIL_TOON_1_8_0
+            var clips = new HashSet<AnimationClip>();
+            clips.UnionWith(ctx.AvatarRootObject.GetComponentsInChildren<Animator>(true).Where(a => a.runtimeAnimatorController).SelectMany(a => a.runtimeAnimatorController.animationClips));
+            #if LIL_VRCSDK3A
+            var descriptor = ctx.AvatarDescriptor;
+            clips.UnionWith(descriptor.specialAnimationLayers.Where(l => l.animatorController).SelectMany(l => l.animatorController.animationClips));
+            if(descriptor.customizeAnimationLayers) clips.UnionWith(descriptor.baseAnimationLayers.Where(l => l.animatorController).SelectMany(l => l.animatorController.animationClips));
+            #endif
+            var props = clips.SelectMany(c => AnimationUtility.GetCurveBindings(c)).Select(b => b.propertyName).Where(n => n.Contains("material."))
+            .Select(n => n=n.Substring("material.".Length))
+            .Select(n => {if(n.Contains(".")) n=n.Substring(0, n.IndexOf(".")); return n;}).Distinct().ToArray();
+            #endif
+
+            foreach(var m in materials)
+            {
+                RemoveUnusedProperties(m, propMap);
+                #if LIL_TOON_1_8_0
+                if(lilToon.lilMaterialUtils.CheckShaderIslilToon(m)) lilToon.lilMaterialUtils.RemoveUnusedTextureOnly(m, m.shader.name.Contains("Lite"), props);
+                #endif
+            }
         }
 
         // シェーダーで使われていないプロパティを除去

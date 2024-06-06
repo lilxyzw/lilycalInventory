@@ -175,7 +175,7 @@ namespace jp.lilxyzw.lilycalinventory
         // マテリアルから不要なプロパティを除去
         internal static void Optimize(BuildContext ctx)
         {
-            if(shouldModify && optimizers.Length != 0) Optimizer.OptimizeMaterials(materials);
+            if(shouldModify && optimizers.Length != 0) Optimizer.OptimizeMaterials(materials, ctx);
         }
     }
 }

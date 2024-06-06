@@ -6,7 +6,8 @@
         "nadena.dev.ndmf",
         "nadena.dev.ndmf.runtime",
         "nadena.dev.ndmf.vrchat",
-        "nadena.dev.modular-avatar.core"
+        "nadena.dev.modular-avatar.core",
+        "lilToon.Editor"
     ],
     "includePlatforms": [
         "Editor"
@@ -48,6 +49,11 @@
             "name": "nadena.dev.ndmf",
             "expression": "1.4.0",
             "define": "LIL_NDMF_1_4_0"
+        },
+        {
+            "name": "jp.lilxyzw.liltoon",
+            "expression": "1.8.0",
+            "define": "LIL_TOON_1_8_0"
         }
     ],
     "noEngineReferences": false
