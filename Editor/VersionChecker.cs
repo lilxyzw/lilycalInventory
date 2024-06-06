@@ -48,9 +48,15 @@ namespace jp.lilxyzw.lilycalinventory
                 // package.jsonをここでは読み込まずdelayCallで安全に読み込む
                 EditorApplication.delayCall -= GetCurrentVersion;
                 EditorApplication.delayCall += GetCurrentVersion;
-                CoroutineHandler.StartStaticCoroutine(GetLatestVersionInfo());
-                CoroutineHandler.StartStaticCoroutine(ChangeLogViewer.GetChangelogEn());
-                CoroutineHandler.StartStaticCoroutine(ChangeLogViewer.GetChangelogJp());
+
+                static IEnumerator Coroutine()
+                {
+                    yield return GetLatestVersionInfo();
+                    yield return ChangeLogViewer.GetChangelogEn();
+                    yield return ChangeLogViewer.GetChangelogJp();
+                }
+
+                CoroutineHandler.StartStaticCoroutine(Coroutine());
             }
         }
 

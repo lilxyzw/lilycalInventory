@@ -117,7 +117,7 @@ namespace jp.lilxyzw.lilycalinventory
             Localization.SelectLanguageGUI();
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-            if(Localization.GetCurrentCode() == "ja-jp" && !string.IsNullOrEmpty(ChangeLogViewer.instance.changelogJp))
+            if(Localization.GetCurrentCode() == "ja-JP" && !string.IsNullOrEmpty(ChangeLogViewer.instance.changelogJp))
             {
                 EditorGUILayout.LabelField(ChangeLogViewer.instance.changelogJp, style);
             }
