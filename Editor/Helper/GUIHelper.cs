@@ -57,7 +57,6 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static bool PropertyFoldout(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.BeginChangeCheck();
             var isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
             if(property.isExpanded != isExpanded)
             {
