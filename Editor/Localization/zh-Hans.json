@@ -1,4 +1,6 @@
 {
+  "Language": "简体中文",
+
   "inspector.changelog": "更新日志",
   "inspector.changelogLoadFailed": "更新日志加载失败。",
   "inspector.noProperty": "这个组件没有属性。",

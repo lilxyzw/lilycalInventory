@@ -1,4 +1,6 @@
 {
+  "Language": "English (United States)",
+
   "inspector.changelog": "Changelog",
   "inspector.changelogLoadFailed": "Failed to load changelog.",
   "inspector.noProperty": "This component has no properties.",

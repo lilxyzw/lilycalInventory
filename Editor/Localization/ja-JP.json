@@ -1,4 +1,6 @@
 {
+  "Language": "日本語 (日本)",
+
   "inspector.changelog": "変更履歴",
   "inspector.changelogLoadFailed": "変更履歴を読み込めませんでした。",
   "inspector.noProperty": "このコンポーネントには設定項目がありません。",

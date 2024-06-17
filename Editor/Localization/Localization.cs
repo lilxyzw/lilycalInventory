@@ -37,15 +37,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var code = Path.GetFileNameWithoutExtension(path);
                 languages.Add(lang);
                 codes.Add(code);
-                try
-                {
-                    var cul = new CultureInfo(code);
-                    tmpNames.Add(cul.NativeName);
-                }
-                catch
-                {
-                    tmpNames.Add(code);
-                }
+                tmpNames.Add(lang.TryGetValue("Language", out string o) ? o : code);
             }
             names = tmpNames.ToArray();
             number = GetIndexByCode(LoadLanguageSettings());
