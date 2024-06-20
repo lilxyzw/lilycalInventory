@@ -240,7 +240,7 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(!replacer.replaceTo[i]) continue;
                     var binding = AnimationHelper.CreateMaterialReplaceBinding(replacer.renderer, i);
-                    AddPropertyModification(binding, target, new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, replacer.renderer.sharedMaterials[i]);
+                    AddPropertyModification(binding, replacer.renderer, new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, replacer.renderer.sharedMaterials[i]);
                     materials[i] = replacer.replaceTo[i];
                     modified = true;
                 }
