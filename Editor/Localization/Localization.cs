@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -21,11 +22,26 @@ namespace jp.lilxyzw.lilycalinventory
         private static List<string> codes = new List<string>();
         private static string[] names;
         private static int number;
+        private static bool isLoaded = false;
 
         [InitializeOnLoadMethod]
         internal static void LoadDatas()
         {
-            var paths = Directory.GetFiles(AssetDatabase.GUIDToAssetPath(ConstantValues.GUID_LOCALIZATION), "*.json");
+            var folder = GetLanguageFolder();
+            if(string.IsNullOrEmpty(folder))
+            {
+                languages.Add(new Dictionary<string, string>());
+                codes.Add("");
+                names = new string[]{""};
+                number = 0;
+                Debug.LogError("Failed to load language file");
+                return;
+            }
+
+            languages.Clear();
+            codes.Clear();
+
+            var paths = Directory.GetFiles(folder, "*.json");
             var tmpNames = new List<string>();
             foreach(var path in paths)
             {
@@ -41,6 +57,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
             names = tmpNames.ToArray();
             number = GetIndexByCode(LoadLanguageSettings());
+            isLoaded = true;
         }
 
         internal static string GetCurrentCode()
@@ -102,6 +119,12 @@ namespace jp.lilxyzw.lilycalinventory
         // 各所で表示される言語設定GUI
         internal static bool SelectLanguageGUI()
         {
+            if(!isLoaded)
+            {
+                if(GUILayout.Button("Reload Language")) LoadDatas();
+                return false;
+            }
+
             EditorGUI.BeginChangeCheck();
             number = EditorGUILayout.Popup("Editor Language", number, names);
             if(EditorGUI.EndChangeCheck())
@@ -114,6 +137,12 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void SelectLanguageGUI(Rect position)
         {
+            if(!isLoaded)
+            {
+                if(GUI.Button(position, "Reload Language")) LoadDatas();
+                return;
+            }
+
             EditorGUI.BeginChangeCheck();
             number = EditorGUI.Popup(position, "Editor Language", number, names);
             if(EditorGUI.EndChangeCheck()) SaveLanguageSettings();
@@ -131,6 +160,24 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(!Directory.Exists(PATH_PREF)) Directory.CreateDirectory(PATH_PREF);
             SafeIO.SaveFile(PATH_SETTING, codes[number]);
+        }
+
+        // 言語ファイルのフォルダを取得
+        private static string GetLanguageFolder()
+        {
+            // GUID
+            var folder = AssetDatabase.GUIDToAssetPath(ConstantValues.GUID_LOCALIZATION);
+            if(!string.IsNullOrEmpty(folder) && Directory.Exists(folder)) return folder;
+
+            // Packages配下
+            folder = "Packages/jp.lilxyzw.lilycalinventory/Editor/Localization";
+            if(Directory.Exists(folder)) return folder;
+
+            // PackageCache配下
+            folder = Directory.GetDirectories("Library/PackageCache").Select(p => Path.GetFileName(p)).FirstOrDefault(p => p.StartsWith("jp.lilxyzw.lilycalinventory")) + "/Editor/Localization";
+            if(Directory.Exists(folder)) return folder;
+
+            return null;
         }
     }
 
