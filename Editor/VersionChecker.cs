@@ -49,7 +49,7 @@ namespace jp.lilxyzw.lilycalinventory
                 EditorApplication.delayCall -= GetCurrentVersion;
                 EditorApplication.delayCall += GetCurrentVersion;
 
-                static IEnumerator Coroutine()
+                IEnumerator Coroutine()
                 {
                     yield return GetLatestVersionInfo();
                     yield return ChangeLogViewer.GetChangelogEn();
