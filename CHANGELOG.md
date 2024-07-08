@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2024-07-08
+### Added
+- Icons for each component
+- Parameter initial values ​​can now be set (by nekobako)
+- New Preview Mode
+- Simplified Chinese support (by lonelyicer)
+- A prefab of a gimmick that works locally
+
+### Changed
+- UI Improvements
+- Change preview to off by default
+
+### Fixed
+- Menus not sorted hierarchically (by nekobako)
+- Warn if there is a circular reference in the menu (by nekobako)
+- An issue where necessary settings may be deleted
+- Behavior when an object is operated by multiple components (by nekobako)
+- UI lag in Foldout
+- Fixed an issue where material replacement could not be undone when previewing
+- Added handling for when the language file cannot be loaded
+
 ## [0.3.9] - 2024-04-09
 
 ### Fixed

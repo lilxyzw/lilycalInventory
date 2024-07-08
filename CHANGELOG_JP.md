@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2024-07-08
+### 追加
+- コンポーネントごとのアイコンを追加
+- パラメーターの初期値を設定できるようにした (by nekobako)
+- プレビューモードの追加
+- 簡体中国語対応 (by lonelyicer)
+- ローカルで動作するギミックのprefabを追加
+
+### 変更
+- UIの向上
+- プレビューをデフォルトでオフに変更
+
+### 修正
+- メニューがヒエラルキー順にならない場合があるのを修正 (by nekobako)
+- メニューの循環参照がある場合に警告が出るように修正 (by nekobako)
+- 必要な設定が削除される場合があった問題を修正
+- 複数コンポーネントからオブジェクトが操作される場合の挙動を修正 (by nekobako)
+- FoldoutのUIの遅延を修正
+- マテリアル置き換えのプレビュー時に元に戻らなくなる問題を修正
+- 言語ファイルが読み込めなかった場合の処理を追加
+
 ## [0.3.9] - 2024-04-09
 
 ### 修正
