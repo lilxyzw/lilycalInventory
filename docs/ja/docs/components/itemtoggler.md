@@ -1,0 +1,16 @@
+# LI ItemToggler
+
+小物を切り替える際に使用することを想定したコンポーネントです。
+
+## 仕様
+
+Bool型で制御しています。設定内容はビルド時にAnimationClipとAnimatorControllerのStateに変換されます。パラメーターの値に応じてStateが遷移し、アニメーションが再生される仕組みになっています。
+
+ビルド時には具体的に以下の処理が行われます。
+
+- コンポーネントの設定値とprefab初期値を取得したAnimationClipをそれぞれ作成
+- 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
+- AnimatorControllerとExpressionParametersに`メニュー・パラメーター名`に設定した名前のBoolパラメーターを追加
+- ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
+- AnimatorControllerにレイヤーを追加し、State・AnimationClip・Transitionを登録
+- ToggleでBool値を設定するメニューを生成

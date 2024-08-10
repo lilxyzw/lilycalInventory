@@ -1,0 +1,17 @@
+# LI SmoothChanger
+
+BlendShapeなど無段階で制御するものに使用することを想定したコンポーネントです。
+
+## 仕様
+
+Float型で制御しています。登録したフレームはビルド時にAnimationClipとAnimatorControllerのBlendTreeに変換されます。パラメーターの値に応じて登録したフレームのアニメーションがブレンドされる仕組みになっています。
+
+ビルド時には具体的に以下の処理が行われます。
+
+- 各フレームの設定値とprefab初期値を取得したAnimationClipを作成
+- 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
+- 各フレームの未設定値をprefab初期値で埋める
+- AnimatorControllerとExpressionParametersに`メニュー・パラメーター名`に設定した名前のFloatパラメーターを追加
+- ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
+- AnimatorControllerにレイヤーを追加し、State・BlendTree・AnimationClipを登録
+- RadialPuppetでFloat値を制御するメニューを生成
