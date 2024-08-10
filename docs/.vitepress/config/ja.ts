@@ -29,6 +29,7 @@ export const ja = defineConfig({
       },
       {
         text: 'ドキュメント',
+        link: langName + '/docs/',
         collapsed: false,
         items: [
           {
