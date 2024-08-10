@@ -25,5 +25,5 @@ features:
   - title: <img class="emoji" draggable="false" alt="⚙️" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/2699.png"> 自動
     details: 面倒なアニメーション・メニュー・パラメーター生成をアップロード時に全て自動で行います。アセットを生成しないのでファイルがごちゃごちゃになる心配はありません。
   - title: <img class="emoji" draggable="false" alt="🔑" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/1f511.png"> 安全
-    details: VRChatでの同期周りの事故も意識されており、全パラメーターがオフときの見た目がprefabの状態と一致するようになっています。
+    details: VRChatでの同期周りの事故も意識されており、全パラメーターがオフのときの見た目がprefabの状態と一致するようになっています。
 ---
