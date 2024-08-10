@@ -19,5 +19,6 @@ lilycalInventoryのドキュメントページです。ここでは中・上級�
         </ul>
     </li>
     <li><a href="./directblendtree">Direct Blend Treeを使用した最適化</a></li>
+    <li><a href="./compatibility">NDMFや他ツールとの互換性</a></li>
     </ul>
 </div>

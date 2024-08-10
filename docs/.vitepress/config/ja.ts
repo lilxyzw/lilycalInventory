@@ -47,7 +47,8 @@ export const ja = defineConfig({
               { text: 'LI SmoothChanger', link: langName + '/docs/components/smoothchanger' },
             ]
           },
-          { text: 'Direct Blend Treeを使用した最適化', link: langName + '/docs/directblendtree' }
+          { text: 'Direct Blend Treeを使用した最適化', link: langName + '/docs/directblendtree' },
+          { text: 'NDMFや他ツールとの互換性', link: langName + '/docs/compatibility' }
         ]
       },
       {
