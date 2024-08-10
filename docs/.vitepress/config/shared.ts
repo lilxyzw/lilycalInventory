@@ -7,7 +7,7 @@ export const shared = defineConfig({
   base: '/lilycalInventory/',
   title: "lilycalInventory",
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
+    ['link', {rel: 'icon', type: 'image/svg+xml', href: '/lilycalInventory/images/logo.svg'}],
     ['meta', {property: 'og:type', content: 'website'}],
     ['meta', {property: 'og:image', content: 'https://lilxyzw.github.io/lilycalInventory/images/ogimg.jpg'}],
     ['meta', {property: 'twitter:card', content: 'summary'}],
