@@ -8,13 +8,8 @@ const markdownItMDinMD: PluginSimple = (md) => {
   const parse = (src) => {
     var cap;
     while(cap = reg.exec(src)) {
-      let path = cap[1].trim();
-      var txt;
-      if(fs.existsSync(path)) {
-        txt = parse(fs.readFileSync(path, 'utf8'));
-      } else {
-        txt = `\'${path}\' not found.`;
-      }
+      var path = cap[1].trim();
+      var txt = parse(fs.readFileSync(path, 'utf8'));
       src = src.substring(0, cap.index) + txt + src.substring(cap.index + cap[0].length);
     }
     return src;
