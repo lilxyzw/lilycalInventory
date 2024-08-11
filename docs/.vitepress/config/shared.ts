@@ -28,6 +28,9 @@ export const shared = defineConfig({
     editLink: {
       pattern: 'https://github.com/lilxyzw/lilycalInventory/edit/docs/docs/:path',
       text: 'Edit this page on GitHub'
+    },
+    search: {
+      provider: 'local'
     }
   },
   lastUpdated: true,
