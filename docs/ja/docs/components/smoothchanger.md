@@ -34,4 +34,4 @@ Float型で制御しています。登録したフレームはビルド時にAni
 |-|-|
 |パペット設定値(%)|フレームに割り当てるパラメーターの値を指定します。|
 
-#include "E:/GitHub/lilycalInventory/docs/ja/docs/components/_additional_settings_table.md"
+#include "docs/ja/docs/components/_additional_settings_table.md"
