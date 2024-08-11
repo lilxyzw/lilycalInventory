@@ -6,7 +6,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // オブジェクトをオンオフするコンポーネント
     // Boolパラメーターが生成されます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(ItemToggler))]
-    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(ItemToggler))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "itemtoggler")]
     internal class ItemToggler : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
         [NotKeyable] [LILLocalize] public bool isSave = true;

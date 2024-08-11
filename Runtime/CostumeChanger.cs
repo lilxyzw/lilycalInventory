@@ -7,7 +7,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // Intパラメーターが生成されます。
     // Boolに置き換えてパラメーター数を節約するのもありかもしれません。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(CostumeChanger))]
-    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(CostumeChanger))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "costumechanger")]
     internal class CostumeChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
         [NotKeyable] [LILLocalize] public bool isSave = true;

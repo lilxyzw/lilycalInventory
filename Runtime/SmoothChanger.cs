@@ -6,7 +6,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // 無段階でパラメーターを操作するコンポーネント
     // BlendShapeやマテリアルのプロパティ操作を想定しています。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(SmoothChanger))]
-    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(SmoothChanger))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "smoothchanger")]
     internal class SmoothChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
         [NotKeyable] [LILLocalize] public bool isSave = true;

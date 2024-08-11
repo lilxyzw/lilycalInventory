@@ -6,7 +6,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // マテリアルの設定値をセットしたマテリアルに合わせるコンポーネント
     // メニューは生成されません。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(MaterialModifier))]
-    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + nameof(MaterialModifier))]
+    [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "materialmodifier")]
     internal class MaterialModifier : AvatarTagComponent
     {
         [NotKeyable] [LILLocalize] public Material referenceMaterial;

@@ -7,8 +7,8 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         internal const string PACKAGE_NAME = "lilycalinventory";
         internal const string PACKAGE_NAME_FULL = "jp.lilxyzw." + PACKAGE_NAME;
         internal const string COMPONENTS_BASE = TOOL_NAME + "/LI ";
-        internal const string URL_DOCS_BASE = "https://github.com/lilxyzw/lilycalInventory";
-        internal const string URL_DOCS_COMPONENT = URL_DOCS_BASE + "#LI-";
+        internal const string URL_DOCS_BASE = "https://lilxyzw.github.io/lilycalInventory/redirect#";
+        internal const string URL_DOCS_COMPONENT = URL_DOCS_BASE + "docs/components/";
         internal const string URL_PACKAGE_JSON = "https://raw.githubusercontent.com/lilxyzw/lilycalInventory/main/package.json";
         internal const string URL_CHANGELOG_EN = "https://raw.githubusercontent.com/lilxyzw/lilycalInventory/main/CHANGELOG.md";
         internal const string URL_CHANGELOG_JP = "https://raw.githubusercontent.com/lilxyzw/lilycalInventory/main/CHANGELOG_JP.md";
