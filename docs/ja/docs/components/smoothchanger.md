@@ -15,3 +15,23 @@ Float型で制御しています。登録したフレームはビルド時にAni
 - ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
 - AnimatorControllerにレイヤーを追加し、State・BlendTree・AnimationClipを登録
 - RadialPuppetでFloat値を制御するメニューを生成
+
+## 設定項目
+
+### メニュー設定
+
+#include "docs/ja/docs/components/_menu_settings_table.md"
+
+### アニメーション設定
+
+|名前|説明|
+|-|-|
+|パペット初期値(%)|作成されるメニューで使用するパラメーターの初期値を指定することができます。|
+
+#### フレーム (複数指定可)
+
+|名前|説明|
+|-|-|
+|パペット設定値(%)|フレームに割り当てるパラメーターの値を指定します。|
+
+#include "E:/GitHub/lilycalInventory/docs/ja/docs/components/_additional_settings_table.md"
