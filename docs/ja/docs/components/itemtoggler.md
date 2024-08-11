@@ -14,3 +14,19 @@ Bool型で制御しています。設定内容はビルド時にAnimationClipと
 - ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
 - AnimatorControllerにレイヤーを追加し、State・AnimationClip・Transitionを登録
 - ToggleでBool値を設定するメニューを生成
+
+## 設定項目
+
+### メニュー設定
+
+#include "docs/ja/docs/components/_menu_settings_table.md"
+
+### アニメーション設定
+
+#include "docs/ja/docs/components/_additional_settings_table.md"
+
+### 詳細設定
+
+|名前|説明|
+|-|-|
+|デフォルト状態のパラメーターの値|作成されるメニューで使用するパラメーターの初期値(Bool値)を指定することができます。|
