@@ -93,12 +93,8 @@ namespace jp.lilxyzw.lilycalinventory
                     for(int k = 0; k < frames[j].Length; k++)
                         if(frames[j][k].value is Material m) frames[j][k].value = CloneMaterial(m, context);
 
-                #if UNITY_2020_1_OR_NEWER
-                AnimationUtility.SetObjectReferenceCurves(clip, bindings, frames);
-                #else
                 for(int j = 0; j < bindings.Length; j++)
                     AnimationUtility.SetObjectReferenceCurve(clip, bindings[j], frames[j]);
-                #endif
             }
 
             var renderers = context.AvatarRootObject.GetComponentsInChildren<Renderer>(true);
