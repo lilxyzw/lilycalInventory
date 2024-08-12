@@ -1,4 +1,4 @@
-# LI CostumeChanger
+# LIICON(LI_Script_CostumeChanger.png) LI CostumeChanger
 
 衣装を切り替える際に使用することを想定したコンポーネントです。
 

@@ -1,4 +1,4 @@
-# LI AutoDresser
+# LIICON(LI_Script_AutoDresser.png) LI AutoDresser
 
 衣装を切り替える際に使用することを想定したコンポーネントです。衣装の切り替え方法については[チュートリアル](../../tutorial/costume)で確認してください。
 

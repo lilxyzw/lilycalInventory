@@ -1,4 +1,4 @@
-# LI MaterialModifier
+# LIICON(LI_Script_Material.png) LI MaterialModifier
 
 マテリアルの設定値を統一するために使用することを想定したコンポーネントです。衣装とアバターでライトの受け方の設定が異なって問題が発生するケースがありますが、このコンポーネントを使用することで設定統一作業を省略できます。
 

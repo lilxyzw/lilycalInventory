@@ -1,4 +1,4 @@
-# LI MenuFolder
+# LIICON(LI_Script_MenuFolder.png) LI MenuFolder
 
 lilycalInventoryの各コンポーネントで生成されるメニューを整理する際に使用することを想定したコンポーネントです。
 

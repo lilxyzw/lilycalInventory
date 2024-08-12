@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress'
-import markdownItTwemoji from '../theme/md/markdownItTwemoji'
 import markdownItImage from '../theme/md/markdownItImage'
 import markdownItToc from '../theme/md/markdownItToc'
 import markdownItMDinMD from '../theme/md/markdownItMDinMD'
+import markdownItTwemoji from '../theme/md/markdownItTwemoji'
+import markdownItIcon from '../theme/md/markdownItIcon'
 
 export const shared = defineConfig({
   base: '/lilycalInventory/',
@@ -36,10 +37,11 @@ export const shared = defineConfig({
   lastUpdated: true,
   markdown: {
     config: (md) => {
-      md.use(markdownItTwemoji)
       md.use(markdownItImage)
       md.use(markdownItToc)
       md.use(markdownItMDinMD)
+      md.use(markdownItTwemoji)
+      md.use(markdownItIcon)
     }
   }
 })

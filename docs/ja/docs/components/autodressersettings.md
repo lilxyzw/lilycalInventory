@@ -1,4 +1,4 @@
-# LI AutoDresserSettings
+# LIICON(LI_Script_AutoDresserSettings.png) LI AutoDresserSettings
 
 `LI AutoDresser`で生成されるメニューをカスタマイズする際に使用するコンポーネントです。
 
