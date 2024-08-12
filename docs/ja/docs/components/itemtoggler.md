@@ -1,4 +1,4 @@
-# <img class="emoji" draggable="false" src="../../../public/images/LI_Script_ItemToggler.png"> LI ItemToggler
+# LIICON(LI_Script_ItemToggler.png) LI ItemToggler
 
 小物を切り替える際に使用することを想定したコンポーネントです。
 

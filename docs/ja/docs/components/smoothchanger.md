@@ -1,4 +1,4 @@
-# <img class="emoji" draggable="false" src="../../../public/images/LI_Script_SmoothChanger.png"> LI SmoothChanger
+# LIICON(LI_Script_SmoothChanger.png) LI SmoothChanger
 
 BlendShapeなど無段階で制御するものに使用することを想定したコンポーネントです。
 

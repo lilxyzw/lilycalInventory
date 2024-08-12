@@ -1,4 +1,4 @@
-# <img class="emoji" draggable="false" src="../../../public/images/LI_Script_Comment.png"> LI Comment
+# LIICON(LI_Script_Comment.png) LI Comment
 
 これはGameObjectにコメントを表示するだけのコンポーネントでこれ自体に機能はありません。prefabの説明を残す用途を想定しています。
 
