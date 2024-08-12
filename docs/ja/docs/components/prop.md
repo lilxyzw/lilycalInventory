@@ -1,4 +1,4 @@
-# LI Prop
+# <img class="emoji" draggable="false" src="../../../public/images/LI_Script_Prop.png"> LI Prop
 
 小物を切り替える際に使用することを想定したコンポーネントです。小物の切り替え方法については[チュートリアル](../../tutorial/toggle)で確認してください。
 

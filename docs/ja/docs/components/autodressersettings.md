@@ -1,4 +1,4 @@
-# LI AutoDresserSettings
+# <img class="emoji" draggable="false" src="../../../public/images/LI_Script_AutoDresserSettings.png"> LI AutoDresserSettings
 
 `LI AutoDresser`で生成されるメニューをカスタマイズする際に使用するコンポーネントです。
 
