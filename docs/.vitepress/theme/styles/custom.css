@@ -377,7 +377,7 @@ li img {
   margin-top: 0.5em;
 }
 
-.vp-doc .docsimage img {
+.vp-doc img:not(.emoji) {
   border-radius: 10px;
   box-shadow: 5px 5px 15px #00164621;
   scale: 95%;

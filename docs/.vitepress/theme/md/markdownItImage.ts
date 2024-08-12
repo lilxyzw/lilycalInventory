@@ -11,7 +11,7 @@ const markdownItImage: PluginSimple = (md) => {
     const token = tokens[idx];
     if(token.attrs != null)
     {
-      var result = '<a class="docsimage" href=\"/lilycalInventory';
+      var result = '<a href=\"/lilycalInventory';
       result += token.attrs[token.attrIndex('src')][1];
       result += '\"data-lightbox=' + crypto.randomUUID() + '>';
       result += defaultRender(tokens, idx, options, env, self);
