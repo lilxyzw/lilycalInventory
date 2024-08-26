@@ -210,7 +210,7 @@ namespace jp.lilxyzw.lilycalinventory
                         blendShapeNameValues2.arraySize++;
                         var p = blendShapeNameValues2.GetArrayElementAtIndex(blendShapeNameValues2.arraySize - 1);
                         p.FPR("name").stringValue = blendShapes[mesh2][selected];
-                        blendShapeNameValues2.serializedObject.ApplyModifiedProperties();
+                        if(blendShapeNameValues2.serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
                     }, (blendShapeNameValues,mesh));
                 }
             );

@@ -143,6 +143,8 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // プレビュー切り替え用のGUI
+        internal bool m_IsActive = false;
+        internal bool IsActive(Object obj) => Event.current == null || Event.current.type != EventType.Layout ? m_IsActive : m_IsActive = AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"); 
         internal void TogglePreview(Object obj)
         {
             var rect = EditorGUI.PrefixLabel(EditorGUILayout.GetControlRect(), Localization.G("inspector.previewAnimation"));
@@ -151,7 +153,7 @@ namespace jp.lilxyzw.lilycalinventory
             var isChanged = EditorGUI.EndChangeCheck();
 
             // 選択しているオブジェクト自体がアニメーションされている場合は警告を表示
-            if(doPreview != 0 && AnimationMode.IsPropertyAnimated(((Component)obj).gameObject, "m_IsActive"))
+            if(doPreview != 0 && IsActive(obj))
                 EditorGUILayout.HelpBox(Localization.S("inspector.previewWarn"), MessageType.Warning);
 
             if(isChanged && doPreview == 0) StopPreview();
