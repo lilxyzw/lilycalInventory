@@ -70,6 +70,7 @@ namespace jp.lilxyzw.lilycalinventory
 
             foreach(var clip in parameter.clips)
             {
+                if(!clip) continue;
                 clipDefault.AddDefault(clip, gameObject);
                 clipChanged.Add(clip);
             }
