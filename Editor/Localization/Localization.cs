@@ -213,9 +213,14 @@ namespace jp.lilxyzw.lilycalinventory
         {
             LILLocalizeAttribute loc = attribute as LILLocalizeAttribute;
             if(loc.name == null)
-                EditorGUI.PropertyField(position, property, Localization.G(property));
+                EditorGUI.PropertyField(position, property, Localization.G(property), true);
             else
-                EditorGUI.PropertyField(position, property, Localization.G(loc.name));
+                EditorGUI.PropertyField(position, property, Localization.G(loc.name), true);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label);
         }
     }
 
