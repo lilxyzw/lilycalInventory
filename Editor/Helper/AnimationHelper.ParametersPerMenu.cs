@@ -276,7 +276,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             foreach(var costumeChanger in costumeChangers)
                 foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Where(o => o).Distinct())
-                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => c.parametersPerMenu.objects.SingleOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf).ToArray(), costumeChanger.defaultValue));
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => c.parametersPerMenu.objects.FirstOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf).ToArray(), costumeChanger.defaultValue));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
