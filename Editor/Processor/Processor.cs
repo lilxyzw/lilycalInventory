@@ -72,7 +72,7 @@ namespace jp.lilxyzw.lilycalinventory
 
             // 一時的にアクティブにして子のコンポーネントが探索されるようにする
             foreach(var a in actives) a.Item1.SetActive(true);
-            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).Where(c => c.gameObject.activeInHierarchy || c.forceActive).ToArray();
+            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).Where(c => c.IsEnabledInBuild() || c.forceActive).ToArray();
             foreach(var a in actives) a.Item1.SetActive(a.Item2);
 
             // 各コンポーネントを取得

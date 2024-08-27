@@ -57,7 +57,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static ProvidedParameter[] CreateProvidedParameter(AutoDresser component)
         {
-            if(!component.enabled || component.IsEditorOnly()) return new ProvidedParameter[0];
+            if(component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
                 new ProvidedParameter(
                     "AutoDresser",
@@ -74,7 +74,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static ProvidedParameter[] CreateProvidedParameter(Prop component)
         {
-            if(!component.enabled || component.IsEditorOnly()) return new ProvidedParameter[0];
+            if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
                 new ProvidedParameter(
                     component.GetMenuName(),
@@ -91,7 +91,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static ProvidedParameter[] CreateProvidedParameter(MenuBaseComponent component, AnimatorControllerParameterType type, bool isLocalOnly = false)
         {
-            if(!component.enabled || !component.gameObject.activeInHierarchy || component.IsEditorOnly()) return new ProvidedParameter[0];
+            if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
                 new ProvidedParameter(
                     component.GetMenuName(),

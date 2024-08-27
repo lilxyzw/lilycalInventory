@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
+    using runtime;
+
     internal static partial class ObjHelper
     {
         internal static string TryGetName(this Object obj)
@@ -101,6 +103,22 @@ namespace jp.lilxyzw.lilycalinventory
         internal static bool IsEditorOnly(this Component com)
         {
             return IsEditorOnly(com.transform);
+        }
+
+        // 有効なコンポーネントか
+        internal static bool IsEnabledInBuild(this AvatarTagComponent component)
+        {
+            if(!component.enabled || component.IsEditorOnly()) return false;
+            if(component.gameObject.activeInHierarchy) return true;
+            if(component is Prop || component is AutoDresser) return true;
+
+            var prop = component.gameObject.GetComponentInParentInAvatar<Prop>();
+            if(prop && prop.enabled) return true;
+
+            var dresser = component.gameObject.GetComponentInParentInAvatar<AutoDresser>();
+            if(dresser && dresser.enabled) return true;
+
+            return false;
         }
     }
 }
