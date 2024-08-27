@@ -131,7 +131,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var arrayElementType = prop.arrayElementType;
 
                 // 参照でない場合はD&D非対応
-                if(!arrayElementType.StartsWith("PPtr<$")) List(position, prop, drawFoldout);
+                if(!arrayElementType.StartsWith("PPtr<$")) return List(position, prop, drawFoldout);
                 arrayElementType = arrayElementType.Replace("PPtr<$","").Replace(">","");
 
                 // Componentである場合はD&D対応
