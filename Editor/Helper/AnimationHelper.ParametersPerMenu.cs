@@ -274,9 +274,18 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] toActives, int defaultValue)>> dic)
         {
+            bool Cond(CostumeChanger costumeChanger, GameObject obj, Costume c)
+            {
+                var first = c.parametersPerMenu.objects.FirstOrDefault(x => x.obj == obj);
+                if(first != null) return first.value;
+                if(System.Array.IndexOf(costumeChanger.costumes, c) == costumeChanger.defaultValue) return obj.activeSelf;
+                var def = costumeChanger.costumes[costumeChanger.defaultValue].parametersPerMenu.objects.FirstOrDefault(x => x.obj == obj);
+                if(def != null) return !def.value;
+                return obj.activeSelf;
+            }
             foreach(var costumeChanger in costumeChangers)
                 foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Where(o => o).Distinct())
-                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => c.parametersPerMenu.objects.FirstOrDefault(x => x.obj == obj)?.value ?? obj.activeSelf).ToArray(), costumeChanger.defaultValue));
+                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => Cond(costumeChanger, obj, c)).ToArray(), costumeChanger.defaultValue));
         }
 
         private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
