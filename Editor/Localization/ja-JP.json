@@ -111,6 +111,8 @@
   "inspector.add": "追加",
   "inspector.delete": "削除",
 
+  "inspector.convertToItemToggler": "ItemTogglerに変換",
+
   "inspector.ParameterViewer.memoryUsed": "使用パラメーターメモリ",
   "inspector.ParameterViewer.memoryRemaining": "残り",
   "inspector.ParameterViewer.memoryAvatar": "アバター",

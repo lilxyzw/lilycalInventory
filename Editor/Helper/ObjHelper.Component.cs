@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
@@ -171,15 +172,29 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // PropをItemTogglerに変換
-        internal static void PropToToggler(this Prop[] props)
+        internal static void PropToToggler(this Prop[] props, bool createNewObject = false)
         {
             if(props == null || props.Length == 0) return;
             foreach(var prop in props)
             {
                 var obj = prop.gameObject;
                 var toggler = prop.PropToToggler();
-                Object.DestroyImmediate(prop);
-                var toggler2 = obj.AddComponent<ItemToggler>();
+                ItemToggler toggler2;
+                if(createNewObject)
+                {
+                    obj = new GameObject(prop.GetMenuName());
+                    if(prop.parentOverride) obj.transform.parent = prop.parentOverride.transform;
+                    else obj.transform.parent = prop.transform.parent;
+                    Undo.RegisterCreatedObjectUndo(obj, "Convert to ItemToggler");
+                    Undo.DestroyObjectImmediate(prop);
+                    toggler2 = Undo.AddComponent<ItemToggler>(obj);
+                    EditorGUIUtility.PingObject(obj);
+                }
+                else
+                {
+                    Object.DestroyImmediate(prop);
+                    toggler2 = obj.AddComponent<ItemToggler>();
+                }
                 toggler2.menuName = toggler.menuName;
                 toggler2.parentOverride = toggler.parentOverride;
                 toggler2.parentOverrideMA = toggler.parentOverrideMA;

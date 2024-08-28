@@ -111,6 +111,8 @@
   "inspector.add": "添加",
   "inspector.delete": "删除",
 
+  "inspector.convertToItemToggler": "Convert to ItemToggler",
+
   "inspector.ParameterViewer.memoryUsed": "已使用的参数",
   "inspector.ParameterViewer.memoryRemaining": "剩余",
   "inspector.ParameterViewer.memoryAvatar": "虚拟形象",

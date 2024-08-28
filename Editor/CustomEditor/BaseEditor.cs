@@ -132,6 +132,11 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             // ----------------------------------------------------------------
+            // フォルダの中身を表示
+            if(target is Prop && GUILayout.Button(Localization.S("inspector.convertToItemToggler")))
+                targets.Select(t => t as Prop).Where(t => t).ToArray().PropToToggler(true);
+
+            // ----------------------------------------------------------------
             // 全てを確認した後にプレビューを実行
             if(targets.Length == 1) PreviewHelper.instance.StartPreview(target);
         }

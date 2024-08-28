@@ -111,6 +111,8 @@
   "inspector.add": "Add",
   "inspector.delete": "Del",
 
+  "inspector.convertToItemToggler": "Convert to ItemToggler",
+
   "inspector.ParameterViewer.memoryUsed": "Parameter Memory Used",
   "inspector.ParameterViewer.memoryRemaining": "Remaining",
   "inspector.ParameterViewer.memoryAvatar": "Avatar",
