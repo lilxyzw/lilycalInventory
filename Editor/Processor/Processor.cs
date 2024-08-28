@@ -21,6 +21,9 @@ namespace jp.lilxyzw.lilycalinventory
         private static MaterialModifier[] modifiers;
         private static MaterialOptimizer[] optimizers;
 
+        // Renderer系コンポーネント
+        private static AutoFixMeshSettings[] meshSettings;
+
         // メニュー系コンポーネント
         private static AvatarTagComponent[] components;
         private static AutoDresserSettings[] dresserSettings;
@@ -78,6 +81,7 @@ namespace jp.lilxyzw.lilycalinventory
             // 各コンポーネントを取得
             modifiers = components.SelectComponents<MaterialModifier>();
             optimizers = components.SelectComponents<MaterialOptimizer>();
+            meshSettings = components.SelectComponents<AutoFixMeshSettings>();
             folders = components.SelectComponents<MenuFolder>();
             togglers = components.SelectComponents<ItemToggler>();
             costumeChangers = components.SelectComponents<CostumeChanger>();
@@ -158,11 +162,12 @@ namespace jp.lilxyzw.lilycalinventory
             materials = Cloner.CloneAllMaterials(ctx);
         }
 
-        // マテリアルを編集
+        // マテリアルの編集とメッシュ設定の統一
         internal static void ModifyPostProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
             Modifier.ApplyMaterialModifier(materials, modifiers);
+            Modifier.ApplyMeshSettingsModifier(ctx.AvatarRootObject, meshSettings);
         }
 
         // 後の最適化ツールが正しく動作するようにコンポーネントをここで除去

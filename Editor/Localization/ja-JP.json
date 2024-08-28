@@ -13,6 +13,11 @@
   "inspector.properties": "プロパティ",
   "inspector.properties.tooltip": "ここに入力されているプロパティがコピーされます。",
 
+  "inspector.ignoreRenderers": "除外するレンダラー",
+  "inspector.ignoreRenderers.tooltip": "ここに設定したレンダラーは設定のコピーが行われなくなります。",
+  "inspector.meshSettings": "メッシュの設定（上級者向け）",
+  "inspector.autoCalculateBounds": "Boundsを自動計算する",
+
   "inspector.menuName": "メニュー名",
   "inspector.menuName.tooltip": "VRChatで使用されるメニューの名前です。何も入力していない場合はオブジェクト名と同じになります。",
   "inspector.parameterName": "パラメーター名",

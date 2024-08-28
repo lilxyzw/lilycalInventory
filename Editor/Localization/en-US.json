@@ -13,6 +13,11 @@
   "inspector.properties": "Properties",
   "inspector.properties.tooltip": "The properties entered here will be copied.",
 
+  "inspector.ignoreRenderers": "Ignore Renderers",
+  "inspector.ignoreRenderers.tooltip": "The settings of the renderer set here will not be copied.",
+  "inspector.meshSettings": "Mesh Settings (Advanced)",
+  "inspector.autoCalculateBounds": "Automatically calculate bounds",
+
   "inspector.menuName": "Menu Name",
   "inspector.menuName.tooltip": "This is the name of the menu displayed on VRChat. If nothing is entered, it will be the same as the object name.",
   "inspector.parameterName": "Parameter Name",
