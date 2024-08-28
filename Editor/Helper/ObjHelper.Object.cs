@@ -108,17 +108,7 @@ namespace jp.lilxyzw.lilycalinventory
         // 有効なコンポーネントか
         internal static bool IsEnabledInBuild(this AvatarTagComponent component)
         {
-            if(!component.enabled || component.IsEditorOnly()) return false;
-            if(component.gameObject.activeInHierarchy) return true;
-            if(component is Prop || component is AutoDresser) return true;
-
-            var prop = component.gameObject.GetComponentInParentInAvatar<Prop>();
-            if(prop && prop.enabled) return true;
-
-            var dresser = component.gameObject.GetComponentInParentInAvatar<AutoDresser>();
-            if(dresser && dresser.enabled) return true;
-
-            return false;
+            return component.enabled && !component.IsEditorOnly();
         }
     }
 }
