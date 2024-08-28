@@ -157,7 +157,6 @@ namespace jp.lilxyzw.lilycalinventory
                 changer.isSave = isSave;
                 changer.isLocalOnly = isLocalOnly;
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
-                changer.forceActive = true;
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
             }
             else
@@ -166,7 +165,6 @@ namespace jp.lilxyzw.lilycalinventory
                 var changer = newObj.AddComponent<CostumeChanger>();
                 changer.menuName = nameof(AutoDresser);
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
-                changer.forceActive = true;
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
                 newObj.transform.parent = avatarRoot;
             }
@@ -189,7 +187,6 @@ namespace jp.lilxyzw.lilycalinventory
                 toggler2.isSave = toggler.isSave;
                 toggler2.isLocalOnly = toggler.isLocalOnly;
                 toggler2.parameter = toggler.parameter;
-                toggler2.forceActive = true;
             }
         }
 

@@ -15,6 +15,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         #else
         [HideInInspector] public UnityEngine.Object parentOverrideMA;
         #endif
+        public AutoDresser autoDresser;
         public ParametersPerMenu parametersPerMenu = new ParametersPerMenu();
     }
 

@@ -47,6 +47,16 @@ namespace jp.lilxyzw.lilycalinventory
             // Commentコンポーネントを削除
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
                 Object.DestroyImmediate(component);
+            
+            var deleteDressers = new HashSet<AutoDresser>();
+            foreach(var costume in ctx.AvatarRootObject.GetActiveComponentsInChildren<CostumeChanger>(true).SelectMany(c => c.costumes).Where(c => c.autoDresser))
+            {
+                costume.parametersPerMenu = costume.parametersPerMenu.Merge(costume.autoDresser.parameter);
+                costume.parametersPerMenu.objects = costume.parametersPerMenu.objects.Append(new ObjectToggler{obj = costume.autoDresser.gameObject, value = true}).ToArray();
+                if(string.IsNullOrEmpty(costume.menuName)) costume.menuName = costume.autoDresser.GetMenuName();
+                deleteDressers.Add(costume.autoDresser);
+            }
+            foreach(var d in deleteDressers) Object.DestroyImmediate(d);
 
             dressers = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresser>(true);
             props = ctx.AvatarRootObject.GetActiveComponentsInChildren<Prop>(true);
@@ -62,20 +72,9 @@ namespace jp.lilxyzw.lilycalinventory
             props.ResolveMenuName();
             props.PropToToggler();
 
-            // 子が強制アクティブな場合はメニューの親フォルダを再帰的にアクティブ化
-            void ForceActive(MenuBaseComponent component)
-            {
-                var parent = component.GetMenuParent();
-                if(!parent) return;
-                parent.forceActive = true;
-                ForceActive(parent);
-            }
-            foreach(var component in ctx.AvatarRootObject.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => c.forceActive).ToArray())
-                ForceActive(component);
-
             // 一時的にアクティブにして子のコンポーネントが探索されるようにする
             foreach(var a in actives) a.Item1.SetActive(true);
-            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).Where(c => c.IsEnabledInBuild() || c.forceActive).ToArray();
+            components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).ToArray();
             foreach(var a in actives) a.Item1.SetActive(a.Item2);
 
             // 各コンポーネントを取得

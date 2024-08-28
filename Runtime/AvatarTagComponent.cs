@@ -10,7 +10,6 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     , VRC.SDKBase.IEditorOnly
     #endif
     {
-        [NonSerialized] internal bool forceActive = false;
         void Start(){}
     }
 }

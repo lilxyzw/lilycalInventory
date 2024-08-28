@@ -95,12 +95,15 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var copy = property.Copy();
-            copy.Next(false);
-            copy.Next(false);
-            copy.Next(false);
-            copy.Next(false);
+            var path = property.propertyPath.Substring(0, property.propertyPath.Length - property.name.Length);
+            var copy = property.serializedObject.FindProperty(path + "parametersPerMenu");
             string name = property.stringValue;
+
+            if(string.IsNullOrEmpty(name))
+            {
+                var autoDresser = property.serializedObject.FindProperty(path + "autoDresser").objectReferenceValue as AutoDresser;
+                if(autoDresser) name = autoDresser.GetMenuName();
+            }
 
             if(string.IsNullOrEmpty(name))
             {

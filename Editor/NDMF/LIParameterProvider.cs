@@ -57,7 +57,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static ProvidedParameter[] CreateProvidedParameter(AutoDresser component)
         {
-            if(component.IsEnabledInBuild()) return new ProvidedParameter[0];
+            if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
                 new ProvidedParameter(
                     "AutoDresser",
