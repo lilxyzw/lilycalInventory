@@ -24,6 +24,9 @@ namespace jp.lilxyzw.lilycalinventory
         private static int number;
         private static bool isLoaded = false;
 
+        [MenuItem("Tools/lilycalInventory/Reload Language Files")]
+        private static void ReloadLanguages() => LoadDatas();
+
         [InitializeOnLoadMethod]
         internal static void LoadDatas()
         {
