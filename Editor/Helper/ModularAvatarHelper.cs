@@ -70,10 +70,6 @@ namespace jp.lilxyzw.lilycalinventory
             // 複数コンポーネントから参照されるMenuItemがあった場合にエラー
             if(duplicates.Count > 0)
                 ErrorHelper.Report("dialog.error.menuMADuplication", menus.Where(p => p.Value.Item2).Select(p => p.Value.Item1).Union(duplicates).ToArray());
-
-            // 空のメニューを除去
-            foreach(var m in menus.Keys.Where(m => m.Control.type == ControlType.SubMenu && m.gameObject.transform.childCount == 0).ToArray())
-                Object.DestroyImmediate(m.gameObject);
             #else
             foreach(var m in folders) m.parentOverrideMA = null;
             foreach(var m in togglers) m.parentOverrideMA = null;
