@@ -125,5 +125,6 @@
   "dialog.error.allObjectOff": "All objects with AutoDresser are turned off. Please check only one so that the tool can set the initial value.",
   "dialog.error.avatarRootNofFound": "Avatar root object not found. Make sure that the object is inside the avatar and that the avatar has an AvatarDescriptor attached.",
   "dialog.error.menuCircularReference": "MenuFolder has a circular reference. Please change the parent folder.",
+  "dialog.error.autoFixMeshSettingsDuplication": "There are multiple AutoFixMeshSettings. Please enable only one.",
   "dialog.error.menuMADuplication": "MA Menu Item is referenced by multiple components. Make sure to create one MA Menu Item for each component."
 }

@@ -125,5 +125,6 @@
   "dialog.error.allObjectOff": "全てのAutoDresserが付いたオブジェクトがオフになっています。初期値を設定できるようにどれか1つだけオンにしてください。",
   "dialog.error.avatarRootNofFound": "アバターのルートオブジェクトが見つかりませんでした。オブジェクトがアバターの中に入っていることとアバターにAvatarDescriptorがついていることを確認してください。",
   "dialog.error.menuCircularReference": "MenuFolderに循環参照があります。親フォルダを変更してください。",
+  "dialog.error.autoFixMeshSettingsDuplication": "AutoFixMeshSettingsが複数存在します。1つだけを有効化してください。",
   "dialog.error.menuMADuplication": "MA Menu Itemが複数コンポーネントから参照されています。それぞれのコンポーネントにつき1つのMA Menu Itemを作成するようにしてください。"
 }

@@ -9,34 +9,39 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void ApplyMeshSettingsModifier(GameObject root, AutoFixMeshSettings[] settingss)
         {
+            if(settingss == null || settingss.Length == 0) return;
+            if(settingss.Length > 1)
+            {
+                ErrorHelper.Report("dialog.error.autoFixMeshSettingsDuplication", settingss);
+                return;
+            }
+            var settings = settingss[0];
+
             root.transform.GetPositionAndRotation(out var position, out var rotation);
             root.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-            foreach(var settings in settingss)
+            var renderers = root.GetComponentsInChildren<Renderer>(true).Where(r => !settings.ignoreRenderers.Contains(r)).ToArray();
+            var probeAnchor = settings.meshSettings.anchorOverride ? settings.meshSettings.anchorOverride : GetHumanBone(root, HumanBodyBones.Chest);
+            var rootBone = settings.meshSettings.rootBone ? settings.meshSettings.rootBone : GetHumanBone(root, HumanBodyBones.Hips);
+            var bounds = settings.meshSettings.autoCalculateBounds ? SumBounds(renderers.Where(r => !(r is ParticleSystemRenderer)).ToArray()) : settings.meshSettings.bounds;
+            if(settings.meshSettings.autoCalculateBounds) bounds.center -= rootBone.position;
+            foreach(var renderer in renderers)
             {
-                var renderers = root.GetComponentsInChildren<Renderer>(true).Where(r => !settings.ignoreRenderers.Contains(r)).ToArray();
-                var probeAnchor = settings.meshSettings.anchorOverride ? settings.meshSettings.anchorOverride : GetHumanBone(root, HumanBodyBones.Chest);
-                var rootBone = settings.meshSettings.rootBone ? settings.meshSettings.rootBone : GetHumanBone(root, HumanBodyBones.Hips);
-                var bounds = settings.meshSettings.autoCalculateBounds ? SumBounds(renderers.Where(r => !(r is ParticleSystemRenderer)).ToArray()) : settings.meshSettings.bounds;
-                if(settings.meshSettings.autoCalculateBounds) bounds.center -= rootBone.position;
-                foreach(var renderer in renderers)
-                {
-                    renderer.shadowCastingMode = settings.meshSettings.castShadows;
-                    renderer.receiveShadows = settings.meshSettings.receiveShadows;
-                    renderer.lightProbeUsage = settings.meshSettings.lightProbes;
-                    renderer.reflectionProbeUsage = settings.meshSettings.reflectionProbes;
-                    renderer.probeAnchor = probeAnchor;
-                    renderer.motionVectorGenerationMode = settings.meshSettings.motionVectors;
-                    renderer.allowOcclusionWhenDynamic = settings.meshSettings.dynamicOcclusion;
+                renderer.shadowCastingMode = settings.meshSettings.castShadows;
+                renderer.receiveShadows = settings.meshSettings.receiveShadows;
+                renderer.lightProbeUsage = settings.meshSettings.lightProbes;
+                renderer.reflectionProbeUsage = settings.meshSettings.reflectionProbes;
+                renderer.probeAnchor = probeAnchor;
+                renderer.motionVectorGenerationMode = settings.meshSettings.motionVectors;
+                renderer.allowOcclusionWhenDynamic = settings.meshSettings.dynamicOcclusion;
 
-                    if(renderer is SkinnedMeshRenderer s)
+                if(renderer is SkinnedMeshRenderer s)
+                {
+                    s.updateWhenOffscreen = settings.meshSettings.updateWhenOffscreen;
+                    s.skinnedMotionVectors = settings.meshSettings.skinnedMotionVectors;
+                    if(!s.gameObject.GetComponent<Cloth>())
                     {
-                        s.updateWhenOffscreen = settings.meshSettings.updateWhenOffscreen;
-                        s.skinnedMotionVectors = settings.meshSettings.skinnedMotionVectors;
-                        if(!s.gameObject.GetComponent<Cloth>())
-                        {
-                            s.rootBone = rootBone;
-                            s.localBounds = bounds;
-                        }
+                        s.rootBone = rootBone;
+                        s.localBounds = bounds;
                     }
                 }
             }

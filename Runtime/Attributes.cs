@@ -50,4 +50,28 @@ namespace jp.lilxyzw.lilycalinventory.runtime
             this.order = order;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    internal class LILDisableWhenAttribute : PropertyAttribute
+    {
+        public readonly string propertyPath;
+        public readonly bool boolValue;
+        public readonly int intValue;
+        public readonly float floatValue;
+        public LILDisableWhenAttribute(string propertyPath, bool boolValue)
+        {
+            this.propertyPath = propertyPath;
+            this.boolValue = boolValue;
+        }
+        public LILDisableWhenAttribute(string propertyPath, int intValue)
+        {
+            this.propertyPath = propertyPath;
+            this.intValue = intValue;
+        }
+        public LILDisableWhenAttribute(string propertyPath, float floatValue)
+        {
+            this.propertyPath = propertyPath;
+            this.floatValue = floatValue;
+        }
+    }
 }

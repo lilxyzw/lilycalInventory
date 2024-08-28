@@ -290,4 +290,36 @@ namespace jp.lilxyzw.lilycalinventory
             return position.yMax;
         }
     }
+
+    [CustomPropertyDrawer(typeof(LILDisableWhenAttribute))]
+    internal class LILDisableWhenDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var attr = attribute as LILDisableWhenAttribute;
+            var prop = property.serializedObject.FindProperty(attr.propertyPath);
+            if(prop != null)
+            {
+                switch(prop.propertyType)
+                {
+                    case SerializedPropertyType.Boolean:
+                        GUI.enabled = prop.boolValue != attr.boolValue;
+                        break;
+                    case SerializedPropertyType.Integer:
+                        GUI.enabled = prop.intValue != attr.intValue;
+                        break;
+                    case SerializedPropertyType.Float:
+                        GUI.enabled = prop.floatValue != attr.floatValue;
+                        break;
+                }
+            }
+            EditorGUI.PropertyField(position, property, label, true);
+            GUI.enabled = true;
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label);
+        }
+    }
 }

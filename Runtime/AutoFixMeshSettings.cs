@@ -7,6 +7,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
 {
     // メッシュ設定を自動統一するコンポーネント
     // メニューは生成されません。
+    [DisallowMultipleComponent]
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(AutoFixMeshSettings))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "autofixmeshsettings")]
     internal class AutoFixMeshSettings : AvatarTagComponent
@@ -21,7 +22,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] public bool updateWhenOffscreen = false;
         [NotKeyable] public Transform rootBone;
         [NotKeyable] [LILLocalize] public bool autoCalculateBounds = true;
-        [NotKeyable] public Bounds bounds;
+        [NotKeyable] [LILDisableWhen("meshSettings.autoCalculateBounds", true)] public Bounds bounds;
         [NotKeyable] public ShadowCastingMode castShadows = ShadowCastingMode.On;
         [NotKeyable] public bool receiveShadows = true;
         [NotKeyable] public LightProbeUsage lightProbes = LightProbeUsage.BlendProbes;

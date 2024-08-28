@@ -125,5 +125,6 @@
   "dialog.error.allObjectOff": "所有带有 AutoDresser 组件的对象都已关闭。请启用一个，以便工具设置初始值。",
   "dialog.error.avatarRootNofFound": "未找到虚拟形象根对象。请确保该对象位于虚拟形象内部，且虚拟形象已附加 AvatarDescriptor。",
   "dialog.error.menuCircularReference": "MenuFolder 具有循环引用。请更改父文件夹。",
+  "dialog.error.autoFixMeshSettingsDuplication": "There are multiple AutoFixMeshSettings. Please enable only one.",
   "dialog.error.menuMADuplication": "MA 菜单项被多个组件引用。确保为每个组件创建一个 MA 菜单项。"
 }
