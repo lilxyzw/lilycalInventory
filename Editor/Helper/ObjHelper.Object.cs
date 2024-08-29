@@ -110,5 +110,13 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return component.enabled && !component.IsEditorOnly();
         }
+
+        #if !UNITY_2021_3_OR_NEWER
+        internal static void GetPositionAndRotation(this Transform transform, out Vector3 position, out Quaternion rotation)
+        {
+            position = transform.position;
+            rotation = transform.rotation;
+        }
+        #endif
     }
 }
