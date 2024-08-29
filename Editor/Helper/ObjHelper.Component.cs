@@ -176,6 +176,7 @@ namespace jp.lilxyzw.lilycalinventory
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
                 newObj.transform.parent = avatarRoot;
+                newObj.transform.SetAsFirstSibling();
             }
         }
 
