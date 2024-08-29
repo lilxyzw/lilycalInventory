@@ -348,4 +348,62 @@ namespace jp.lilxyzw.lilycalinventory
             return GUIHelper.propertyHeight * 3 + GUIHelper.GetSpaceHeight(3);
         }
     }
+
+    // プリセット用のエディタ
+    [CustomPropertyDrawer(typeof(PresetItem))]
+    internal class PresetItemDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            var objRect = new Rect(position.x, position.y, position.width - 120 - 16, position.height);
+            var valueRect = new Rect(objRect.xMax + 16, position.y, 120, position.height);
+            var obj = property.FPR("obj");
+            var value = property.FPR("value");
+
+            GUIHelper.FieldOnly(objRect, obj);
+            var valueLabel = Localization.G("inspector.presetItemValue");
+
+            EditorGUIUtility.labelWidth = 60;
+            void AsBool()
+            {
+                EditorGUI.BeginChangeCheck();
+                var valueBool = EditorGUI.Popup(valueRect, valueLabel, value.floatValue > 0.5f ? 1 : 0, new[]{new GUIContent("False"), new GUIContent("True")}) > 0;
+                if(EditorGUI.EndChangeCheck()) value.floatValue = valueBool ? 1 : 0;
+            }
+
+            void AsInt()
+            {
+                EditorGUI.BeginChangeCheck();
+                var valueInt = EditorGUI.IntField(valueRect, valueLabel, (int)value.floatValue);
+                if(EditorGUI.EndChangeCheck()) value.floatValue = valueInt;
+            }
+
+            void AsFloat()
+            {
+                EditorGUI.BeginChangeCheck();
+                var valueFloat = EditorGUI.FloatField(valueRect, valueLabel, value.floatValue);
+                if(EditorGUI.EndChangeCheck()) value.floatValue = valueFloat;
+            }
+
+            // コンポーネントが生成するパラメーターの型に応じてエディタを変える
+            if(!obj.objectReferenceValue)
+            {
+                GUI.enabled = false;
+                AsFloat();
+                GUI.enabled = true;
+            }
+            else if(obj.objectReferenceValue is AutoDresser)
+            {
+                GUI.enabled = false;
+                EditorGUI.Popup(valueRect, valueLabel, 0, new[]{new GUIContent("True")});
+                GUI.enabled = true;
+            }
+            else if(obj.objectReferenceValue is CostumeChanger) AsInt();
+            else if(obj.objectReferenceValue is ItemToggler) AsBool();
+            else if(obj.objectReferenceValue is Prop) AsBool();
+            else if(obj.objectReferenceValue is SmoothChanger) AsFloat();
+            else obj.objectReferenceValue = null;
+            EditorGUIUtility.labelWidth = 0;
+        }
+    }
 }

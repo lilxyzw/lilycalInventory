@@ -90,6 +90,10 @@
   "inspector.frameValue": "帧值 (%)",
   "inspector.frameValue.tooltip": "关键帧的值。当 Radial Puppet 处于最小值时为 0，处于最大值时为 1。",
 
+  "inspector.presetItems": "Controls",
+  "inspector.presetItemValue": "Value",
+  "inspector.presetItemValue.tooltip": "When the menu is enabled, the component will be set to the value specified here.",
+
   "inspector.previewAnimation": "预览动画",
   "inspector.previewStop": "停止",
   "inspector.preview": "预览",

@@ -36,6 +36,10 @@ namespace jp.lilxyzw.lilycalinventory
                     if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, toggler.defaultValue, root);
                     else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, toggler.defaultValue);
                 }
+                else
+                {
+                    controller.TryAddParameter(name, toggler.defaultValue);
+                }
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加

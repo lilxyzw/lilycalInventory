@@ -20,7 +20,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         // メニューの追加処理
         // 順序処理を追加するにあたって大幅な書き換えを予定
-        internal static void Generate(BuildContext ctx, MenuFolder[] folders, ItemToggler[] togglers, SmoothChanger[] smoothChangers, CostumeChanger[] costumeChangers
+        internal static void Generate(BuildContext ctx, MenuFolder[] folders, ItemToggler[] togglers, SmoothChanger[] smoothChangers, CostumeChanger[] costumeChangers, Preset[] presets
         , MenuBaseComponent[] menuBaseComponents
         #if LIL_VRCSDK3A
         , VRCExpressionsMenu menu
@@ -86,6 +86,16 @@ namespace jp.lilxyzw.lilycalinventory
                     }
                     controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, changer.menuName, i)));
                 }
+            }
+
+            // Presetを追加
+            foreach(var preset in presets)
+            {
+                if(preset.parentOverrideMA) continue;
+                controls[preset] = new List<(MenuBaseComponent, Control)>()
+                {
+                    (preset.GetMenuParent(), VRChatHelper.CreateControl(preset.menuName, preset.icon, ControlType.Button, preset.menuName))
+                };
             }
 
             // Hierarchy 順でソートしてメニューを構築

@@ -96,7 +96,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // AutoDresserをCostumeChangerに変換
-        internal static Costume[] DresserToCostumes(this AutoDresser[] dressers, out Transform avatarRoot, AutoDresser dresserDefOverride = null)
+        internal static Costume[] DresserToCostumes(this AutoDresser[] dressers, out Transform avatarRoot, CostumeChanger changer, Preset[] presets, AutoDresser dresserDefOverride = null)
         {
             avatarRoot = null;
             if(dressers == null || dressers.Length == 0) return null;
@@ -117,12 +117,20 @@ namespace jp.lilxyzw.lilycalinventory
                 if(dresserDefOverride && dresser == dresserDefOverride) def = cos;
                 else if(!dresserDefOverride && obj.activeSelf)
                 {
-                    if(def == null) def = cos;
+                    if(def == null)
+                    {
+                        def = cos;
+                        presets.ReplaceComponent(dresser, changer, 0);
+                    }
 
                     // 複数衣装がオンの場合にエラー
                     else ErrorHelper.Report("dialog.error.defaultDuplication", dressers);
                 }
-                else costumes.Add(cos);
+                else
+                {
+                    presets.ReplaceComponent(dresser, changer, costumes.Count);
+                    costumes.Add(cos);
+                }
             }
             if(def == null)
             {
@@ -136,7 +144,7 @@ namespace jp.lilxyzw.lilycalinventory
             return costumes.ToArray();
         }
 
-        internal static void DresserToChanger(this AutoDresser[] dressers, AutoDresserSettings[] settings)
+        internal static void DresserToChanger(this AutoDresser[] dressers, AutoDresserSettings[] settings, Preset[] presets)
         {
             if(dressers == null || dressers.Length == 0) return;
             if(settings.Length == 1 && settings[0])
@@ -157,7 +165,7 @@ namespace jp.lilxyzw.lilycalinventory
                 changer.parentOverrideMA = parentOverrideMA;
                 changer.isSave = isSave;
                 changer.isLocalOnly = isLocalOnly;
-                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
             }
             else
@@ -165,14 +173,14 @@ namespace jp.lilxyzw.lilycalinventory
                 var newObj = new GameObject(nameof(AutoDresser));
                 var changer = newObj.AddComponent<CostumeChanger>();
                 changer.menuName = nameof(AutoDresser);
-                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot);
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
                 newObj.transform.parent = avatarRoot;
             }
         }
 
         // PropをItemTogglerに変換
-        internal static void PropToToggler(this Prop[] props, bool createNewObject = false)
+        internal static void PropToToggler(this Prop[] props, Preset[] presets, bool createNewObject = false)
         {
             if(props == null || props.Length == 0) return;
             foreach(var prop in props)
@@ -180,6 +188,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var obj = prop.gameObject;
                 var toggler = prop.PropToToggler();
                 ItemToggler toggler2;
+                var items = presets.SelectMany(p => p.presetItems).Where(i => i.obj == prop);
+                Undo.RecordObjects(presets.Where(p => items.Any(i => p.presetItems.Contains(i))).ToArray(), "Convert to ItemToggler");
                 if(createNewObject)
                 {
                     obj = new GameObject(prop.GetMenuName());
@@ -194,6 +204,11 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     Object.DestroyImmediate(prop);
                     toggler2 = obj.AddComponent<ItemToggler>();
+                }
+                foreach(var item in items)
+                {
+                    item.obj = toggler2;
+                    item.value = 1;
                 }
                 toggler2.menuName = toggler.menuName;
                 toggler2.parentOverride = toggler.parentOverride;
@@ -220,6 +235,16 @@ namespace jp.lilxyzw.lilycalinventory
             };
             toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
             return toggler;
+        }
+
+        // Preset内のComponentを置換
+        internal static void ReplaceComponent(this Preset[] presets, MenuBaseComponent from, MenuBaseComponent to, float value)
+        {
+            foreach(var item in presets.SelectMany(p => p.presetItems).Where(i => i.obj == from))
+            {
+                item.obj = to;
+                item.value = value;
+            }
         }
     }
 }

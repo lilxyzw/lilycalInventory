@@ -134,7 +134,8 @@ namespace jp.lilxyzw.lilycalinventory
             // ----------------------------------------------------------------
             // フォルダの中身を表示
             if(target is Prop && GUILayout.Button(Localization.S("inspector.convertToItemToggler")))
-                targets.Select(t => t as Prop).Where(t => t).ToArray().PropToToggler(true);
+                foreach(var prop in targets.Select(t => t as Prop).Where(t => t).ToArray())
+                    new[]{prop}.PropToToggler(prop.gameObject.GetAvatarRoot().GetComponentsInChildren<Preset>(true), true);
 
             // ----------------------------------------------------------------
             // 全てを確認した後にプレビューを実行

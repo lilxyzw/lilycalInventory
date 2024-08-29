@@ -95,7 +95,7 @@ namespace jp.lilxyzw.lilycalinventory
             var gameObject = target.gameObject.GetAvatarRoot().gameObject;
 
             var dressers = gameObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
-            var parameters = dressers.DresserToCostumes(out Transform avatarRoot, dresser).Select(c => c.parametersPerMenu).ToArray();
+            var parameters = dressers.DresserToCostumes(out Transform avatarRoot, null, new Preset[]{}, dresser).Select(c => c.parametersPerMenu).ToArray();
 
             StartPreview(parameters, 0);
         }

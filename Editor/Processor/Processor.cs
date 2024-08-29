@@ -33,6 +33,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static ItemToggler[] togglers;
         private static CostumeChanger[] costumeChangers;
         private static SmoothChanger[] smoothChangers;
+        private static Preset[] presets;
         private static MenuBaseComponent[] menuBaseComponents;
         private static Material[] materials;
         private static HashSet<string> parameterNames;
@@ -48,13 +49,21 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
                 Object.DestroyImmediate(component);
             
+            presets = ctx.AvatarRootObject.GetActiveComponentsInChildren<Preset>(true);
+
             var deleteDressers = new HashSet<AutoDresser>();
-            foreach(var costume in ctx.AvatarRootObject.GetActiveComponentsInChildren<CostumeChanger>(true).SelectMany(c => c.costumes).Where(c => c.autoDresser))
+            foreach(var changer in ctx.AvatarRootObject.GetActiveComponentsInChildren<CostumeChanger>(true))
             {
-                costume.parametersPerMenu = costume.parametersPerMenu.Merge(costume.autoDresser.parameter);
-                costume.parametersPerMenu.objects = costume.parametersPerMenu.objects.Append(new ObjectToggler{obj = costume.autoDresser.gameObject, value = true}).ToArray();
-                if(string.IsNullOrEmpty(costume.menuName)) costume.menuName = costume.autoDresser.GetMenuName();
-                deleteDressers.Add(costume.autoDresser);
+                for(int i = 0; i < changer.costumes.Length; i++)
+                {
+                    var costume = changer.costumes[i];
+                    if(!costume.autoDresser) continue;
+                    costume.parametersPerMenu = costume.parametersPerMenu.Merge(costume.autoDresser.parameter);
+                    costume.parametersPerMenu.objects = costume.parametersPerMenu.objects.Append(new ObjectToggler{obj = costume.autoDresser.gameObject, value = true}).ToArray();
+                    if(string.IsNullOrEmpty(costume.menuName)) costume.menuName = costume.autoDresser.GetMenuName();
+                    deleteDressers.Add(costume.autoDresser);
+                    presets.ReplaceComponent(costume.autoDresser, changer, i);
+                }
             }
             foreach(var d in deleteDressers) Object.DestroyImmediate(d);
 
@@ -66,11 +75,11 @@ namespace jp.lilxyzw.lilycalinventory
             dresserSettings = ctx.AvatarRootObject.GetActiveComponentsInChildren<AutoDresserSettings>(false);
             if(dresserSettings.Length > 1) ErrorHelper.Report("dialog.error.dresserSettingsDuplicate", dresserSettings);
             dressers.ResolveMenuName();
-            dressers.DresserToChanger(dresserSettings);
+            dressers.DresserToChanger(dresserSettings, presets);
 
             // PropをItemTogglerに変換
             props.ResolveMenuName();
-            props.PropToToggler();
+            props.PropToToggler(presets);
 
             // 一時的にアクティブにして子のコンポーネントが探索されるようにする
             foreach(var a in actives) a.Item1.SetActive(true);
@@ -85,6 +94,7 @@ namespace jp.lilxyzw.lilycalinventory
             togglers = components.SelectComponents<ItemToggler>();
             costumeChangers = components.SelectComponents<CostumeChanger>();
             smoothChangers = components.SelectComponents<SmoothChanger>();
+            presets = components.SelectComponents<Preset>();
             menuBaseComponents = components.SelectComponents<MenuBaseComponent>();
             shouldModify = components.Length != 0;
             if(!shouldModify) return;
@@ -97,7 +107,7 @@ namespace jp.lilxyzw.lilycalinventory
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
 
             // 再帰的にMenuGroup配下に
-            ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers);
+            ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers, presets);
         }
 
         // AnimatorControllerとExpressionsMenuとExpressionParametersをクローン
@@ -112,7 +122,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(!shouldModify) return;
             #if LIL_VRCSDK3A
-            if(togglers.Length + costumeChangers.Length + smoothChangers.Length > 0)
+            if(togglers.Length + costumeChangers.Length + smoothChangers.Length + presets.Length > 0)
             {
                 var controller = ctx.AvatarDescriptor.TryGetFXAnimatorController(ctx);
                 var hasWriteDefaultsState = controller.HasWriteDefaultsState();
@@ -139,12 +149,13 @@ namespace jp.lilxyzw.lilycalinventory
                 Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, parameters);
                 Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, parameters);
                 Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, parameters);
+                Modifier.ApplyPreset(ctx, controller, hasWriteDefaultsState, presets, parameters);
 
                 // DirectBlendTreeの子のパラメーターを設定
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
 
                 // メニューを生成
-                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, menuBaseComponents, menu);
+                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, presets, menuBaseComponents, menu);
 
                 // 生成したメニュー・パラメーターをマージ
                 ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);

@@ -54,8 +54,7 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = defaultValue });
+            controller.TryAddParameter(name, defaultValue);
         }
 
         internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name, int defaultValue)
@@ -90,8 +89,7 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultValue });
+            controller.TryAddParameter(name, defaultValue);
         }
 
         internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, float defaultValue)
@@ -127,8 +125,7 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
+            controller.TryAddParameter(name, defaultValue);
         }
 
         // 複数コンポーネントから操作されるオブジェクト用
@@ -199,8 +196,7 @@ namespace jp.lilxyzw.lilycalinventory
 
                 transitionToActive.AddCondition(toActive == defaultValue ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
 
-                if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = defaultValue });
+                controller.TryAddParameter(name, defaultValue);
             }
 
             // 非アクティブにする条件をor、アクティブにする条件をandにする
@@ -218,8 +214,7 @@ namespace jp.lilxyzw.lilycalinventory
                     transitionToActive.AddCondition(AnimatorConditionMode.NotEqual, value, name);
                 }
 
-                if(!controller.parameters.Any(p => p.name == name))
-                    controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultValue });
+                controller.TryAddParameter(name, defaultValue);
             }
         }
     }

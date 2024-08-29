@@ -57,7 +57,7 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // 再帰的にMenuGroup配下に
-        internal static void ResolveMenu(MenuFolder[] folders, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers)
+        internal static void ResolveMenu(MenuFolder[] folders, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers, Preset[] presets)
         {
             #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
             var menus = new Dictionary<ModularAvatarMenuItem, (Component,bool)>();
@@ -66,6 +66,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var m in togglers) m.Resolve(ControlType.Toggle, menus, duplicates);
             foreach(var m in smoothChangers) m.Resolve(ControlType.RadialPuppet, menus, duplicates);
             foreach(var m in costumeChangers) m.Resolve(menus, duplicates);
+            foreach(var m in presets) m.Resolve(ControlType.Toggle, menus, duplicates);
 
             // 複数コンポーネントから参照されるMenuItemがあった場合にエラー
             if(duplicates.Count > 0)
@@ -79,6 +80,7 @@ namespace jp.lilxyzw.lilycalinventory
                 m.parentOverrideMA = null;
                 foreach(var c in m.costumes) c.parentOverrideMA = null;
             }
+            foreach(var m in presets) m.parentOverrideMA = null;
             #endif
         }
 

@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -62,6 +63,27 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var childStateMachine in stateMachine.stateMachines)
                 if(childStateMachine.stateMachine.HasWriteDefaultsState()) return true;
             return false;
+        }
+
+        internal static bool TryAddParameter(this AnimatorController controller, string name, bool defaultValue)
+        {
+            if(controller.parameters.Any(p => p.name == name)) return false;
+            controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Bool, defaultBool = defaultValue });
+            return true;
+        }
+
+        internal static bool TryAddParameter(this AnimatorController controller, string name, int defaultValue)
+        {
+            if(controller.parameters.Any(p => p.name == name)) return false;
+            controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Int, defaultInt = defaultValue });
+            return true;
+        }
+
+        internal static bool TryAddParameter(this AnimatorController controller, string name, float defaultValue)
+        {
+            if(controller.parameters.Any(p => p.name == name)) return false;
+            controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
+            return true;
         }
     }
 }

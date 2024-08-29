@@ -90,6 +90,10 @@
   "inspector.frameValue": "パペット設定値 (%)",
   "inspector.frameValue.tooltip": "キーフレームの値です。Radial Puppetが最小のときに0、最大のとき100になります。",
 
+  "inspector.presetItems": "操作項目",
+  "inspector.presetItemValue": "セットする値",
+  "inspector.presetItemValue.tooltip": "メニューを有効にしたときにコンポーネントがここに指定した値にセットされます。",
+
   "inspector.previewAnimation": "アニメーションのプレビュー",
   "inspector.previewStop": "ストップ",
   "inspector.preview": "プレビュー",
