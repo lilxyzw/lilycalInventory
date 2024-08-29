@@ -116,6 +116,7 @@
   "inspector.delete": "删除",
 
   "inspector.convertToItemToggler": "Convert to ItemToggler",
+  "inspector.generateMenuFolder": "Generate MenuFolder",
 
   "inspector.ParameterViewer.memoryUsed": "已使用的参数",
   "inspector.ParameterViewer.memoryRemaining": "剩余",

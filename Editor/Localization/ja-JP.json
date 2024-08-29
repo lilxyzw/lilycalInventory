@@ -116,6 +116,7 @@
   "inspector.delete": "削除",
 
   "inspector.convertToItemToggler": "ItemTogglerに変換",
+  "inspector.generateMenuFolder": "MenuFolderを生成",
 
   "inspector.ParameterViewer.memoryUsed": "使用パラメーターメモリ",
   "inspector.ParameterViewer.memoryRemaining": "残り",

@@ -116,6 +116,7 @@
   "inspector.delete": "Del",
 
   "inspector.convertToItemToggler": "Convert to ItemToggler",
+  "inspector.generateMenuFolder": "Generate MenuFolder",
 
   "inspector.ParameterViewer.memoryUsed": "Parameter Memory Used",
   "inspector.ParameterViewer.memoryRemaining": "Remaining",

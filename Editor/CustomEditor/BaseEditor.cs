@@ -132,10 +132,19 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             // ----------------------------------------------------------------
-            // フォルダの中身を表示
+            // Prop => ItemToggler 変換ボタン
             if(target is Prop && GUILayout.Button(Localization.S("inspector.convertToItemToggler")))
                 foreach(var prop in targets.Select(t => t as Prop).Where(t => t).ToArray())
                     new[]{prop}.PropToToggler(prop.gameObject.GetAvatarRoot().GetComponentsInChildren<Preset>(true), true);
+
+            // ----------------------------------------------------------------
+            // フォルダ生成ボタン
+            if((target is AutoDresser || target is Prop) && !(target as MenuBaseComponent).parentOverride && GUILayout.Button(Localization.S("inspector.generateMenuFolder")))
+                foreach(var c in targets.Select(t => t as MenuBaseComponent).Where(t => t && !t.parentOverride && (t is AutoDresser || t is Prop)).ToArray())
+                {
+                    Undo.RecordObject(c, "Generate Folder");
+                    c.parentOverride = Undo.AddComponent<MenuFolder>(c.gameObject);
+                }
 
             // ----------------------------------------------------------------
             // 全てを確認した後にプレビューを実行
