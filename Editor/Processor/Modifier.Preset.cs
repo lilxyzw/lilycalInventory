@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -25,7 +26,8 @@ namespace jp.lilxyzw.lilycalinventory
         {
             #if LIL_VRCSDK3A
             if(presets.Length == 0) return;
-            var emptyClip = new AnimationClip();
+            var emptyClip = new AnimationClip(){name = "Empty"};
+            AssetDatabase.AddObjectToAsset(emptyClip, ctx.AssetContainer);
             var stateDefault = new AnimatorState
             {
                 motion = emptyClip,
@@ -67,6 +69,7 @@ namespace jp.lilxyzw.lilycalinventory
                         value = item.value
                     });
                 }
+                AssetDatabase.AddObjectToAsset(driver, ctx.AssetContainer);
 
                 controller.TryAddParameter(name, false);
 

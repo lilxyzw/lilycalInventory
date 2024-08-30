@@ -2,6 +2,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using VRC.SDK3.Avatars.Components;
 using VRC.SDKBase.Editor.BuildPipeline;
 
 namespace jp.lilxyzw.lilycalinventory.vrchat
@@ -14,6 +15,23 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
         public int callbackOrder => -1100;
 
         public bool OnPreprocessAvatar(GameObject avatarGameObject)
+        {
+            return OnPreprocessAvatarInternal(avatarGameObject);
+        }
+
+        [MenuItem("Tools/lilycalInventory/Test in Editor")]
+        private static void TestBuild()
+        {
+            if(!EditorApplication.isPlaying || !Selection.activeGameObject || !Selection.activeGameObject.GetComponent<VRCAvatarDescriptor>())
+            {
+                EditorUtility.DisplayDialog("lilycalIntentory", Localization.S("dialog.error.testInEditor"), "OK");
+                return;
+            }
+
+            OnPreprocessAvatarInternal(Selection.activeGameObject);
+        }
+
+        private static bool OnPreprocessAvatarInternal(GameObject avatarGameObject)
         {
             try
             {
