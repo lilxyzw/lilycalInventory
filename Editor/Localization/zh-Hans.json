@@ -5,6 +5,8 @@
   "inspector.changelogLoadFailed": "更新日志加载失败。",
   "inspector.noProperty": "这个组件没有属性。",
   "inspector.componentDisabled": "该组件已禁用，并将在构建过程中被忽略。如果要启用该组件，请勾选检查框。",
+  "inspector.componentEditorOnly": "This object or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the tag.",
+  "inspector.targetEditorOnly": "The object to be operated or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the Tag.",
 
   "inspector.referenceMaterial": "引用材质",
   "inspector.referenceMaterial.tooltip": "将从此处指定的材质中复制设定。",

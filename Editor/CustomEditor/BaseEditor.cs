@@ -52,8 +52,11 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
+            // EditorOnlyになっている場合にビルド時に無視される旨の警告を表示
+            if(targets.All(t => ((AvatarTagComponent)t).IsEditorOnly())) EditorGUILayout.HelpBox(Localization.S("inspector.componentEditorOnly"), MessageType.Warning);
+
             // コンポーネントがオフになっている場合にビルド時に無視される旨の警告を表示
-            if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Info);
+            if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Warning);
 
             if(target is MenuBaseComponent comp)
             {

@@ -5,6 +5,8 @@
   "inspector.changelogLoadFailed": "Failed to load changelog.",
   "inspector.noProperty": "This component has no properties.",
   "inspector.componentDisabled": "The component is disabled and will be ignored during the build. Check the checkbox for the component if you want to enable it.",
+  "inspector.componentEditorOnly": "This object or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the tag.",
+  "inspector.targetEditorOnly": "The object to be operated or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the Tag.",
 
   "inspector.referenceMaterial": "Reference Material",
   "inspector.referenceMaterial.tooltip": "Settings will be copied from the material specified here.",

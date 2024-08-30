@@ -5,6 +5,8 @@
   "inspector.changelogLoadFailed": "変更履歴を読み込めませんでした。",
   "inspector.noProperty": "このコンポーネントには設定項目がありません。",
   "inspector.componentDisabled": "コンポーネントが無効化されているためビルド時に無視されます。有効化したい場合はコンポーネントのチェックボックスをオンにしてください。",
+  "inspector.componentEditorOnly": "このオブジェクトまたは親オブジェクトがEditorOnlyになっているためビルド時に無視されます。有効化したい場合はTagを変更してください。",
+  "inspector.targetEditorOnly": "操作対象のオブジェクトまたはその親オブジェクトがEditorOnlyになっているためビルド時に無視されます。有効化したい場合はTagを変更してください。",
 
   "inspector.referenceMaterial": "コピー元のマテリアル",
   "inspector.referenceMaterial.tooltip": "ここに指定したマテリアルから設定がコピーされます。",
