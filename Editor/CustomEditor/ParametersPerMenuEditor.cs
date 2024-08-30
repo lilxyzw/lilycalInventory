@@ -153,9 +153,9 @@ namespace jp.lilxyzw.lilycalinventory
     [CustomPropertyDrawer(typeof(ObjectToggler))]
     internal class ObjectTogglerDrawer : PropertyDrawer
     {
-        private static GUIContent HelpContent => new GUIContent(Localization.S("inspector.targetEditorOnly"), EditorGUIUtility.IconContent("console.warnicon").image);
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            var yMax = position.yMax;
             position.height = GUIHelper.propertyHeight;
             var valueRect = new Rect(position.x, position.y, 80, position.height);
             var objRect = new Rect(valueRect.xMax + 4, position.y, position.width - valueRect.width - 4, position.height);
@@ -174,21 +174,14 @@ namespace jp.lilxyzw.lilycalinventory
                 value.boolValue = !gameObject.activeSelf;
             }
 
-            if(obj.objectReferenceValue && (obj.objectReferenceValue as GameObject).IsEditorOnly())
-            {
-                position.y = position.yMax + GUIHelper.GetSpaceHeight();
-                position.height = EditorStyles.helpBox.CalcHeight(HelpContent, position.width);
-                EditorGUI.HelpBox(position, HelpContent.text, MessageType.Warning);
-            }
+            position.y = position.yMax + GUIHelper.GetSpaceHeight();
+            position.yMax = yMax;
+            AvatarScanner.Draw(position, obj.objectReferenceValue);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var obj = property.FPR("obj");
-            if(!obj.objectReferenceValue || !(obj.objectReferenceValue as GameObject).IsEditorOnly()) return GUIHelper.propertyHeight;
-            return GUIHelper.propertyHeight +
-                EditorStyles.helpBox.CalcHeight(HelpContent, EditorGUIUtility.currentViewWidth - 90) +
-                GUIHelper.GetSpaceHeight(2);
+            return GUIHelper.propertyHeight + AvatarScanner.Height(property.FPR("obj").objectReferenceValue);
         }
     }
 

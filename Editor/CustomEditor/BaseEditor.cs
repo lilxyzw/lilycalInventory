@@ -22,6 +22,7 @@ namespace jp.lilxyzw.lilycalinventory
             PreviewHelper.instance.StopPreview();
             if(PreviewHelper.doPreview == 1) PreviewHelper.doPreview = 0;
             ParameterViewer.Reset();
+            AvatarScanner.Reset();
             menuChildren.Clear();
         }
 
@@ -52,9 +53,6 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
-            // EditorOnlyになっている場合にビルド時に無視される旨の警告を表示
-            if(targets.All(t => ((AvatarTagComponent)t).IsEditorOnly())) EditorGUILayout.HelpBox(Localization.S("inspector.componentEditorOnly"), MessageType.Warning);
-
             // コンポーネントがオフになっている場合にビルド時に無視される旨の警告を表示
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Warning);
 
@@ -62,6 +60,8 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 // ExpressionParameters
                 ParameterViewer.Draw(comp);
+                AvatarScanner.Update(comp);
+                AvatarScanner.Draw(targets);
 
                 // プレビューの設定用GUI
                 if(targets.Length == 1 && PreviewHelper.instance.ChechTargetHasPreview(target))
