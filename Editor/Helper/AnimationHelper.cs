@@ -58,6 +58,8 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static bool HasWriteDefaultsState(this AnimatorStateMachine stateMachine)
         {
+            if(stateMachine.states.Length == 1 && stateMachine.states[0].state.motion is BlendTree b && b.blendType == BlendTreeType.Direct)
+                return false;
             foreach(var state in stateMachine.states)
                 if(state.state.writeDefaultValues) return true;
             foreach(var childStateMachine in stateMachine.stateMachines)
