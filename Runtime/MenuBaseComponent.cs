@@ -13,7 +13,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         #if LIL_MODULAR_AVATAR
         [NotKeyable] [LILLocalize] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
         #else
-        [NotKeyable] [HideInInspector] public Object parentOverrideMA;
+        [NotKeyable] public Object parentOverrideMA;
         #endif
     }
 

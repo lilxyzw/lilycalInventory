@@ -461,7 +461,7 @@ namespace jp.lilxyzw.lilycalinventory
             var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && c.enabled && !c.IsEditorOnly());
             autoDressers = components.Where(c => c is AutoDresser);
             props = components.Where(c => c is Prop);
-            components = components.Where(c => c.gameObject.IsEnabledInBuild());
+            components = components.Where(c => c.IsEnabledInBuild());
             itemTogglers = components.Where(c => c is ItemToggler);
             costumeChangers = components.Where(c => c is CostumeChanger);
             smoothChangers = components.Where(c => c is SmoothChanger);
