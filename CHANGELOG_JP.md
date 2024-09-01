@@ -1,8 +1,29 @@
-# Changelog
-All notable changes to this project will be documented in this file.
+# 変更履歴
+このプロジェクトに対するすべての注目すべき変更はこのファイルに記録されます。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
+
+## [1.1.0] - 2024-09-01
+### 追加
+- 言語ファイルの再読み込み (`Tools/lilycalInventory/Reload Language Files`)
+- メッシュ設定を自動統一するコンポーネント（LI AutoFixMeshSettings） #96
+- CostumeChanger内にAutoDresserを入れる機能 #27
+- PropをItemTogglerに変換するボタン #27
+- 複数パラメーターを一括切り替えするメニューを追加するコンポーネント（LI Preset） #56
+- PropやAutoDresserと同一階層にMenuFolderを生成するボタン #75
+- EditorOnlyやAnimationClipで操作されている場合の警告
+
+### 変更
+- GameObjectが非アクティブでもビルド時に処理されるように変更 #92
+- AutoDresserの表示順をLIで生成されるメニュー先頭に変更
+
+### 修正
+- BlendShape追加時にプレビューが更新されない #93
+- AnimationClipがセットされていないときにエラー
+- マテリアルのプロパティ編集設定でカーソルが出ない #84
+- 特定条件下でのエラー
+- LI MenuFolderとMA MenuItemを同一オブジェクトに付けた場合にエラー
+- AnimationClipだけしか設定していない場合にメニューが生成されない #94
 
 ## [1.0.1] - 2024-08-12
 ### 修正

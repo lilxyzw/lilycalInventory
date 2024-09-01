@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-09-01
+### Added
+- Reload language files (`Tools/lilycalInventory/Reload Language Files`)
+- LI AutoFixMeshSettings #96
+- AutoDresser in CostumeChanger #27
+- Prop to ItemToggler #27
+- LI Preset #56
+- Generate MenuFolder in Prop and AutoDresser #75
+- Warn EditorOnly and AnimationClip
+
+### Changed
+- Enable components on inactive GameObjects #92
+- Change menu order of AutoDresser
+
+### Fixed
+- Update preview when adding BlendShape #93
+- Error when AnimationClip is null
+- Cursor is not visible in MaterialPropertyModifier #84
+- Error under certain conditions
+- Error when attaching a LI MenuFolder to the same object as MA MenuItem
+- Menu is not generated when only AnimationClip is set #94
+
 ## [1.0.1] - 2024-08-12
 ### Fixed
 - Some animations do not work
