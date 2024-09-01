@@ -13,7 +13,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 path = renderer.GetPathInAvatar(),
                 propertyName = $"blendShape.{blendShape}",
-                type = typeof(SkinnedMeshRenderer)
+                type = renderer.GetType()
             };
         }
 
@@ -23,7 +23,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 path = gameObject.GetPathInAvatar(),
                 propertyName = "m_IsActive",
-                type = typeof(GameObject)
+                type = gameObject.GetType()
             };
         }
 
@@ -33,7 +33,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 path = renderer.GetPathInAvatar(),
                 propertyName = $"m_Materials.Array.data[{slot}]",
-                type = typeof(Renderer)
+                type = renderer.GetType()
             };
         }
 
@@ -43,7 +43,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 path = renderer.GetPathInAvatar(),
                 propertyName = $"material.{name}",
-                type = typeof(Renderer)
+                type = renderer.GetType()
             };
         }
 
