@@ -37,12 +37,14 @@ export const ja = defineConfig({
             items: [
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_AutoDresser.png"> LI AutoDresser', link: langName + '/docs/components/autodresser' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_AutoDresserSettings.png"> LI AutoDresserSettings', link: langName + '/docs/components/autodressersettings' },
+              { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_AutoFixMeshSettings.png"> LI AutoFixMeshSettings', link: langName + '/docs/components/autofixmeshsettings' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_Comment.png"> LI Comment', link: langName + '/docs/components/comment' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_CostumeChanger.png"> LI CostumeChanger', link: langName + '/docs/components/costumechanger' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_ItemToggler.png"> LI ItemToggler', link: langName + '/docs/components/itemtoggler' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_Material.png"> LI MaterialModifier', link: langName + '/docs/components/materialmodifier' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_MaterialOptimizer.png"> LI MaterialOptimizer', link: langName + '/docs/components/materialoptimizer' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_MenuFolder.png"> LI MenuFolder', link: langName + '/docs/components/menufolder' },
+              { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_Preset.png"> LI Preset', link: langName + '/docs/components/preset' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_Prop.png"> LI Prop', link: langName + '/docs/components/prop' },
               { text: '<img class="emoji" draggable="false" src="/lilycalInventory/images/LI_Script_SmoothChanger.png"> LI SmoothChanger', link: langName + '/docs/components/smoothchanger' },
             ]
