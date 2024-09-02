@@ -12,7 +12,7 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
     // NDMFがない場合はこちらで処理
     public class AvatarPreprocessor : IVRCSDKPreprocessAvatarCallback
     {
-        public int callbackOrder => -1100;
+        public int callbackOrder => -11000;
 
         public bool OnPreprocessAvatar(GameObject avatarGameObject)
         {
@@ -43,7 +43,7 @@ namespace jp.lilxyzw.lilycalinventory.vrchat
                 Processor.CloneMaterials(ctx);
                 Processor.ModifyPostProcess(ctx);
                 Processor.RemoveComponent(ctx);
-                Processor.Optimize(ctx);
+                Processor.Optimize(ctx); // NDMFでは-1025で実行されるけど処理内容が単純なのでここで処理
 
                 AssetDatabase.SaveAssets();
                 return true;
