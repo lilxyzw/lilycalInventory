@@ -59,9 +59,15 @@ namespace jp.lilxyzw.lilycalinventory
                 sr.ReadLine();
                 sr.ReadLine();
 
+                bool isHeader = true;
                 string line;
                 while((line = sr.ReadLine()) != null)
                 {
+                    if(isHeader)
+                    {
+                        isHeader = !line.StartsWith("## [");
+                        if(isHeader) continue;
+                    }
                     line = ReplaceSyntax(line, "`", "\u2006<color=#e96900>", "</color>\u2006");
                     if(line.StartsWith("### "))
                     {

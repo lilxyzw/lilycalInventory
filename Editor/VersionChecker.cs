@@ -45,10 +45,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(instance.current == null)
             {
-                // package.jsonをここでは読み込まずdelayCallで安全に読み込む
-                EditorApplication.delayCall -= GetCurrentVersion;
-                EditorApplication.delayCall += GetCurrentVersion;
-
                 IEnumerator Coroutine()
                 {
                     yield return GetLatestVersionInfo();
@@ -58,6 +54,9 @@ namespace jp.lilxyzw.lilycalinventory
 
                 CoroutineHandler.StartStaticCoroutine(Coroutine());
             }
+            // package.jsonをここでは読み込まずdelayCallで安全に読み込む
+            EditorApplication.delayCall -= GetCurrentVersion;
+            EditorApplication.delayCall += GetCurrentVersion;
         }
 
         // インストールしているバージョンを取得
