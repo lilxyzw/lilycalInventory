@@ -73,7 +73,7 @@
   "inspector.materialPropertyModifiers": "Material Property Modifiers",
   "inspector.materialPropertyModifiers.tooltip": "The material properties specified here will be set to the specified values when the menu is activated.",
   "inspector.renderers": "Mesh and Renderer",
-  "inspector.renderers.tooltip": "The mesh specified here will be controlled.",
+  "inspector.renderers.tooltip": "The mesh specified here will be controlled. If nothing is specified, all meshes will be controlled.",
   "inspector.floatModifiers": "Float Modifiers",
   "inspector.vectorModifiers": "Vector Modifiers",
   "inspector.propertyName": "Property Name",

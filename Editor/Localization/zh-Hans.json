@@ -73,7 +73,7 @@
   "inspector.materialPropertyModifiers": "修改材质属性",
   "inspector.materialPropertyModifiers.tooltip": "激活菜单时，此处指定的材质属性将被设置为指定值。",
   "inspector.renderers": "静态网格体和骨骼网格体渲染器",
-  "inspector.renderers.tooltip": "此处指定的网格体将被修改。",
+  "inspector.renderers.tooltip": "此处指定的网格体将被修改。如果未指定任何网格体，则所有网格体都会更改。",
   "inspector.floatModifiers": "浮点修改",
   "inspector.vectorModifiers": "向量修改",
   "inspector.propertyName": "属性名称",

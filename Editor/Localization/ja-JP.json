@@ -73,7 +73,7 @@
   "inspector.materialPropertyModifiers": "マテリアルのプロパティ操作",
   "inspector.materialPropertyModifiers.tooltip": "ここに指定したマテリアルのプロパティはメニューを有効化したときに指定した値にセットされます。",
   "inspector.renderers": "メッシュ・レンダラー",
-  "inspector.renderers.tooltip": "ここに指定したメッシュが操作されます。",
+  "inspector.renderers.tooltip": "ここに指定したメッシュが操作されます。何も指定していない場合は全てのメッシュが操作されます。",
   "inspector.floatModifiers": "操作するFloatプロパティ",
   "inspector.vectorModifiers": "操作するVectorプロパティ",
   "inspector.propertyName": "プロパティ名",
