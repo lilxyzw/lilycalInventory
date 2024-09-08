@@ -3,6 +3,15 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.1.1] - 2024-09-08
+### 変更
+- Change callback order
+
+### 修正
+- Subclassを操作するように修正 #101
+- Changelogとバージョンが正しく表示されない問題を修正 #102
+- ツールチップの情報に抜けがあったのを修正 #105
+
 ## [1.1.0] - 2024-09-01
 ### 追加
 - 言語ファイルの再読み込み (`Tools/lilycalInventory/Reload Language Files`)
