@@ -138,8 +138,18 @@ namespace jp.lilxyzw.lilycalinventory
         {
             #if LIL_VRCSDK3A
                 var map = new Dictionary<Object,Object>();
+                VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu CloneMenu(VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu menu)
+                {
+                    menu = (VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu)CloneObject(menu, context, map);
+                    foreach(var control in menu.controls)
+                    {
+                        if(control.type != VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType.SubMenu) continue;
+                        control.subMenu = CloneMenu(control.subMenu);
+                    }
+                    return menu;
+                }
                 context.AvatarDescriptor.expressionParameters = (VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionParameters)CloneObject(context.AvatarDescriptor.expressionParameters, context, map);
-                context.AvatarDescriptor.expressionsMenu = (VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu)CloneObject(context.AvatarDescriptor.expressionsMenu, context, map);
+                context.AvatarDescriptor.expressionsMenu = CloneMenu(context.AvatarDescriptor.expressionsMenu);
             #endif
         }
     }
