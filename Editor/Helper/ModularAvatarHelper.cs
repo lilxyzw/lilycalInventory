@@ -161,6 +161,10 @@ namespace jp.lilxyzw.lilycalinventory
             for(int i = 0; i < m.costumes.Length; i++)
             {
                 var c = m.costumes[i];
+                if(!c.parentOverrideMA && c.parentOverride && c.parentOverride.parentOverrideMA)
+                {
+                    c.parentOverrideMA = CreateChildMenu(c.parentOverride.parentOverrideMA.transform, c.menuName, c.icon, ControlType.Toggle, m.menuName, i);
+                }
                 if(!c.parentOverrideMA) continue;
                 c.parentOverrideMA.Set(ControlType.Toggle, m.menuName, i);
                 menus.TryAdd(c.parentOverrideMA, duplicates, m);
