@@ -97,14 +97,14 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // BlendShapeModifier
-        private static void ToClipDefault(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
+        internal static void ToClipDefault(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
         {
             var binding = CreateBlendShapeBinding(skinnedMeshRenderer, namevalue.name);
             var value = skinnedMeshRenderer.GetBlendShapeWeight(skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(namevalue.name));
             clip.Add(binding, value);
         }
 
-        private static void ToClip(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
+        internal static void ToClip(this BlendShapeNameValue namevalue, InternalClip clip, SkinnedMeshRenderer skinnedMeshRenderer)
         {
             var binding = CreateBlendShapeBinding(skinnedMeshRenderer, namevalue.name);
             clip.Add(binding, namevalue.value);
@@ -265,14 +265,28 @@ namespace jp.lilxyzw.lilycalinventory
             return parameter;
         }
 
-        internal static void GatherConditions(this ItemToggler[] itemTogglers, Dictionary<GameObject, HashSet<(string name, bool toActive, bool defaultValue)>> dic)
+        internal static void GatherConditions(
+            this ItemToggler[] itemTogglers,
+            Dictionary<GameObject, HashSet<(string name, bool toActive, bool defaultValue)>> toggleBools,
+            Dictionary<(SkinnedMeshRenderer, string), HashSet<(string name, bool toActive, bool defaultValue)>> shapeBools
+        )
         {
             foreach(var itemToggler in itemTogglers)
+            {
                 foreach(var toggler in itemToggler.parameter.objects)
-                    dic.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value, itemToggler.defaultValue));
+                    toggleBools.GetOrAdd(toggler.obj).Add((itemToggler.menuName, toggler.value, itemToggler.defaultValue));
+
+                foreach(var bsModifier in itemToggler.parameter.blendShapeModifiers)
+                    foreach(var nv in bsModifier.blendShapeNameValues)
+                        shapeBools.GetOrAdd((bsModifier.skinnedMeshRenderer, nv.name)).Add((itemToggler.menuName, nv.value == 100f, itemToggler.defaultValue));
+            }
         }
 
-        internal static void GatherConditions(this CostumeChanger[] costumeChangers, Dictionary<GameObject, HashSet<(string name, bool[] toActives, int defaultValue)>> dic)
+        internal static void GatherConditions(
+            this CostumeChanger[] costumeChangers,
+            Dictionary<GameObject, HashSet<(string name, bool[] toActives, int defaultValue)>> toggleInts,
+            Dictionary<(SkinnedMeshRenderer, string), HashSet<(string name, bool[] toActives, int defaultValue)>> shapeInts
+        )
         {
             bool Cond(CostumeChanger costumeChanger, GameObject obj, Costume c)
             {
@@ -283,15 +297,28 @@ namespace jp.lilxyzw.lilycalinventory
                 if(def != null) return !def.value;
                 return obj.activeSelf;
             }
-            foreach(var costumeChanger in costumeChangers)
-                foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Where(o => o).Distinct())
-                    dic.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => Cond(costumeChanger, obj, c)).ToArray(), costumeChanger.defaultValue));
-        }
 
-        private static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
-        {
-            if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
-            return dic[key];
+            bool CondShape(CostumeChanger costumeChanger, SkinnedMeshRenderer obj, string name, Costume c)
+            {
+                var first = c.parametersPerMenu.blendShapeModifiers
+                    .FirstOrDefault(x => x.skinnedMeshRenderer == obj && x.blendShapeNameValues.Any(nv => nv.name == name));
+                if(first != null) return first.blendShapeNameValues.First(nv => nv.name == name).value == 100f;
+
+                if(System.Array.IndexOf(costumeChanger.costumes, c) == costumeChanger.defaultValue) return obj.GetBlendShapeWeight(name) == 100f;
+
+                var def = costumeChanger.costumes[costumeChanger.defaultValue].parametersPerMenu.blendShapeModifiers.FirstOrDefault(x => x.skinnedMeshRenderer == obj && x.blendShapeNameValues.Any(nv => nv.name == name));
+                if(def != null) return def.blendShapeNameValues.First(nv => nv.name == name).value == 100f;
+                return obj.GetBlendShapeWeight(name) == 100f;
+            }
+
+            foreach(var costumeChanger in costumeChangers)
+            {
+                foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Where(o => o).Distinct())
+                    toggleInts.GetOrAdd(obj).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => Cond(costumeChanger, obj, c)).ToArray(), costumeChanger.defaultValue));
+
+                foreach(var kv in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.blendShapeModifiers).SelectMany(o => o.blendShapeNameValues.Select(nv => (o.skinnedMeshRenderer,nv.name))).Distinct())
+                    shapeInts.GetOrAdd(kv).Add((costumeChanger.menuName, costumeChanger.costumes.Select(c => CondShape(costumeChanger, kv.skinnedMeshRenderer, kv.name, c)).ToArray(), costumeChanger.defaultValue));
+            }
         }
     }
 }

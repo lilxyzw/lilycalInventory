@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEditor;
@@ -109,6 +110,20 @@ namespace jp.lilxyzw.lilycalinventory
         internal static bool IsEnabledInBuild(this MonoBehaviour component)
         {
             return component.enabled && !component.IsEditorOnly();
+        }
+
+        internal static float GetBlendShapeWeight(this SkinnedMeshRenderer obj, string name)
+        {
+            if(!obj.sharedMesh) return 0;
+            var index = obj.sharedMesh.GetBlendShapeIndex(name);
+            if(index == -1) return 0;
+            return obj.GetBlendShapeWeight(index);
+        }
+
+        internal static HashSet<TValue> GetOrAdd<TKey,TValue>(this Dictionary<TKey,HashSet<TValue>> dic, TKey key)
+        {
+            if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
+            return dic[key];
         }
 
         #if !UNITY_2021_3_OR_NEWER
