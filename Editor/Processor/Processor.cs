@@ -81,6 +81,50 @@ namespace jp.lilxyzw.lilycalinventory
             props.ResolveMenuName();
             props.PropToToggler(presets);
 
+            // メニュー名に応じてフォルダ生成
+            foreach(var c in ctx.AvatarRootObject.GetActiveComponentsInChildren<MenuBaseComponent>(true).ToArray())
+            {
+                var siblingIndex = c.transform.GetSiblingIndex();
+
+                MenuFolder SlashToFolder(string[] names, MenuFolder rootParent)
+                {
+                    MenuFolder firstFolder = null;
+                    MenuFolder lastFolder = null;
+                    for(int i = names.Length-2; i >= 0; i--)
+                    {
+                        var name = names[i];
+                        var obj = new GameObject(name);
+                        obj.transform.parent = c.transform.parent;
+                        obj.transform.SetSiblingIndex(siblingIndex++);
+                        var folder = obj.AddComponent<MenuFolder>();
+                        if(lastFolder) lastFolder.parentOverride = folder;
+                        else firstFolder = folder;
+
+                        if(i == 0) folder.parentOverride = rootParent;
+                        lastFolder = folder;
+                    }
+                    return firstFolder;
+                }
+
+                var names = c.menuName.Split("/");
+                if(names.Length > 1)
+                {
+                    c.parentOverride = SlashToFolder(names, c.GetMenuParent());
+                    c.menuName = names[names.Length-1];
+                }
+
+                if(c is CostumeChanger cc)
+                {
+                    foreach(var costume in cc.costumes)
+                    {
+                        var namesC = costume.menuName.Split("/");
+                        if(namesC.Length <= 1) continue;
+                        costume.parentOverride = SlashToFolder(namesC, costume.parentOverride);
+                        costume.menuName = namesC[namesC.Length-1];
+                    }
+                }
+            }
+
             // 一時的にアクティブにして子のコンポーネントが探索されるようにする
             foreach(var a in actives) a.Item1.SetActive(true);
             components = ctx.AvatarRootObject.GetActiveComponentsInChildren<AvatarTagComponent>(true).ToArray();

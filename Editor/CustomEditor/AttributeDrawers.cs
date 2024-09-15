@@ -11,32 +11,34 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            string parentName;
+            string parentName = "";
             var gameObject = (property.serializedObject.targetObject as Component).gameObject;
+            if(property.serializedObject.targetObject is MenuBaseComponent c && !string.IsNullOrEmpty(c.menuName) && c.menuName.Contains("/"))
+            {
+                parentName = "/" + c.menuName.Substring(0, c.menuName.LastIndexOf("/"));
+            }
+
             if(property.objectReferenceValue)
             {
-                parentName = property.objectReferenceValue.name;
+                parentName = property.objectReferenceValue.name + parentName;
             }
-            else if(property.serializedObject.targetObject is AutoDresser)
+            else if(property.serializedObject.targetObject is AutoDresser && string.IsNullOrEmpty(parentName))
             {
                 var root = gameObject.GetAvatarRoot();
                 if(root)
                 {
                     var settings = root.GetComponentInChildren<AutoDresserSettings>();
                     if(settings) parentName = settings.GetMenuName();
-                    else parentName = "AutoDresser";
                 }
-                else
-                {
-                    parentName = "AutoDresser";
-                }
+                if(string.IsNullOrEmpty(parentName)) parentName = "AutoDresser";
             }
             else
             {
                 var parent = gameObject.GetComponentInParentInAvatar<MenuFolder>();
-                if(parent) parentName = parent.gameObject.name;
-                else parentName = "(Root)";
+                if(parent) parentName = parent.GetMenuName() + parentName;
             }
+            if(string.IsNullOrEmpty(parentName)) parentName = "(Root)";
+            if(parentName.StartsWith("/")) parentName = parentName.Substring(1);
             GUIHelper.ObjectField(position, Localization.G(property), property, $"{parentName} (Menu Folder)");
         }
     }
