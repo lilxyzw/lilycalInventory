@@ -95,11 +95,34 @@ namespace jp.lilxyzw.lilycalinventory
             // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
             if(descriptor.expressionsMenu) descriptor.expressionsMenu.Merge(menu);
             else descriptor.expressionsMenu = menu;
+            descriptor.expressionsMenu.CombineSubMenu();
             descriptor.expressionsMenu.ResolveOver(ctx);
 
             // ExpressionParametetsも同様
             if(descriptor.expressionParameters) descriptor.expressionParameters.Merge(parameters);
             else descriptor.expressionParameters = parameters;
+        }
+
+        private static void CombineSubMenu(this VRCExpressionsMenu menu)
+        {
+            // 同名のSubMenuを統合
+            var firsts = new Dictionary<string, VRCExpressionsMenu>();
+            for(int i = 0; i < menu.controls.Count; i++)
+            {
+                var control = menu.controls[i];
+                if(control.type != ControlType.SubMenu) continue;
+                if(!firsts.ContainsKey(control.name))
+                {
+                    firsts[control.name] = control.subMenu;
+                    continue;
+                }
+                firsts[control.name].controls.AddRange(control.subMenu.controls);
+                menu.controls.RemoveAt(i);
+                i--;
+            }
+
+            foreach(var child in menu.controls)
+                if(child.subMenu) child.subMenu.CombineSubMenu();
         }
 
         private static void ResolveOver(this VRCExpressionsMenu menu, BuildContext ctx)
