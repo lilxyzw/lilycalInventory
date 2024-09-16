@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-09-16
+### Changed
+- Create folders if menu name contains slash
+- Conbine same name submenus
+- Mesh deletion BlendShape now properly handles cases where values ​​can only be changed to 0 or 100 when operated from multiple components #104
+- Compress int parameters
+- Make the component class public
+
+### Fixed
+- An error occurs if the costume's parent is managed by MA #113
+- Update comment in prefab #114
+
 ## [1.1.1] - 2024-09-08
 ### Changed
 - Change callback order
