@@ -75,6 +75,10 @@ namespace jp.lilxyzw.lilycalinventory
                         (changer.GetMenuParent(), VRChatHelper.CreateControl(changer.menuName, changer.icon, menus[changer]))
                     };
                 }
+
+                var parameterName = changer.menuName;
+                if(!changer.isLocalOnly) parameterName += "_Local";
+
                 for(int i = 0; i < changer.costumes.Length; i++)
                 {
                     var costume = changer.costumes[i];
@@ -84,7 +88,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         controls[changer] = new List<(MenuBaseComponent, Control)>();
                     }
-                    controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, changer.menuName, i)));
+                    controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, parameterName, i)));
                 }
             }
 
