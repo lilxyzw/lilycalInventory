@@ -106,18 +106,18 @@ namespace jp.lilxyzw.lilycalinventory
                     return firstFolder;
                 }
 
-                var names = c.menuName.Split("/");
-                if(names.Length > 1)
+                var namesP = c.menuName.Split('/');
+                if(namesP.Length > 1)
                 {
-                    c.parentOverride = SlashToFolder(names, c.GetMenuParent());
-                    c.menuName = names[names.Length-1];
+                    c.parentOverride = SlashToFolder(namesP, c.GetMenuParent());
+                    c.menuName = namesP[namesP.Length-1];
                 }
 
                 if(c is CostumeChanger cc)
                 {
                     foreach(var costume in cc.costumes)
                     {
-                        var namesC = costume.menuName.Split("/");
+                        var namesC = costume.menuName.Split('/');
                         if(namesC.Length <= 1) continue;
                         costume.parentOverride = SlashToFolder(namesC, costume.parentOverride);
                         costume.menuName = namesC[namesC.Length-1];
