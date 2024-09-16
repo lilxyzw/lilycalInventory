@@ -481,18 +481,37 @@ namespace jp.lilxyzw.lilycalinventory
             #endif
 
             // lilycalInventoryのコスト
-            var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && c.enabled && !c.IsEditorOnly());
+            var components = avatarRoot.GetActiveComponentsInChildren<MenuBaseComponent>(true).Where(c => !(c is MenuFolder) && !(c is AutoDresserSettings) && c.IsEnabledInBuild());
             autoDressers = components.Where(c => c is AutoDresser);
             props = components.Where(c => c is Prop);
-            components = components.Where(c => c.IsEnabledInBuild());
             itemTogglers = components.Where(c => c is ItemToggler);
             costumeChangers = components.Where(c => c is CostumeChanger);
             smoothChangers = components.Where(c => c is SmoothChanger);
 
+            var costByCC = costumeChangers.Select(c => c as CostumeChanger).Sum(c => {
+                var bits = 0;
+                var n = c.costumes.Length;
+                while(n > 0){
+                    bits++;
+                    n >>= 1;
+                }
+                return bits;
+            });
+
             costByLI = costBool * (props.Count() + itemTogglers.Count())
-                + costInt * costumeChangers.Count()
+                + costByCC
                 + costFloat * smoothChangers.Count();
-            if(autoDressers.Count() > 0) costByLI += costInt;
+
+            if(autoDressers.Count() > 0)
+            {
+                var bits = 0;
+                var n = autoDressers.Count();
+                while(n > 0){
+                    bits++;
+                    n >>= 1;
+                }
+                costByLI += bits;
+            }
         }
 
         internal static void Reset()

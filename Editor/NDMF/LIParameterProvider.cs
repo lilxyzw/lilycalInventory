@@ -1,6 +1,7 @@
 #if LIL_NDMF_1_4_0
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using nadena.dev.ndmf;
 using UnityEngine;
 
@@ -22,8 +23,13 @@ namespace jp.lilxyzw.lilycalinventory
     {
         private readonly CostumeChanger component;
         public CostumeChangerParameterProvider(CostumeChanger component) => this.component = component;
-        public IEnumerable<ProvidedParameter> GetSuppliedParameters(BuildContext context = null) => LIParameterProviderUtils.CreateProvidedParameter(component, AnimatorControllerParameterType.Int, component.isLocalOnly);
         public void RemapParameters(ref ImmutableDictionary<(ParameterNamespace, string), ParameterMapping> nameMap, BuildContext context = null){}
+        public IEnumerable<ProvidedParameter> GetSuppliedParameters(BuildContext context = null)
+        {
+            if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
+            if(!component.isLocalOnly) return LIParameterProviderUtils.CreateProvidedParameter(component, AnimatorControllerParameterType.Int, component.isLocalOnly);
+            return LIParameterProviderUtils.CreateProvidedParameterCompressedInt(component, component.GetMenuName(), component.costumes.Length);
+        }
     }
 
     [ParameterProviderFor(typeof(ItemToggler))]
@@ -55,12 +61,32 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static class LIParameterProviderUtils
     {
-        internal static ProvidedParameter[] CreateProvidedParameter(AutoDresser component)
+        internal static IEnumerable<ProvidedParameter> CreateProvidedParameter(AutoDresser component)
         {
             if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
-            return new ProvidedParameter[]{
-                new ProvidedParameter(
-                    "AutoDresser",
+            var root = component.gameObject.GetAvatarRoot();
+            if(!root) return new ProvidedParameter[0];
+
+            var costumeCount = root.GetComponentsInChildren<AutoDresser>(true).Count(c => c.IsEnabledInBuild());
+            return CreateProvidedParameterCompressedInt(component, "AutoDresser", costumeCount);
+        }
+
+        internal static IEnumerable<ProvidedParameter> CreateProvidedParameterCompressedInt(Component component, string name, int costumeCount)
+        {
+            var list = new List<ProvidedParameter>();
+            list.Add(new ProvidedParameter(
+                    name,
+                    ParameterNamespace.Animator,
+                    component,
+                    LilycalInventoryPlugin.Instance,
+                    AnimatorControllerParameterType.Int
+                ){
+                    IsAnimatorOnly = true,
+                    IsHidden = false,
+                    WantSynced = false
+                });
+            list.Add(new ProvidedParameter(
+                    name+"_Local",
                     ParameterNamespace.Animator,
                     component,
                     LilycalInventoryPlugin.Instance,
@@ -68,8 +94,29 @@ namespace jp.lilxyzw.lilycalinventory
                 ){
                     IsAnimatorOnly = false,
                     IsHidden = false,
-                    WantSynced = true
-                }};
+                    WantSynced = false
+                });
+            var bits = 0;
+            var n = costumeCount;
+            while(n > 0){
+                bits++;
+                n >>= 1;
+            }
+            for(int bit = 0; bit < bits; bit++)
+            {
+                list.Add(new ProvidedParameter(
+                        $"{name}_Bool{bit}",
+                        ParameterNamespace.Animator,
+                        component,
+                        LilycalInventoryPlugin.Instance,
+                        AnimatorControllerParameterType.Bool
+                    ){
+                        IsAnimatorOnly = false,
+                        IsHidden = false,
+                        WantSynced = true
+                    });
+            }
+            return list;
         }
 
         internal static ProvidedParameter[] CreateProvidedParameter(Prop component)
