@@ -28,12 +28,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 var name = changer.menuName;
                 var costumeCount = changer.costumes.Length;
-                var bits = 0;
-                var n = costumeCount;
-                while(n > 0){
-                    bits++;
-                    n >>= 1;
-                }
+                var bits = ObjHelper.ToNBitInt(costumeCount);
                 if(costumeCount != 0)
                 {
                     var clipDefaults = new InternalClip[changer.costumes.Length];

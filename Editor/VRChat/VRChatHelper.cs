@@ -488,30 +488,13 @@ namespace jp.lilxyzw.lilycalinventory
             costumeChangers = components.Where(c => c is CostumeChanger);
             smoothChangers = components.Where(c => c is SmoothChanger);
 
-            var costByCC = costumeChangers.Select(c => c as CostumeChanger).Sum(c => {
-                var bits = 0;
-                var n = c.costumes.Length;
-                while(n > 0){
-                    bits++;
-                    n >>= 1;
-                }
-                return bits;
-            });
+            var costByCC = costumeChangers.Select(c => c as CostumeChanger).Sum(c => ObjHelper.ToNBitInt(c.costumes.Length));
 
             costByLI = costBool * (props.Count() + itemTogglers.Count())
                 + costByCC
                 + costFloat * smoothChangers.Count();
 
-            if(autoDressers.Count() > 0)
-            {
-                var bits = 0;
-                var n = autoDressers.Count();
-                while(n > 0){
-                    bits++;
-                    n >>= 1;
-                }
-                costByLI += bits;
-            }
+            if(autoDressers.Count() > 0) costByLI += ObjHelper.ToNBitInt(autoDressers.Count());
         }
 
         internal static void Reset()

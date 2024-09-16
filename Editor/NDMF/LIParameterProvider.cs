@@ -96,12 +96,7 @@ namespace jp.lilxyzw.lilycalinventory
                     IsHidden = false,
                     WantSynced = false
                 });
-            var bits = 0;
-            var n = costumeCount;
-            while(n > 0){
-                bits++;
-                n >>= 1;
-            }
+            var bits = ObjHelper.ToNBitInt(costumeCount);
             for(int bit = 0; bit < bits; bit++)
             {
                 list.Add(new ProvidedParameter(

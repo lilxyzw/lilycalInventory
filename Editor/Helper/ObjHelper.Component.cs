@@ -247,5 +247,17 @@ namespace jp.lilxyzw.lilycalinventory
                 item.value = value;
             }
         }
+
+        // n-bit intの計算
+        internal static int ToNBitInt(int costumeCount)
+        {
+            var bits = 0;
+            var n = costumeCount - 1;
+            while(n > 0){
+                bits++;
+                n >>= 1;
+            }
+            return bits;
+        }
     }
 }
