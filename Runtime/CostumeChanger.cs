@@ -8,13 +8,13 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // Boolに置き換えてパラメーター数を節約するのもありかもしれません。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(CostumeChanger))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "costumechanger")]
-    internal class CostumeChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
+    public class CostumeChanger : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] [LILLocalize] public bool isSave = true;
-        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
-        [NotKeyable] public Costume[] costumes = new Costume[]{};
+        [NotKeyable] [SerializeField] internal Costume[] costumes = new Costume[]{};
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
-        [NotKeyable] [DefaultValue("costumes")] public int defaultValue = 0;
+        [NotKeyable] [DefaultValue("costumes")] [SerializeField] internal int defaultValue = 0;
     }
 }

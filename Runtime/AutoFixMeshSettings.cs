@@ -10,10 +10,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [DisallowMultipleComponent]
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(AutoFixMeshSettings))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "autofixmeshsettings")]
-    internal class AutoFixMeshSettings : AvatarTagComponent
+    public class AutoFixMeshSettings : AvatarTagComponent
     {
-        [NotKeyable] [NoLabel] public Renderer[] ignoreRenderers;
-        [LILLocalize] public MeshSettings meshSettings;
+        [NotKeyable] [NoLabel] [SerializeField] internal Renderer[] ignoreRenderers;
+        [LILLocalize] [SerializeField] internal MeshSettings meshSettings;
     }
 
     [Serializable]

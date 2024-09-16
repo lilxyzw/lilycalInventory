@@ -7,11 +7,11 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // ビルド時にItemTogglerに変換されます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Prop))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "prop")]
-    internal class Prop : MenuBaseDisallowMultipleComponent, IGenerateParameter
+    public class Prop : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] [LILLocalize] public bool isSave = true;
-        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
         [Space(order = 0)] [LILLocalizeHeader("inspector.parametersWith", 1)]
-        [NotKeyable] [LILBox] public ParametersPerMenu parameter = new ParametersPerMenu();
+        [NotKeyable] [LILBox] [SerializeField] internal ParametersPerMenu parameter = new ParametersPerMenu();
     }
 }

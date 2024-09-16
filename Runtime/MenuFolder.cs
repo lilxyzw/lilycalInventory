@@ -6,7 +6,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [DisallowMultipleComponent]
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(MenuFolder))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "menufolder")]
-    internal class MenuFolder : MenuBaseComponent
+    public class MenuFolder : MenuBaseComponent
     {
     }
 }

@@ -7,9 +7,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // 1アバターごとに1つまで設定でき、ここの設定をもとにAutoDresser変換後のCostumeChangerの設定が行われます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(AutoDresserSettings))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "autodressersettings")]
-    internal class AutoDresserSettings : MenuBaseDisallowMultipleComponent, IGenerateParameter
+    public class AutoDresserSettings : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] [LILLocalize] public bool isSave = true;
-        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
     }
 }

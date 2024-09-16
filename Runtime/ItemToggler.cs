@@ -7,14 +7,14 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // Boolパラメーターが生成されます。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(ItemToggler))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "itemtoggler")]
-    internal class ItemToggler : MenuBaseDisallowMultipleComponent, IGenerateParameter
+    public class ItemToggler : MenuBaseDisallowMultipleComponent, IGenerateParameter
     {
-        [NotKeyable] [LILLocalize] public bool isSave = true;
-        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
-        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
+        [NotKeyable] [SerializeField] internal ParametersPerMenu parameter = new ParametersPerMenu();
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
-        [NotKeyable] [DefaultValue] public bool defaultValue = false;
+        [NotKeyable] [DefaultValue] [SerializeField] internal bool defaultValue = false;
     }
 
     // こちらは上記と全く同じフィールドを持つクラスです。

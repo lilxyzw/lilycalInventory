@@ -5,20 +5,20 @@ namespace jp.lilxyzw.lilycalinventory.runtime
 {
     // 各メニュー生成コンポーネントのベースとなるクラス
     // メニューに必須なプロパティはここにまとめています
-    internal abstract class MenuBaseComponent : AvatarTagComponent
+    public abstract class MenuBaseComponent : AvatarTagComponent
     {
-        [NotKeyable] [MenuName] public string menuName;
-        [NotKeyable] [MenuFolderOverride] public MenuFolder parentOverride;
-        [NotKeyable] [LILLocalize] public Texture2D icon;
+        [NotKeyable] [MenuName] [SerializeField] internal string menuName;
+        [NotKeyable] [MenuFolderOverride] [SerializeField] internal MenuFolder parentOverride;
+        [NotKeyable] [LILLocalize] [SerializeField] internal Texture2D icon;
         #if LIL_MODULAR_AVATAR
-        [NotKeyable] [LILLocalize] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
+        [NotKeyable] [LILLocalize] [SerializeField] internal nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
         #else
-        [NotKeyable] public Object parentOverrideMA;
+        [NotKeyable] [SerializeField] internal Object parentOverrideMA;
         #endif
     }
 
     [DisallowMultipleComponent]
-    internal abstract class MenuBaseDisallowMultipleComponent : MenuBaseComponent
+    public abstract class MenuBaseDisallowMultipleComponent : MenuBaseComponent
     {
     }
 }

@@ -6,7 +6,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // メニューは生成されません。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(MaterialOptimizer))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "materialoptimizer")]
-    internal class MaterialOptimizer : AvatarTagComponent
+    public class MaterialOptimizer : AvatarTagComponent
     {
     }
 }

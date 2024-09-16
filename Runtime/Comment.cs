@@ -8,10 +8,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // これ自体に機能はなく、PrefabやGameObjectに説明を残しておくことを想定しています。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Comment))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "comment")]
-    internal class Comment : AvatarTagComponent
+    public class Comment : AvatarTagComponent
     {
-        [NotKeyable] [LILLocalize] public MessageType messageType;
-        [NotKeyable] public LanguageAndText[] comments = new LanguageAndText[]{};
+        [NotKeyable] [LILLocalize] [SerializeField] internal MessageType messageType;
+        [NotKeyable] [SerializeField] internal LanguageAndText[] comments = new LanguageAndText[]{};
 
         [Serializable]
         internal struct LanguageAndText

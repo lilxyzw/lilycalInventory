@@ -7,10 +7,10 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // メニューは生成されません。
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(MaterialModifier))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "materialmodifier")]
-    internal class MaterialModifier : AvatarTagComponent
+    public class MaterialModifier : AvatarTagComponent
     {
-        [NotKeyable] [LILLocalize] public Material referenceMaterial;
-        [NotKeyable] [NoLabel] public Material[] ignoreMaterials;
-        [NotKeyable] [NoLabel] public string[] properties;
+        [NotKeyable] [LILLocalize] [SerializeField] internal Material referenceMaterial;
+        [NotKeyable] [NoLabel] [SerializeField] internal Material[] ignoreMaterials;
+        [NotKeyable] [NoLabel] [SerializeField] internal string[] properties;
     }
 }

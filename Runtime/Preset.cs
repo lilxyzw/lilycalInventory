@@ -9,9 +9,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [DisallowMultipleComponent]
     [AddComponentMenu(ConstantValues.COMPONENTS_BASE + nameof(Preset))]
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "preset")]
-    internal class Preset : MenuBaseComponent
+    public class Preset : MenuBaseComponent
     {
-        [NotKeyable] public PresetItem[] presetItems = new PresetItem[]{};
+        [NotKeyable] [SerializeField] internal PresetItem[] presetItems = new PresetItem[]{};
     }
 
     [Serializable]
