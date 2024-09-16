@@ -378,7 +378,9 @@ namespace jp.lilxyzw.lilycalinventory
                 case Texture2D _:
                 case MonoScript _:
                 case Material _:
-                    return original;
+
+                // VRC Animator Play Audio
+                case AudioClip _:
 
                 // Also avoid copying unknown scriptable objects.
                 // This ensures compatibility with e.g. avatar remote, which stores state information in a state
