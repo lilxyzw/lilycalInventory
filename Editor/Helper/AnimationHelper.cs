@@ -11,7 +11,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return new EditorCurveBinding
             {
-                path = renderer.GetPathInAvatar(),
+                path = renderer.GetPathInAvatarFast(),
                 propertyName = $"blendShape.{blendShape}",
                 type = renderer.GetType()
             };
@@ -21,7 +21,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return new EditorCurveBinding
             {
-                path = gameObject.GetPathInAvatar(),
+                path = gameObject.GetPathInAvatarFast(),
                 propertyName = "m_IsActive",
                 type = gameObject.GetType()
             };
@@ -31,7 +31,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return new EditorCurveBinding
             {
-                path = renderer.GetPathInAvatar(),
+                path = renderer.GetPathInAvatarFast(),
                 propertyName = $"m_Materials.Array.data[{slot}]",
                 type = renderer.GetType()
             };
@@ -41,7 +41,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return new EditorCurveBinding
             {
-                path = renderer.GetPathInAvatar(),
+                path = renderer.GetPathInAvatarFast(),
                 propertyName = $"material.{name}",
                 type = renderer.GetType()
             };

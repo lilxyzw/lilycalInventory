@@ -59,8 +59,13 @@ namespace jp.lilxyzw.lilycalinventory
                     layer.animatorController = null;
                 }
 
-                // AnimatorControllerがセットされている場合はそれを返す
-                if(layer.animatorController) return (AnimatorController)layer.animatorController;
+                // AnimatorControllerがセットされている場合はそれをクローンして返す
+                if(layer.animatorController)
+                {
+                    var ac = AnimatorCombiner.DeepCloneAnimator(ctx, layer.animatorController);
+                    layer.animatorController = ac;
+                    return ac;
+                }
 
                 // 空の場合は新規に作ったものをセットしつつ返す
                 var controllerI = CreateFXController();
@@ -91,6 +96,21 @@ namespace jp.lilxyzw.lilycalinventory
                 descriptor.expressionsMenu = null;
                 descriptor.expressionParameters = null;
             }
+
+            // クローン
+            var map = new Dictionary<Object,Object>();
+            VRCExpressionsMenu CloneMenu(VRCExpressionsMenu menu)
+            {
+                menu = (VRCExpressionsMenu)Cloner.CloneObject(menu, ctx, map);
+                foreach(var control in menu.controls)
+                {
+                    if(control.type != ControlType.SubMenu) continue;
+                    control.subMenu = CloneMenu(control.subMenu);
+                }
+                return menu;
+            }
+            ctx.AvatarDescriptor.expressionParameters = (VRCExpressionParameters)Cloner.CloneObject(ctx.AvatarDescriptor.expressionParameters, ctx, map);
+            ctx.AvatarDescriptor.expressionsMenu = CloneMenu(ctx.AvatarDescriptor.expressionsMenu);
 
             // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
             if(descriptor.expressionsMenu) descriptor.expressionsMenu.Merge(menu);
@@ -172,12 +192,6 @@ namespace jp.lilxyzw.lilycalinventory
 
             // パラメーターをマージ
             parameters.parameters = parameters.parameters.Union(parameters2.parameters).ToArray();
-            //var size = parameters.parameters.Length;
-            //Array.Resize(ref parameters.parameters, parameters.parameters.Length + parameters2.parameters.Length);
-            //for(int i = 0; i < parameters2.parameters.Length; i++)
-            //{
-            //    parameters.parameters[size+i] = parameters2.parameters[i];
-            //}
         }
 
         internal static void AddMenu(this VRCExpressionsMenu menu, VRCExpressionsMenu menu2, Texture2D icon = null, string name = null)

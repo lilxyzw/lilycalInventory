@@ -14,6 +14,31 @@ namespace jp.lilxyzw.lilycalinventory
         internal AnimationClip ToClip()
         {
             var clip = new AnimationClip{name = name};
+
+            #if UNITY_2022_3_OR_NEWER
+            var referenceBindings = new List<EditorCurveBinding>();
+            var referenceCurves = new List<ObjectReferenceKeyframe[]>();
+            var floatBindings = new List<EditorCurveBinding>();
+            var floatCurves = new List<AnimationCurve>();
+            foreach(var b in bindings)
+            {
+                if(b.Value.Item3)
+                {
+                    var curve = new[]{new ObjectReferenceKeyframe{time = 0, value = b.Value.Item2}};
+                    referenceBindings.Add(b.Key);
+                    referenceCurves.Add(curve);
+                }
+                else
+                {
+                    var curve = new AnimationCurve();
+                    curve.AddKey(0, b.Value.Item1);
+                    floatBindings.Add(b.Key);
+                    floatCurves.Add(curve);
+                }
+            }
+            AnimationUtility.SetObjectReferenceCurves(clip, referenceBindings.ToArray(), referenceCurves.ToArray());
+            AnimationUtility.SetEditorCurves(clip, floatBindings.ToArray(), floatCurves.ToArray());
+            #else
             foreach(var b in bindings)
             {
                 if(b.Value.Item3)
@@ -28,6 +53,7 @@ namespace jp.lilxyzw.lilycalinventory
                     AnimationUtility.SetEditorCurve(clip, b.Key, curve);
                 }
             }
+            #endif
             return clip;
         }
 
@@ -134,7 +160,7 @@ namespace jp.lilxyzw.lilycalinventory
         internal static InternalClip MergeAndCreate(InternalClip[] srcs)
         {
             var newClip = new InternalClip();
-            foreach(var src in srcs) newClip.Merge(src);
+            newClip.Merge(srcs);
             return newClip;
         }
 

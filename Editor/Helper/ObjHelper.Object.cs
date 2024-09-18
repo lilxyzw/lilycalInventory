@@ -69,6 +69,19 @@ namespace jp.lilxyzw.lilycalinventory
             return component.gameObject.GetPathInAvatar();
         }
 
+        internal static Dictionary<GameObject, string> pathInAvatars = new Dictionary<GameObject, string>();
+
+        internal static string GetPathInAvatarFast(this GameObject gameObject)
+        {
+            if(pathInAvatars.ContainsKey(gameObject)) return pathInAvatars[gameObject];
+            return pathInAvatars[gameObject] = gameObject.GetPathInAvatar();
+        }
+
+        internal static string GetPathInAvatarFast(this Component component)
+        {
+            return component.gameObject.GetPathInAvatarFast();
+        }
+
         // 指定の型に一致するコンポーネントをキャストしつつ取得
         internal static T[] SelectComponents<T>(this Component[] components) where T : MonoBehaviour
         {

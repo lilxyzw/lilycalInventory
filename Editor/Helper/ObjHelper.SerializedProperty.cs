@@ -43,13 +43,15 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.arraySize == 0) return;
             int i = 0;
-            var prop = property.GetArrayElementAtIndex(0);
-            var end = property.GetEndProperty();
-            function.Invoke(prop,i);
-            while(prop.NextVisible(false) && !SerializedProperty.EqualContents(prop, end))
+            using(var prop = property.GetArrayElementAtIndex(0))
+            using(var end = property.GetEndProperty())
             {
-                i++;
                 function.Invoke(prop,i);
+                while(prop.NextVisible(false) && !SerializedProperty.EqualContents(prop, end))
+                {
+                    i++;
+                    function.Invoke(prop,i);
+                }
             }
         }
 

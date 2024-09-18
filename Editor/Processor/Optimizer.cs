@@ -41,58 +41,78 @@ namespace jp.lilxyzw.lilycalinventory
         // シェーダーで使われていないプロパティを除去
         private static void RemoveUnusedProperties(Material material, Dictionary<Shader, ShaderPropertyContainer> propMap)
         {
-            var so = new SerializedObject(material);
-            so.Update();
-            var savedProps = so.FindProperty("m_SavedProperties");
-
-            if(material.shader)
+            using(var so = new SerializedObject(material))
             {
-                var dic = propMap[material.shader];
-                DeleteUnused(savedProps.FindPropertyRelative("m_TexEnvs"), dic.textures);
-                DeleteUnused(savedProps.FindPropertyRelative("m_Floats"), dic.floats);
-                DeleteUnused(savedProps.FindPropertyRelative("m_Colors"), dic.vectors);
+                so.Update();
+                using(var savedProps = so.FindProperty("m_SavedProperties"))
+                if(material.shader)
+                {
+                    var dic = propMap[material.shader];
+                    DeleteUnused(savedProps, "m_TexEnvs", dic.textures);
+                    DeleteUnused(savedProps, "m_Floats", dic.floats);
+                    DeleteUnused(savedProps, "m_Colors", dic.vectors);
+                }
+                else
+                {
+                    DeleteAll(savedProps, "m_TexEnvs");
+                    DeleteAll(savedProps, "m_Floats");
+                    DeleteAll(savedProps, "m_Colors");
+                }
+                so.ApplyModifiedProperties();
             }
-            else
-            {
-                DeleteAll(savedProps.FindPropertyRelative("m_TexEnvs"));
-                DeleteAll(savedProps.FindPropertyRelative("m_Floats"));
-                DeleteAll(savedProps.FindPropertyRelative("m_Colors"));
-            }
-            so.ApplyModifiedProperties();
         }
 
-        private static void DeleteUnused(SerializedProperty props, List<string> names)
+        private static void DeleteUnused(SerializedProperty prop, string name, HashSet<string> names)
         {
-            if(props.arraySize == 0) return;
-            var ints = new List<int>();
-            props.DoAllElements((p,i) => {
-                if(!names.Contains(p.FPR("first").stringValue)) ints.Add(i);
-            });
-            ints.Reverse();
-            foreach(var a in ints) props.DeleteArrayElementAtIndex(a);
+            using(var props = prop.FPR(name))
+            {
+                if(props.arraySize == 0) return;
+                int i = 0;
+                var size = props.arraySize;
+                var p = props.GetArrayElementAtIndex(i);
+                void DeleteUnused()
+                {
+                    using(var first = p.FPR("first"))
+                    if(!names.Contains(first.stringValue))
+                    {
+                        p.DeleteCommand();
+                        if(i < --size)
+                        {
+                            p = props.GetArrayElementAtIndex(i);
+                            DeleteUnused();
+                        }
+                    }
+                    else if(p.NextVisible(false))
+                    {
+                        if(++i < size) DeleteUnused();
+                    }
+                }
+                DeleteUnused();
+                p.Dispose();
+            }
         }
 
-        private static void DeleteAll(SerializedProperty props)
+        private static void DeleteAll(SerializedProperty prop, string name)
         {
-            for(int i = props.arraySize - 1; i >= 0; i--)
-                props.DeleteArrayElementAtIndex(i);
+            using(var props = prop.FPR(name)) props.arraySize = 0;
         }
     }
 
     // シェーダーのプロパティを検索して保持するクラス
     internal class ShaderPropertyContainer
     {
-        internal List<string> textures = new List<string>();
-        internal List<string> floats = new List<string>();
-        internal List<string> vectors = new List<string>();
+        internal HashSet<string> textures;
+        internal HashSet<string> floats;
+        internal HashSet<string> vectors;
 
         internal ShaderPropertyContainer(Shader shader)
         {
-            textures = new List<string>();
-            floats = new List<string>();
-            vectors = new List<string>();
+            textures = new HashSet<string>();
+            floats = new HashSet<string>();
+            vectors = new HashSet<string>();
 
             var count = shader.GetPropertyCount();
+
             for(int i = 0; i < count; i++)
             {
                 var t = shader.GetPropertyType(i);

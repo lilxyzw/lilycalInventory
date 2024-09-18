@@ -29,12 +29,10 @@ namespace jp.lilxyzw.lilycalinventory
 
             // アニメーションの生成はMAの前に行う
             var Transforming = InPhase(BuildPhase.Transforming).BeforePlugin("nadena.dev.modular-avatar");
-            Transforming.Run("Clone Assets", ctx => Processor.CloneAssets(ctx));
             Transforming.Run("ModifyPreProcess", ctx => Processor.ModifyPreProcess(ctx));
 
             // マテリアルのクローンおよび改変はMAやTTTの後に行う
             var TransformingPostProcess = InPhase(BuildPhase.Transforming).AfterPlugin("nadena.dev.modular-avatar").AfterPlugin("net.rs64.tex-trans-tool");
-            TransformingPostProcess.Run("Clone Materials", ctx => Processor.CloneMaterials(ctx));
             TransformingPostProcess.Run("ModifyPostProcess", ctx => Processor.ModifyPostProcess(ctx));
             TransformingPostProcess.Run("Remove Component", ctx => Processor.RemoveComponent(ctx));
 

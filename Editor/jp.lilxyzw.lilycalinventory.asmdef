@@ -20,6 +20,8 @@
         "VRCSDKBase.dll",
         "VRCSDK3A.dll",
         "VRCSDK3A-Editor.dll",
+        "VRC.Dynamics.dll",
+        "VRCCore-Editor.dll",
         "System.Collections.Immutable.dll"
     ],
     "autoReferenced": false,

@@ -154,17 +154,11 @@ namespace jp.lilxyzw.lilycalinventory
             ModularAvatarHelper.ResolveMenu(folders, togglers, costumeChangers, smoothChangers, presets);
         }
 
-        // AnimatorControllerとExpressionsMenuとExpressionParametersをクローン
-        internal static void CloneAssets(BuildContext ctx)
-        {
-            if(!shouldModify) return;
-            Cloner.DeepCloneAssets(ctx);
-        }
-
         // アニメーション系コンポーネントの処理
         internal static void ModifyPreProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
+            ObjHelper.pathInAvatars.Clear();
             #if LIL_VRCSDK3A
             if(togglers.Length + costumeChangers.Length + smoothChangers.Length + presets.Length > 0)
             {
@@ -209,17 +203,11 @@ namespace jp.lilxyzw.lilycalinventory
             #endif
         }
 
-        // Materialのクローン
-        internal static void CloneMaterials(BuildContext ctx)
-        {
-            if(!shouldModify) return;
-            materials = Cloner.CloneAllMaterials(ctx);
-        }
-
         // マテリアルの編集とメッシュ設定の統一
         internal static void ModifyPostProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
+            materials = Cloner.CloneAllMaterials(ctx);
             Modifier.ApplyMaterialModifier(materials, modifiers);
             Modifier.ApplyMeshSettingsModifier(ctx.AvatarRootObject, meshSettings);
         }

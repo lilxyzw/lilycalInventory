@@ -31,6 +31,10 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
+#if LIL_NDMF
+using nadena.dev.ndmf;
+#endif
+
 #if LIL_VRCSDK3A
 using VRC.SDK3.Avatars.Components;
 #endif
@@ -43,6 +47,27 @@ namespace jp.lilxyzw.lilycalinventory
 {
     internal class AnimatorCombiner
     {
+        public static AnimatorController DeepCloneAnimator(BuildContext context, RuntimeAnimatorController controller)
+        {
+            if (controller == null) return null;
+            if (context.IsTemporaryAsset(controller) && controller is AnimatorController a) return a;
+
+            var merger = new AnimatorCombiner(controller.name + " (clone)", context.AssetContainer);
+            switch (controller)
+            {
+                case AnimatorController ac:
+                    merger.AddController("", ac, null);
+                    break;
+                case AnimatorOverrideController oac:
+                    merger.AddOverrideController("", oac, null);
+                    break;
+                default:
+                    throw new Exception("Unknown RuntimeAnimatorContoller type " + controller.GetType());
+            }
+
+            return merger.Finish();
+        }
+
         private readonly AnimatorController _combined;
         private bool isSaved;
 
@@ -50,20 +75,20 @@ namespace jp.lilxyzw.lilycalinventory
 
         private List<AnimatorControllerLayer> _layers = new List<AnimatorControllerLayer>();
 
-        private Dictionary<String, AnimatorControllerParameter> _parameters =
+        private Dictionary<string, AnimatorControllerParameter> _parameters =
             new Dictionary<string, AnimatorControllerParameter>();
 
-        private Dictionary<KeyValuePair<String, Motion>, Motion> _motions =
+        private Dictionary<KeyValuePair<string, Motion>, Motion> _motions =
             new Dictionary<KeyValuePair<string, Motion>, Motion>();
 
-        private Dictionary<KeyValuePair<String, AnimatorStateMachine>, AnimatorStateMachine> _stateMachines =
+        private Dictionary<KeyValuePair<string, AnimatorStateMachine>, AnimatorStateMachine> _stateMachines =
             new Dictionary<KeyValuePair<string, AnimatorStateMachine>, AnimatorStateMachine>();
 
         private Dictionary<Object, Object> _cloneMap;
 
         private int controllerBaseLayer = 0;
 
-        public AnimatorCombiner(String assetName, Object assetContainer)
+        private AnimatorCombiner(string assetName, Object assetContainer)
         {
             _combined = new AnimatorController();
             if (assetContainer != null)
@@ -83,14 +108,14 @@ namespace jp.lilxyzw.lilycalinventory
             _combined.name = assetName;
         }
 
-        public AnimatorController Finish()
+        private AnimatorController Finish()
         {
             _combined.parameters = _parameters.Values.ToArray();
             _combined.layers = _layers.ToArray();
             return _combined;
         }
 
-        public void AddController(string basePath, AnimatorController controller, bool? writeDefaults)
+        private void AddController(string basePath, AnimatorController controller, bool? writeDefaults)
         {
             controllerBaseLayer = _layers.Count;
             _cloneMap = new Dictionary<Object, Object>();
@@ -127,7 +152,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        public void AddOverrideController(string basePath, AnimatorOverrideController overrideController,
+        private void AddOverrideController(string basePath, AnimatorOverrideController overrideController,
             bool? writeDefaults)
         {
             AnimatorController controller = overrideController.runtimeAnimatorController as AnimatorController;
@@ -135,7 +160,7 @@ namespace jp.lilxyzw.lilycalinventory
             _overrideController = overrideController;
             try
             {
-                this.AddController(basePath, controller, writeDefaults);
+                AddController(basePath, controller, writeDefaults);
             }
             finally
             {
@@ -314,14 +339,14 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if (o is AnimationClip clip)
             {
-                if (clip.IsProxyAnimation()) return clip;
+                if (IsProxyAnimation(clip)) return clip;
 
                 AnimationClip newClip = new AnimationClip();
                 newClip.name = clip.name;
                 if (isSaved)
                 {
                     #if LIL_NDMF
-                    nadena.dev.ndmf.ObjectRegistry.RegisterReplacedObject(clip, newClip);
+                    ObjectRegistry.RegisterReplacedObject(clip, newClip);
                     #endif
                     AssetDatabase.AddObjectToAsset(newClip, _combined);
                 }
@@ -352,6 +377,20 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 return null;
             }
+        }
+
+        private static bool IsProxyAnimation(Motion m)
+        {
+            var path = AssetDatabase.GetAssetPath(m);
+
+            // This is a fairly wide condition in order to deal with:
+            // 1. Future additions of proxy animations (so GUIDs are out)
+            // 2. Unitypackage based installations of the VRCSDK
+            // 3. VCC based installations of the VRCSDK
+            // 4. Very old VCC based installations of the VRCSDK where proxy animations were copied into Assets
+            return path.Contains("/AV3 Demo Assets/Animation/ProxyAnim/proxy")
+                   || path.Contains("/VRCSDK/Examples3/Animation/ProxyAnim/proxy")
+                   || path.StartsWith("Packages/com.vrchat.");
         }
 
         private T deepClone<T>(T original,
@@ -430,7 +469,7 @@ namespace jp.lilxyzw.lilycalinventory
             if (isSaved && _combined != null && EditorUtility.IsPersistent(_combined))
             {
                 #if LIL_NDMF
-                nadena.dev.ndmf.ObjectRegistry.RegisterReplacedObject(original, obj);
+                ObjectRegistry.RegisterReplacedObject(original, obj);
                 #endif
                 AssetDatabase.AddObjectToAsset(obj, _combined);
             }
