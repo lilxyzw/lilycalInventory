@@ -7,6 +7,8 @@
   "inspector.componentDisabled": "The component is disabled and will be ignored during the build. Check the checkbox for the component if you want to enable it.",
   "inspector.targetEditorOnly": "The object to be operated or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the Tag.",
   "inspector.targetAnimationClip": "The object to be operated or its parent object is already being operated by the following AnimationClip.",
+  "inspector.ndmfTooOld": "The installed version of NDMF is too old, please update to {0} or higher using VCC or ALCOM.",
+  "inspector.maTooOld": "The installed version of Modular Avatar is too old, please update to {0} or higher using VCC or ALCOM.",
 
   "inspector.referenceMaterial": "Reference Material",
   "inspector.referenceMaterial.tooltip": "Settings will be copied from the material specified here.",

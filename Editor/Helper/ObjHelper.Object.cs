@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
-    using runtime;
-
     internal static partial class ObjHelper
     {
+        internal static readonly Dictionary<GameObject, string> pathInAvatars = new();
+
         internal static string TryGetName(this Object obj)
         {
             if(obj) return obj.name;
@@ -68,8 +68,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             return component.gameObject.GetPathInAvatar();
         }
-
-        internal static Dictionary<GameObject, string> pathInAvatars = new Dictionary<GameObject, string>();
 
         internal static string GetPathInAvatarFast(this GameObject gameObject)
         {
@@ -138,13 +136,5 @@ namespace jp.lilxyzw.lilycalinventory
             if(!dic.ContainsKey(key)) dic[key] = new HashSet<TValue>();
             return dic[key];
         }
-
-        #if !UNITY_2021_3_OR_NEWER
-        internal static void GetPositionAndRotation(this Transform transform, out Vector3 position, out Quaternion rotation)
-        {
-            position = transform.position;
-            rotation = transform.rotation;
-        }
-        #endif
     }
 }

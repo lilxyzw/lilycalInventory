@@ -16,71 +16,57 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static IEnumerator GetChangelogEn()
         {
-            using(UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_CHANGELOG_EN))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_CHANGELOG_EN);
+            yield return webRequest.SendWebRequest();
+            if(webRequest.result != UnityWebRequest.Result.ConnectionError)
             {
-                yield return webRequest.SendWebRequest();
-                #if UNITY_2020_2_OR_NEWER
-                    if(webRequest.result != UnityWebRequest.Result.ConnectionError)
-                #else
-                    if(!webRequest.isNetworkError)
-                #endif
-                {
-                    instance.changelogEn = ParseChangelog(webRequest.downloadHandler.text);
-                }
+                instance.changelogEn = ParseChangelog(webRequest.downloadHandler.text);
             }
         }
 
         internal static IEnumerator GetChangelogJp()
         {
-            using(UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_CHANGELOG_JP))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_CHANGELOG_JP);
+            yield return webRequest.SendWebRequest();
+            if(webRequest.result != UnityWebRequest.Result.ConnectionError)
             {
-                yield return webRequest.SendWebRequest();
-                #if UNITY_2020_2_OR_NEWER
-                    if(webRequest.result != UnityWebRequest.Result.ConnectionError)
-                #else
-                    if(!webRequest.isNetworkError)
-                #endif
-                {
-                    instance.changelogJp = ParseChangelog(webRequest.downloadHandler.text).Replace(" ", "\u00A0");
-                }
+                instance.changelogJp = ParseChangelog(webRequest.downloadHandler.text).Replace(" ", "\u00A0");
             }
         }
 
         private static string ParseChangelog(string md)
         {
             var sb = new StringBuilder();
-            using(var sr = new StringReader(md))
-            {
-                // Skip header
-                sr.ReadLine();
-                sr.ReadLine();
-                sr.ReadLine();
-                sr.ReadLine();
-                sr.ReadLine();
-                sr.ReadLine();
+            using var sr = new StringReader(md);
+            // Skip header
+            sr.ReadLine();
+            sr.ReadLine();
+            sr.ReadLine();
+            sr.ReadLine();
+            sr.ReadLine();
+            sr.ReadLine();
 
-                bool isHeader = true;
-                string line;
-                while((line = sr.ReadLine()) != null)
+            bool isHeader = true;
+            string line;
+            while((line = sr.ReadLine()) != null)
+            {
+                if(isHeader)
                 {
-                    if(isHeader)
-                    {
-                        isHeader = !line.StartsWith("## [");
-                        if(isHeader) continue;
-                    }
-                    line = ReplaceSyntax(line, "`", "\u2006<color=#e96900>", "</color>\u2006");
-                    if(line.StartsWith("### "))
-                    {
-                        sb.AppendLine($"<size=15><b>{line.Substring(4)}</b></size>");
-                    }
-                    else if(line.StartsWith("## "))
-                    {
-                        sb.AppendLine($"<color=#2d9c63><size=20><b>{line.Substring(3)}</b></size></color>");
-                    }
-                    else
-                    {
-                        sb.AppendLine("  " + line);
-                    }
+                    isHeader = !line.StartsWith("## [");
+                    if(isHeader) continue;
+                }
+                line = ReplaceSyntax(line, "`", "\u2006<color=#e96900>", "</color>\u2006");
+                if(line.StartsWith("### "))
+                {
+                    sb.AppendLine($"<size=15><b>{line.Substring(4)}</b></size>");
+                }
+                else if(line.StartsWith("## "))
+                {
+                    sb.AppendLine($"<color=#2d9c63><size=20><b>{line.Substring(3)}</b></size></color>");
+                }
+                else
+                {
+                    sb.AppendLine("  " + line);
                 }
             }
             return sb.ToString();

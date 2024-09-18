@@ -58,9 +58,7 @@ namespace jp.lilxyzw.lilycalinventory
                     var bone = animator.GetBoneTransform(humanBodyBones);
                     if(bone) return bone;
                 }
-                #if UNITY_2022_2_OR_NEWER
                 return animator.avatarRoot;
-                #endif
             }
             return root.transform;
         }

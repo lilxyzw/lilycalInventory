@@ -71,18 +71,16 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(NotContainsAnimatorController(component)) continue;
 
-                using(var so = new SerializedObject(component))
-                using(var iter = so.GetIterator())
+                using var so = new SerializedObject(component);
+                using var iter = so.GetIterator();
+                var enterChildren = true;
+                while(iter.Next(enterChildren))
                 {
-                    var enterChildren = true;
-                    while(iter.Next(enterChildren))
+                    enterChildren = iter.propertyType != SerializedPropertyType.String;
+                    if(iter.propertyType == SerializedPropertyType.ObjectReference && iter.objectReferenceValue is RuntimeAnimatorController controller && ContainsMaterialReference(controller))
                     {
-                        enterChildren = iter.propertyType != SerializedPropertyType.String;
-                        if(iter.propertyType == SerializedPropertyType.ObjectReference && iter.objectReferenceValue is RuntimeAnimatorController controller && ContainsMaterialReference(controller))
-                        {
-                            iter.objectReferenceValue = AnimatorCombiner.DeepCloneAnimator(context, controller);
-                            controllers.Add(iter.objectReferenceValue as RuntimeAnimatorController);
-                        }
+                        iter.objectReferenceValue = AnimatorCombiner.DeepCloneAnimator(context, controller);
+                        controllers.Add(iter.objectReferenceValue as RuntimeAnimatorController);
                     }
                 }
             }

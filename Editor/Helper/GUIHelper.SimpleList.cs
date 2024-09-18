@@ -8,7 +8,7 @@ namespace jp.lilxyzw.lilycalinventory
         // リストのかわりにプロパティを並べて表示するだけのシンプルなもの
         internal static Rect SimpleList(SerializedProperty prop, Rect position, string[] labels)
         {
-            SerializedProperty endProperty = prop.GetEndProperty();
+            using var endProperty = prop.GetEndProperty();
             prop.NextVisible(true);
             position.Back();
             int i = 0;

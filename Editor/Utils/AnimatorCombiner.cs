@@ -73,22 +73,22 @@ namespace jp.lilxyzw.lilycalinventory
 
         private AnimatorOverrideController _overrideController;
 
-        private List<AnimatorControllerLayer> _layers = new List<AnimatorControllerLayer>();
+        private List<AnimatorControllerLayer> _layers = new();
 
         private Dictionary<string, AnimatorControllerParameter> _parameters =
-            new Dictionary<string, AnimatorControllerParameter>();
+            new();
 
         private Dictionary<KeyValuePair<string, Motion>, Motion> _motions =
-            new Dictionary<KeyValuePair<string, Motion>, Motion>();
+            new();
 
         private Dictionary<KeyValuePair<string, AnimatorStateMachine>, AnimatorStateMachine> _stateMachines =
-            new Dictionary<KeyValuePair<string, AnimatorStateMachine>, AnimatorStateMachine>();
+            new();
 
         private Dictionary<Object, Object> _cloneMap;
 
         private int controllerBaseLayer = 0;
 
-        private AnimatorCombiner(string assetName, Object assetContainer)
+        internal AnimatorCombiner(string assetName, Object assetContainer)
         {
             _combined = new AnimatorController();
             if (assetContainer != null)
@@ -108,14 +108,14 @@ namespace jp.lilxyzw.lilycalinventory
             _combined.name = assetName;
         }
 
-        private AnimatorController Finish()
+        internal AnimatorController Finish()
         {
             _combined.parameters = _parameters.Values.ToArray();
             _combined.layers = _layers.ToArray();
             return _combined;
         }
 
-        private void AddController(string basePath, AnimatorController controller, bool? writeDefaults)
+        internal void AddController(string basePath, AnimatorController controller, bool? writeDefaults)
         {
             controllerBaseLayer = _layers.Count;
             _cloneMap = new Dictionary<Object, Object>();
@@ -152,7 +152,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        private void AddOverrideController(string basePath, AnimatorOverrideController overrideController,
+        internal void AddOverrideController(string basePath, AnimatorOverrideController overrideController,
             bool? writeDefaults)
         {
             AnimatorController controller = overrideController.runtimeAnimatorController as AnimatorController;
@@ -225,7 +225,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         IEnumerable<AnimatorState> WalkAllStates(AnimatorStateMachine animatorStateMachine)
         {
-            HashSet<Object> visited = new HashSet<Object>();
+            HashSet<Object> visited = new();
 
             foreach (var state in VisitStateMachine(animatorStateMachine))
             {
@@ -341,7 +341,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if (IsProxyAnimation(clip)) return clip;
 
-                AnimationClip newClip = new AnimationClip();
+                AnimationClip newClip = new();
                 newClip.name = clip.name;
                 if (isSaved)
                 {
@@ -351,10 +351,9 @@ namespace jp.lilxyzw.lilycalinventory
                     AssetDatabase.AddObjectToAsset(newClip, _combined);
                 }
 
-                SerializedObject srcSO = new SerializedObject(clip);
-                SerializedObject destSO = new SerializedObject(newClip);
-
-                SerializedProperty iter = srcSO.GetIterator();
+                using var srcSO = new SerializedObject(clip);
+                using var destSO = new SerializedObject(newClip);
+                using var iter = srcSO.GetIterator();
 
                 // To avoid error
                 if(iter.Next(true))
@@ -474,8 +473,8 @@ namespace jp.lilxyzw.lilycalinventory
                 AssetDatabase.AddObjectToAsset(obj, _combined);
             }
 
-            SerializedObject so = new SerializedObject(obj);
-            SerializedProperty prop = so.GetIterator();
+            using var so = new SerializedObject(obj);
+            using var prop = so.GetIterator();
 
             bool enterChildren = true;
             while (prop.Next(enterChildren))

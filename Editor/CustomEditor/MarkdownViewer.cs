@@ -5,20 +5,17 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.UIElements.Cursor;
-#if UNITY_2022_3_OR_NEWER
 using UnityEngine.TextCore.Text;
-#endif
 
 namespace jp.lilxyzw.lilycalinventory
 {
     internal static class MarkdownViewer
     {
-        private static Dictionary<string,List<(MDType,string,int,int)>> mdlist = new Dictionary<string,List<(MDType,string,int,int)>>();
-        private static Encoding encSjis = Encoding.GetEncoding("Shift_JIS");
+        private static readonly Dictionary<string,List<(MDType,string,int,int)>> mdlist = new();
+        private static readonly Encoding encSjis = Encoding.GetEncoding("Shift_JIS");
 
         internal enum MDType
         {
@@ -36,11 +33,10 @@ namespace jp.lilxyzw.lilycalinventory
             br
         }
 
-        #if UNITY_2022_3_OR_NEWER
         internal class MDLabel : Label
         {
             private const float FONT_SIZE = 14f;
-            private static Dictionary<MouseCursor, Cursor> cursors = new Dictionary<MouseCursor, Cursor>();
+            private static Dictionary<MouseCursor, Cursor> cursors = new();
 
             // ----------------------------------------------------------------
             // UIElementsで日本語フォントが壊れているため生成して上書き
@@ -145,111 +141,6 @@ namespace jp.lilxyzw.lilycalinventory
                 style.fontSize = FONT_SIZE;
             }
         }
-        #else
-        // Unity 2019ではIMGUIで代替
-        private static PropertyInfo hyperlinkInfos;
-        private static bool isInitializedReflection = false;
-
-        // クリック可能なURL用コールバック
-        [InitializeOnLoadMethod]
-        private static void AddLILHref()
-        {
-            try
-            {
-                var evt = typeof(EditorGUI).GetEvent("hyperLinkClicked", BindingFlags.Static | BindingFlags.NonPublic);
-                var method = typeof(MarkdownViewer).GetMethod("OpenLink", BindingFlags.Static | BindingFlags.NonPublic);
-                var del = System.Delegate.CreateDelegate(evt.EventHandlerType, method);
-                evt.AddMethod.Invoke(null, new object[]{del});
-            }
-            catch(System.Exception e)
-            {
-                Debug.LogException(e);
-            }
-        }
-
-        private static void OpenLink(object sender, System.EventArgs args)
-        {
-            if(!isInitializedReflection) hyperlinkInfos = args.GetType().GetProperty("hyperlinkInfos", BindingFlags.Instance | BindingFlags.Public);
-            if(hyperlinkInfos == null) return;
-            if(hyperlinkInfos.GetValue(args) is Dictionary<string, string> hyperLinkData)
-                Application.OpenURL(hyperLinkData["lilhref"]);
-        }
-
-        internal class MDLabel : Label
-        {
-            private const float FONT_SIZE = 14f;
-
-            internal MDLabel(string label, MDType type, bool enableSpace)
-            {
-                var style = new GUIStyle(EditorStyles.label);
-                style.SetColors(style.normal.textColor);
-                style.richText = true;
-                style.fontSize = (int)FONT_SIZE;
-                style.wordWrap = true;
-                RemoveHorizontalSpace(style);
-
-                switch(type)
-                {
-                    case MDType.h1:
-                        style.fontSize = (int)(FONT_SIZE * 2.0f);
-                        style.fontStyle = FontStyle.Bold;
-                        break;
-                    case MDType.h2:
-                        style.fontSize = (int)(FONT_SIZE * 1.5f);
-                        style.fontStyle = FontStyle.Bold;
-                        break;
-                    case MDType.h3:
-                        style.fontSize = (int)(FONT_SIZE * 1.25f);
-                        style.fontStyle = FontStyle.Bold;
-                        break;
-                    case MDType.h4:
-                    case MDType.h5:
-                    case MDType.h6:
-                        style.fontSize = (int)FONT_SIZE;
-                        style.fontStyle = FontStyle.Bold;
-                        break;
-                    default:
-                        style.fontSize = (int)FONT_SIZE;
-                        break;
-                }
-                var container = new IMGUIContainer(() => {
-                    if(enableSpace) EditorGUILayout.Space(12);
-                    EditorGUILayout.SelectableLabel(label, style, GUILayout.Height(style.CalcHeight(new GUIContent(label), resolvedStyle.width - 3)));
-                });
-                if(type == MDType.h1 || type == MDType.h2)
-                {
-                    container.style.borderBottomColor = new Color(0.5f,0.5f,0.5f,0.5f);
-                    container.style.borderBottomWidth = 1;
-                }
-                Add(container);
-            }
-
-            internal MDLabel(string label)
-            {
-                var style = new GUIStyle(EditorStyles.label);
-                style.SetColors(style.normal.textColor);
-                style.richText = true;
-                style.fontSize = (int)FONT_SIZE;
-                RemoveHorizontalSpace(style);
-                style.alignment = TextAnchor.UpperRight;
-                var layoutHeight = GUILayout.Height(FONT_SIZE + style.margin.vertical + style.border.vertical + style.padding.vertical);
-                var container = new IMGUIContainer(() => {
-                    EditorGUILayout.LabelField(label, style, GUILayout.Width(resolvedStyle.width), layoutHeight);
-                });
-                Add(container);
-            }
-
-            private static void RemoveHorizontalSpace(GUIStyle style)
-            {
-                style.margin.left = 0;
-                style.margin.right = 0;
-                style.border.left = 0;
-                style.border.right = 0;
-                style.padding.left = 0;
-                style.padding.right = 0;
-            }
-        }
-        #endif
 
         // リスト用にマーカーとラベルを表示
         internal class MDList : VisualElement
@@ -485,9 +376,6 @@ namespace jp.lilxyzw.lilycalinventory
             else ReplaceSyntax(ref s, "`", " <color=#2d9c63ff>", "</color> ");
             ReplaceMDLinks(ref s);
             ReplaceLinks(ref s);
-            #if !UNITY_2022_3_OR_NEWER
-            s = s.Replace("<a href=", "<a lilhref=");
-            #endif
 
             list.Add((item.Item1,s,item.Item3,item.Item4));
         }

@@ -71,7 +71,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 else
                 {
-                    conditionAndObjects[key] = new List<ConditionObject>{new ConditionObject(){type=ConditionObjectType.ObjectToggler,obj=o}};
+                    conditionAndObjects[key] = new List<ConditionObject>{new(){type=ConditionObjectType.ObjectToggler,obj=o}};
                 }
             }
 
@@ -88,7 +88,7 @@ namespace jp.lilxyzw.lilycalinventory
                 }
                 else
                 {
-                    conditionAndObjects[key] = new List<ConditionObject>{new ConditionObject(){type=ConditionObjectType.BlendShapeModifier,obj=o.Item1,blendShape=o.Item2}};
+                    conditionAndObjects[key] = new List<ConditionObject>{new(){type=ConditionObjectType.BlendShapeModifier,obj=o.Item1,blendShape=o.Item2}};
                 }
             }
 

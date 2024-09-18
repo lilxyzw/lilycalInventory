@@ -10,7 +10,7 @@ namespace jp.lilxyzw.lilycalinventory
     internal static partial class GUIHelper
     {
         // プロパティごとの固有IDとListを保存して再生成を防ぐ
-        private static readonly Dictionary<string, ReorderableList> reorderableLists = new Dictionary<string, ReorderableList>();
+        private static readonly Dictionary<string, ReorderableList> reorderableLists = new();
         internal static void ResetList() => reorderableLists.Clear();
 
         internal static Rect List(Rect position, SerializedProperty property, bool drawFoldout, Action<SerializedProperty> initializeFunction = null)
@@ -71,23 +71,21 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static ReorderableList CreateReorderableList(SerializedProperty property, Action<SerializedProperty> initializeFunction = null)
         {
-            Rect headerRect = default(Rect);
+            Rect headerRect = default;
             var list = new ReorderableList(property.serializedObject, property)
             {
                 draggable = true,
                 headerHeight = 0,
                 //footerHeight = 0, // みやすさのためにあえて余白を残す
-                #if UNITY_2021_1_OR_NEWER
                 multiSelect = true,
-                #endif
-                elementHeightCallback = index => EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(index)),
+                elementHeightCallback = index => GetPropertyHeight(property, index),
                 onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction),
                 drawHeaderCallback = rect => headerRect = rect,
                 drawElementCallback = (rect, index, isActive, isFocused) =>
                 {
                     rect.x += 8;
                     rect.width -= 8;
-                    var elementProperty = property.GetArrayElementAtIndex(index);
+                    using var elementProperty = property.GetArrayElementAtIndex(index);
                     rect.y += GUI_SPACE * 0.5f;
                     rect.height -= GUI_SPACE;
                     EditorGUI.PropertyField(rect, elementProperty);
@@ -128,9 +126,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             bool isOverMaxMultiEditLimit = list.serializedProperty != null &&
-                #if UNITY_2022_3_OR_NEWER
                 list.serializedProperty.minArraySize > list.serializedProperty.serializedObject.maxArraySizeForMultiEditing &&
-                #endif
                 list.serializedProperty.serializedObject.isEditingMultipleObjects;
 
             var rectNum = new Rect(rect.xMax - EditorGUIUtility.fieldWidth + EditorGUIUtility.standardVerticalSpacing * 3, rect.y, EditorGUIUtility.fieldWidth, rect.height);

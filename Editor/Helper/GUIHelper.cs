@@ -12,7 +12,7 @@ namespace jp.lilxyzw.lilycalinventory
         private const float INDENT_WIDTH = 15f;
         private static readonly float GUI_SPACE = EditorGUIUtility.standardVerticalSpacing;
         internal static readonly float propertyHeight = EditorGUIUtility.singleLineHeight;
-        private static readonly GUIContent hideContent = new GUIContent(" ");
+        private static readonly GUIContent hideContent = new(" ");
 
         // 汎用的なFoldout
         private static bool Foldout(Rect position, SerializedProperty property, bool drawFoldout, GUIContent content = null)
@@ -70,7 +70,7 @@ namespace jp.lilxyzw.lilycalinventory
         // 再帰的にFoldoutを開く
         private static void SetExpandedRecurse(SerializedProperty property, bool expanded)
         {
-            SerializedProperty iter = property.Copy();
+            using var iter = property.Copy();
             iter.isExpanded = expanded;
             int depth = iter.depth;
             bool visitChild = true;
@@ -84,14 +84,15 @@ namespace jp.lilxyzw.lilycalinventory
         // 子を取得しつつFieldを表示
         internal static bool ChildField(Rect position, SerializedProperty property, string childName)
         {
-            var p = property.FPR(childName);
+            using var p = property.FPR(childName);
             return EditorGUI.PropertyField(position, p, Localization.G(p));
         }
 
         // ラベルなしでFieldを表示
         internal static bool ChildFieldOnly(Rect position, SerializedProperty property, string childName)
         {
-            return EditorGUI.PropertyField(position, property.FPR(childName), GUIContent.none);
+            using var p = property.FPR(childName);
+            return EditorGUI.PropertyField(position, p, GUIContent.none);
         }
 
         // プレースホルダ付きのTextField
@@ -127,7 +128,7 @@ namespace jp.lilxyzw.lilycalinventory
             // 配列の描画
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                var prop = property.Copy();
+                using var prop = property.Copy();
                 var arrayElementType = prop.arrayElementType;
 
                 // 参照でない場合はD&D非対応
@@ -169,7 +170,8 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                List(property.Copy(), drawFoldout);
+                using var copy = property.Copy();
+                List(copy, drawFoldout);
             }
             else
             {
@@ -181,12 +183,25 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                return GetListHeight(property.Copy(), drawFoldout) + GetSpaceHeight();
+                using var copy = property.Copy();
+                return GetListHeight(copy, drawFoldout) + GetSpaceHeight();
             }
             else
             {
                 return EditorGUI.GetPropertyHeight(property) + GetSpaceHeight();
             }
+        }
+
+        internal static float GetPropertyHeight(SerializedProperty property, string name)
+        {
+            using var prop = property.FindPropertyRelative(name);
+            return EditorGUI.GetPropertyHeight(prop);
+        }
+
+        internal static float GetPropertyHeight(SerializedProperty property, int i)
+        {
+            using var prop = property.GetArrayElementAtIndex(i);
+            return EditorGUI.GetPropertyHeight(prop);
         }
 
         // ラベルなし
@@ -241,9 +256,16 @@ namespace jp.lilxyzw.lilycalinventory
                         var exists = new List<Object>();
                         for(int i = 0; i < property.arraySize; i++)
                         {
-                            var obj = property.GetArrayElementAtIndex(i);
-                            if(!string.IsNullOrEmpty(childName)) obj = obj.FPR(childName);
-                            if(obj.objectReferenceValue) exists.Add(obj.objectReferenceValue);
+                            using var obj = property.GetArrayElementAtIndex(i);
+                            if(string.IsNullOrEmpty(childName))
+                            {
+                                if(obj.objectReferenceValue) exists.Add(obj.objectReferenceValue);
+                            }
+                            else
+                            {
+                                using var child = obj.FPR(childName);
+                                if(child.objectReferenceValue) exists.Add(child.objectReferenceValue);
+                            }
                         }
 
                         // 既存要素と重複するものは除外
@@ -251,9 +273,13 @@ namespace jp.lilxyzw.lilycalinventory
                         foreach(var o in objectsToAdd)
                         {
                             property.InsertArrayElementAtIndex(property.arraySize);
-                            var current = property.GetArrayElementAtIndex(property.arraySize - 1);
+                            using var current = property.GetArrayElementAtIndex(property.arraySize - 1);
                             if(initializeFunction != null) initializeFunction.Invoke(current);
-                            if(!string.IsNullOrEmpty(childName)) current.FPR(childName).objectReferenceValue = o;
+                            if(!string.IsNullOrEmpty(childName))
+                            {
+                                using var child = current.FPR(childName);
+                                child.objectReferenceValue = o;
+                            }
                             else current.objectReferenceValue = o;
                         }
                         e.Use();

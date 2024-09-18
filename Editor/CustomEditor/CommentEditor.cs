@@ -15,12 +15,6 @@ namespace jp.lilxyzw.lilycalinventory
     internal class CommentEditor : Editor
     {
         private static bool isEditing = false;
-        private static Texture2D m_IconInfo;
-        private static Texture2D m_IconWarn;
-        private static Texture2D m_IconError;
-        private static Texture2D iconInfo => m_IconInfo ? m_IconInfo : m_IconInfo = (Texture2D)EditorGUIUtility.LoadRequired("console.infoicon");
-        private static Texture2D iconWarn => m_IconWarn ? m_IconWarn : m_IconWarn = (Texture2D)EditorGUIUtility.LoadRequired("console.warnicon");
-        private static Texture2D iconError => m_IconError ? m_IconError : m_IconError = (Texture2D)EditorGUIUtility.LoadRequired("console.erroricon");
         private VisualElement veRoot;
         private VisualElement veEditmode;
         private VisualElement veNoComment;
@@ -50,8 +44,8 @@ namespace jp.lilxyzw.lilycalinventory
 
         private void DrawComment()
         {
-            var messageType = serializedObject.FindProperty("messageType");
-            var comments = serializedObject.FindProperty("comments");
+            using var messageType = serializedObject.FindProperty("messageType");
+            using var comments = serializedObject.FindProperty("comments");
 
             if(comments.arraySize == 0)
             {
@@ -64,13 +58,13 @@ namespace jp.lilxyzw.lilycalinventory
             veComment.style.display = DisplayStyle.Flex;
 
             var currentCode = Localization.GetCurrentCode();
-            var end = comments.GetEndProperty();
+            using var end = comments.GetEndProperty();
             var comment = comments.GetArrayElementAtIndex(0);
-            var first = comment.Copy();
+            using var first = comment.Copy();
             bool isFound = false;
             while(comment.NextVisible(false) && !SerializedProperty.EqualContents(comment, end))
             {
-                if(!comment.FPR("langcode").stringValue.Equals(currentCode, StringComparison.OrdinalIgnoreCase)) continue;
+                if(!comment.GetStringInProperty("langcode").Equals(currentCode, StringComparison.OrdinalIgnoreCase)) continue;
                 isFound = true;
                 break;
             }
@@ -79,11 +73,11 @@ namespace jp.lilxyzw.lilycalinventory
             veCommentRoot.Clear();
             if(messageType.intValue == (int)Comment.MessageType.Markdown)
             {
-                veCommentRoot.Add(MarkdownViewer.Draw(comment.FPR("text").stringValue));
+                veCommentRoot.Add(MarkdownViewer.Draw(comment.GetStringInProperty("text")));
             }
             else
             {
-                veCommentRoot.Add(new CustomHelpBox(comment.FPR("text").stringValue, (MessageType)messageType.intValue, true));
+                veCommentRoot.Add(new CustomHelpBox(comment.GetStringInProperty("text"), (MessageType)messageType.intValue, true));
             }
         }
 
@@ -99,8 +93,10 @@ namespace jp.lilxyzw.lilycalinventory
             // 編集用のGUI
             veEditmode.Add(new CustomHelpBox(Localization.S("inspector.commentInformation"), MessageType.Info));
             veEditmode.Add(new IMGUIContainer(() => {
-                GUIHelper.AutoField(serializedObject.FindProperty("messageType"));
-                GUIHelper.AutoField(serializedObject.FindProperty("comments"));
+                using var messageType = serializedObject.FindProperty("messageType");
+                using var comments = serializedObject.FindProperty("comments");
+                GUIHelper.AutoField(messageType);
+                GUIHelper.AutoField(comments);
                 serializedObject.ApplyModifiedProperties();
             }));
 
@@ -166,8 +162,8 @@ namespace jp.lilxyzw.lilycalinventory
         private static string[] codes = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(c => c.Name).ToArray();
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var langcode = property.FPR(PROP_LANGCODE);
-            var text = property.FPR(PROP_TEXT);
+            using var langcode = property.FPR(PROP_LANGCODE);
+            using var text = property.FPR(PROP_TEXT);
 
             var code = langcode.stringValue;
             if(codes.Any(c => c.Equals(code, StringComparison.OrdinalIgnoreCase)))
@@ -187,7 +183,9 @@ namespace jp.lilxyzw.lilycalinventory
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return GUIHelper.GetAutoFieldHeight(property.FPR(PROP_LANGCODE)) + GUIHelper.GetAutoFieldHeight(property.FPR(PROP_TEXT));
+            using var langcode = property.FPR(PROP_LANGCODE);
+            using var text = property.FPR(PROP_TEXT);
+            return GUIHelper.GetAutoFieldHeight(langcode) + GUIHelper.GetAutoFieldHeight(text);
         }
     }
 

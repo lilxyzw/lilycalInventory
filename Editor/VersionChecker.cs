@@ -77,24 +77,18 @@ namespace jp.lilxyzw.lilycalinventory
         // 最新版をGitHubから取得
         private static IEnumerator GetLatestVersionInfo()
         {
-            using(UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_PACKAGE_JSON))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(ConstantValues.URL_PACKAGE_JSON);
+            yield return webRequest.SendWebRequest();
+            if(webRequest.result != UnityWebRequest.Result.ConnectionError)
             {
-                yield return webRequest.SendWebRequest();
-                #if UNITY_2020_2_OR_NEWER
-                if(webRequest.result != UnityWebRequest.Result.ConnectionError)
-                #else
-                if(!webRequest.isNetworkError)
-                #endif
+                try
                 {
-                    try
-                    {
-                        instance.latest = new SemVerParser(JsonUtility.FromJson<PackageInfo>(webRequest.downloadHandler.text).version);
-                    }
-                    catch(Exception e)
-                    {
-                        instance.latest = new SemVerParser("0.0.0");
-                        throw e;
-                    }
+                    instance.latest = new SemVerParser(JsonUtility.FromJson<PackageInfo>(webRequest.downloadHandler.text).version);
+                }
+                catch(Exception e)
+                {
+                    instance.latest = new SemVerParser("0.0.0");
+                    throw e;
                 }
             }
         }

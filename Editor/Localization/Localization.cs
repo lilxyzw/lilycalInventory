@@ -18,8 +18,8 @@ namespace jp.lilxyzw.lilycalinventory
         private static string PATH_SETTING => $"{PATH_PREF}/{FILENAME_SETTING}";
 
         // 言語
-        private static List<Dictionary<string, string>> languages = new List<Dictionary<string, string>>();
-        private static List<string> codes = new List<string>();
+        private static readonly List<Dictionary<string, string>> languages = new();
+        private static readonly List<string> codes = new();
         private static string[] names;
         private static int number;
         private static bool isLoaded = false;
@@ -189,23 +189,17 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void SaveFile(string path, string content)
         {
-            using(var fs = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
-            {
-                fs.SetLength(0);
-                using(var sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(content);
-                }
-            }
+            using var fs = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+            fs.SetLength(0);
+            using var sw = new StreamWriter(fs, Encoding.UTF8);
+            sw.Write(content);
         }
 
         internal static string LoadFile(string path)
         {
-            using(var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using(var sr = new StreamReader(fs, Encoding.UTF8))
-            {
-                return sr.ReadToEnd();
-            }
+            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var sr = new StreamReader(fs, Encoding.UTF8);
+            return sr.ReadToEnd();
         }
     }
 

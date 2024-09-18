@@ -10,7 +10,11 @@ namespace jp.lilxyzw.lilycalinventory
     [CustomEditor(typeof(AvatarTagComponent), true)] [CanEditMultipleObjects]
     internal class BaseEditor : Editor
     {
-        private static Dictionary<MenuFolder, List<MenuBaseComponent>> menuChildren = new Dictionary<MenuFolder, List<MenuBaseComponent>>();
+        private static string ndmfVersion = "";
+        private static string NdmfVersion => string.IsNullOrEmpty(ndmfVersion) ? ndmfVersion = AsmdefReader.Asmdef_LI.versionDefines.FirstOrDefault(v => v.define == "LIL_NDMF").expression : ndmfVersion;
+        private static string maVersion = "";
+        private static string MAVersion => string.IsNullOrEmpty(maVersion) ? maVersion = AsmdefReader.Asmdef_LI.versionDefines.FirstOrDefault(v => v.define == "LIL_MODULAR_AVATAR").expression : maVersion;
+        private static readonly Dictionary<MenuFolder, List<MenuBaseComponent>> menuChildren = new();
         void OnDisable()
         {
             OnDisableInternal();
@@ -31,6 +35,13 @@ namespace jp.lilxyzw.lilycalinventory
             VersionChecker.DrawGUI();
             Localization.SelectLanguageGUI();
 
+            #if !LIL_MODULAR_AVATAR && LIL_MODULAR_AVATAR_ANY
+            EditorGUILayout.HelpBox(string.Format(Localization.S("inspector.maTooOld"), MAVersion), MessageType.Error);
+            #endif
+            #if !LIL_NDMF && LIL_NDMF_ANY
+            EditorGUILayout.HelpBox(string.Format(Localization.S("inspector.ndmfTooOld"), NdmfVersion), MessageType.Error);
+            #endif
+
             // AutoDresser用の警告
             // オンになっているオブジェクトが1つだけでない場合に初期衣装を決定できないためエラーを表示
             if(target is AutoDresser dresser)
@@ -43,7 +54,9 @@ namespace jp.lilxyzw.lilycalinventory
                     foreach(var d in root.GetComponentsInChildren<AutoDresser>(true))
                     {
                         if(!d.enabled || d.IsEditorOnly()) continue;
-                        var a = PreviewHelper.GetFromContainer(d.gameObject, new SerializedObject(d.gameObject).FindProperty("m_IsActive").propertyPath);
+                        using var so = new SerializedObject(d.gameObject);
+                        using var sp = so.FindProperty("m_IsActive");
+                        var a = PreviewHelper.GetFromContainer(d.gameObject, sp.propertyPath);
                         if(a is bool activeSelf && activeSelf) activeCount++;
                         if(a == null && d.gameObject.activeSelf) activeCount++;
                     }
@@ -188,7 +201,7 @@ namespace jp.lilxyzw.lilycalinventory
             EditorGUILayout.ObjectField(obj, obj.GetType(), true);
             EditorGUI.EndDisabledGroup();
 
-            var so = new SerializedObject(obj);
+            using var so = new SerializedObject(obj);
             so.UpdateIfRequiredOrScript();
 
             var iterator = so.GetIterator();
@@ -210,7 +223,7 @@ namespace jp.lilxyzw.lilycalinventory
 
                 EditorGUILayout.BeginVertical();
                 #if LIL_MODULAR_AVATAR
-                bool isOverridedByMA = so.FindProperty("parentOverrideMA").objectReferenceValue;
+                bool isOverridedByMA = so.GetObjectInProperty("parentOverrideMA");
                 #else
                 bool isOverridedByMA = false;
                 #endif

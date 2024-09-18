@@ -80,7 +80,7 @@ namespace jp.lilxyzw.lilycalinventory
             bool isGenerateParameter = property.serializedObject.targetObject is IGenerateParameter;
             string key = isGenerateParameter ? "inspector.menuParameterName" : "inspector.menuName";
             #if LIL_MODULAR_AVATAR
-            bool overrideMA = property.serializedObject.FindProperty("parentOverrideMA").objectReferenceValue;
+            bool overrideMA = property.serializedObject.GetObjectInProperty("parentOverrideMA");
             if(overrideMA && isGenerateParameter) key = "inspector.parameterName";
             if(overrideMA && !isGenerateParameter) EditorGUI.BeginDisabledGroup(true);
             #endif
@@ -98,21 +98,21 @@ namespace jp.lilxyzw.lilycalinventory
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var path = property.propertyPath.Substring(0, property.propertyPath.Length - property.name.Length);
-            var copy = property.serializedObject.FindProperty(path + "parametersPerMenu");
+            using var copy = property.serializedObject.FindProperty(path + "parametersPerMenu");
             string name = property.stringValue;
 
             if(string.IsNullOrEmpty(name))
             {
-                var autoDresser = property.serializedObject.FindProperty(path + "autoDresser").objectReferenceValue as AutoDresser;
+                var autoDresser = property.serializedObject.GetObjectInProperty(path + "autoDresser") as AutoDresser;
                 if(autoDresser) name = autoDresser.GetMenuName();
             }
 
             if(string.IsNullOrEmpty(name))
             {
-                var togglers = copy.FPR("objects");
+                using var togglers = copy.FPR("objects");
                 for(int i = 0; i < togglers.arraySize; i++)
                 {
-                    var obj = togglers.GetArrayElementAtIndex(i).FPR("obj").objectReferenceValue;
+                    var obj = togglers.GetObjectInProperty(i, "obj");
                     if(!obj || string.IsNullOrEmpty(obj.name)) continue;
                     name = obj.name;
                     break;
@@ -121,13 +121,13 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var modifiers = copy.FPR("blendShapeModifiers");
+                using var modifiers = copy.FPR("blendShapeModifiers");
                 for(int i = 0; i < modifiers.arraySize; i++)
                 {
-                    var nv = modifiers.GetArrayElementAtIndex(i).FPR("blendShapeNameValues");
+                    using var nv = modifiers.GetPropertyInArrayElement(i, "blendShapeNameValues");
                     for(int j = 0; j < nv.arraySize; j++)
                     {
-                        var nameTemp = nv.GetArrayElementAtIndex(j).FPR("name").stringValue;
+                        var nameTemp = nv.GetStringInProperty(j, "name");
                         if(string.IsNullOrEmpty(nameTemp)) continue;
                         name = nameTemp;
                         break;
@@ -138,13 +138,13 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var replacers = copy.FPR("materialReplacers");
+                using var replacers = copy.FPR("materialReplacers");
                 for(int i = 0; i < replacers.arraySize; i++)
                 {
-                    var t = replacers.GetArrayElementAtIndex(i).FPR("replaceTo");
+                    using var t = replacers.GetPropertyInArrayElement(i, "replaceTo");
                     for(int j = 0; j < t.arraySize; j++)
                     {
-                        var m = t.GetArrayElementAtIndex(j).objectReferenceValue;
+                        var m = t.GetObjectInProperty(j);
                         if(!m || string.IsNullOrEmpty(m.name)) continue;
                         name = m.name;
                         break;
@@ -155,13 +155,13 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var modifiers = copy.FPR("materialPropertyModifiers");
+                using var modifiers = copy.FPR("materialPropertyModifiers");
                 for(int i = 0; i < modifiers.arraySize; i++)
                 {
-                    var m = modifiers.GetArrayElementAtIndex(i).FPR("floatModifiers");
+                    using var m = modifiers.GetPropertyInArrayElement(i, "floatModifiers");
                     for(int j = 0; j < m.arraySize; j++)
                     {
-                        var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;
+                        var n = m.GetStringInProperty(j, "propertyName");
                         if(string.IsNullOrEmpty(n)) continue;
                         name = n;
                         break;
@@ -172,13 +172,13 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
-                var modifiers = copy.FPR("materialPropertyModifiers");
+                using var modifiers = copy.FPR("materialPropertyModifiers");
                 for(int i = 0; i < modifiers.arraySize; i++)
                 {
-                    var m = modifiers.GetArrayElementAtIndex(i).FPR("vectorModifiers");
+                    using var m = modifiers.GetPropertyInArrayElement(i, "vectorModifiers");
                     for(int j = 0; j < m.arraySize; j++)
                     {
-                        var n = m.GetArrayElementAtIndex(j).FPR("propertyName").stringValue;
+                        var n = m.GetStringInProperty(j, "propertyName");
                         if(string.IsNullOrEmpty(n)) continue;
                         name = n;
                         break;
@@ -259,8 +259,8 @@ namespace jp.lilxyzw.lilycalinventory
                     break;
                 case SerializedPropertyType.Integer:
                     var attr = attribute as DefaultValueAttribute;
-                    var size = property.serializedObject.FindProperty(attr.array).arraySize;
-                    property.intValue = EditorGUI.IntSlider(position, Localization.G("inspector.defaultInt"), property.intValue, 0, size - 1);
+                    using(var array = property.serializedObject.FindProperty(attr.array))
+                    property.intValue = EditorGUI.IntSlider(position, Localization.G("inspector.defaultInt"), property.intValue, 0, array.arraySize - 1);
                     if(property.intValue != 0)
                     {
                         position.NewLine();
@@ -302,7 +302,7 @@ namespace jp.lilxyzw.lilycalinventory
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var attr = attribute as LILDisableWhenAttribute;
-            var prop = property.serializedObject.FindProperty(attr.propertyPath);
+            using var prop = property.serializedObject.FindProperty(attr.propertyPath);
             if(prop != null)
             {
                 switch(prop.propertyType)

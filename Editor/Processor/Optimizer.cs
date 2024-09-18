@@ -41,60 +41,56 @@ namespace jp.lilxyzw.lilycalinventory
         // シェーダーで使われていないプロパティを除去
         private static void RemoveUnusedProperties(Material material, Dictionary<Shader, ShaderPropertyContainer> propMap)
         {
-            using(var so = new SerializedObject(material))
+            using var so = new SerializedObject(material);
+            so.Update();
+            using var savedProps = so.FindProperty("m_SavedProperties");
+            if(material.shader)
             {
-                so.Update();
-                using(var savedProps = so.FindProperty("m_SavedProperties"))
-                if(material.shader)
-                {
-                    var dic = propMap[material.shader];
-                    DeleteUnused(savedProps, "m_TexEnvs", dic.textures);
-                    DeleteUnused(savedProps, "m_Floats", dic.floats);
-                    DeleteUnused(savedProps, "m_Colors", dic.vectors);
-                }
-                else
-                {
-                    DeleteAll(savedProps, "m_TexEnvs");
-                    DeleteAll(savedProps, "m_Floats");
-                    DeleteAll(savedProps, "m_Colors");
-                }
-                so.ApplyModifiedProperties();
+                var dic = propMap[material.shader];
+                DeleteUnused(savedProps, "m_TexEnvs", dic.textures);
+                DeleteUnused(savedProps, "m_Floats", dic.floats);
+                DeleteUnused(savedProps, "m_Colors", dic.vectors);
             }
+            else
+            {
+                DeleteAll(savedProps, "m_TexEnvs");
+                DeleteAll(savedProps, "m_Floats");
+                DeleteAll(savedProps, "m_Colors");
+            }
+            so.ApplyModifiedProperties();
         }
 
         private static void DeleteUnused(SerializedProperty prop, string name, HashSet<string> names)
         {
-            using(var props = prop.FPR(name))
+            using var props = prop.FPR(name);
+            if(props.arraySize == 0) return;
+            int i = 0;
+            var size = props.arraySize;
+            var p = props.GetArrayElementAtIndex(i);
+            void DeleteUnused()
             {
-                if(props.arraySize == 0) return;
-                int i = 0;
-                var size = props.arraySize;
-                var p = props.GetArrayElementAtIndex(i);
-                void DeleteUnused()
+                if(!names.Contains(p.GetStringInProperty("first")))
                 {
-                    using(var first = p.FPR("first"))
-                    if(!names.Contains(first.stringValue))
+                    p.DeleteCommand();
+                    if(i < --size)
                     {
-                        p.DeleteCommand();
-                        if(i < --size)
-                        {
-                            p = props.GetArrayElementAtIndex(i);
-                            DeleteUnused();
-                        }
-                    }
-                    else if(p.NextVisible(false))
-                    {
-                        if(++i < size) DeleteUnused();
+                        p = props.GetArrayElementAtIndex(i);
+                        DeleteUnused();
                     }
                 }
-                DeleteUnused();
-                p.Dispose();
+                else if(p.NextVisible(false))
+                {
+                    if(++i < size) DeleteUnused();
+                }
             }
+            DeleteUnused();
+            p.Dispose();
         }
 
         private static void DeleteAll(SerializedProperty prop, string name)
         {
-            using(var props = prop.FPR(name)) props.arraySize = 0;
+            using var props = prop.FPR(name);
+            props.arraySize = 0;
         }
     }
 

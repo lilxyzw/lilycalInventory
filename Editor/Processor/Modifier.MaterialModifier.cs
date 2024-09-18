@@ -47,24 +47,23 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void GatherProperties(MaterialModifier modifier, Dictionary<string,Object> textureOverride, Dictionary<string,float> floatOverride, Dictionary<string,Vector4> vectorOverride)
         {
-            var so = new SerializedObject(modifier.referenceMaterial);
-            so.Update();
-            var savedProps = so.FindProperty("m_SavedProperties");
+            using var so = new SerializedObject(modifier.referenceMaterial);
+            using var savedProps = so.FindProperty("m_SavedProperties");
 
             savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(modifier.properties.Contains(name))
                     textureOverride[name] = p.FindPropertyRelative("second.m_Texture").objectReferenceValue;
             });
 
             savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(modifier.properties.Contains(name))
                     floatOverride[name] = p.FindPropertyRelative("second").floatValue;
             });
 
             savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(modifier.properties.Contains(name))
                     vectorOverride[name] = p.FindPropertyRelative("second").colorValue;
             });
@@ -72,24 +71,24 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void ModifyProperties(Material material, Dictionary<string,Object> textureOverride, Dictionary<string,float> floatOverride, Dictionary<string,Vector4> vectorOverride)
         {
-            var so = new SerializedObject(material);
+            using var so = new SerializedObject(material);
             so.Update();
             var savedProps = so.FindProperty("m_SavedProperties");
 
             savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(textureOverride.ContainsKey(name))
                     p.FindPropertyRelative("second.m_Texture").objectReferenceValue = textureOverride[name];
             });
 
             savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(floatOverride.ContainsKey(name))
                     p.FindPropertyRelative("second").floatValue = floatOverride[name];
             });
 
             savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
-                var name = p.FPR("first").stringValue;
+                var name = p.GetStringInProperty("first");
                 if(vectorOverride.ContainsKey(name))
                     p.FindPropertyRelative("second").colorValue = vectorOverride[name];
             });

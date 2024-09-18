@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace jp.lilxyzw.lilycalinventory
 {
-    using runtime;
-
     internal static partial class ObjHelper
     {
         // FindPropertyRelativeが長いわりに使い所がかなり多いので省略できるように
@@ -25,7 +21,10 @@ namespace jp.lilxyzw.lilycalinventory
             prop.arraySize = size;
             if(initializeFunction != null && size > arraySize)
                 for(int i = arraySize; i < size; i++)
-                    initializeFunction.Invoke(prop.GetArrayElementAtIndex(i));
+                {
+                    using var element = prop.GetArrayElementAtIndex(i);
+                    initializeFunction.Invoke(element);
+                }
         }
 
         // 配列から全オブジェクト名を取得
@@ -34,7 +33,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(property.arraySize == 0) return new[]{"Empty"};
             var names = new List<string>();
             for(int i = 0; i < property.arraySize; i++)
-                names.Add(property.GetArrayElementAtIndex(i).objectReferenceValue.TryGetName());
+                names.Add(property.GetObjectInProperty(i).TryGetName());
             return names.ToArray();
         }
 
@@ -43,8 +42,8 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.arraySize == 0) return;
             int i = 0;
-            using(var prop = property.GetArrayElementAtIndex(0))
-            using(var end = property.GetEndProperty())
+            using var prop = property.GetArrayElementAtIndex(0);
+            using var end = property.GetEndProperty();
             {
                 function.Invoke(prop,i);
                 while(prop.NextVisible(false) && !SerializedProperty.EqualContents(prop, end))
@@ -55,37 +54,61 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        #if LIL_AVATAR_MODIFIER
-        [MenuItem("Tools/lilycalInventory/Migrate From lilAvatarModifier")]
-        private static void Test()
+        // 配列要素内のプロパティを取得
+        internal static SerializedProperty GetPropertyInArrayElement(this SerializedProperty serializedProperty, int i, string name)
         {
-            if(!Selection.activeGameObject) return;
-            const string NAME_SPACE = "jp.lilxyzw.avatarmodifier.runtime";
-            var assembly = Assembly.Load(NAME_SPACE);
-            ReplaceScript<AutoDresser>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.AutoDresser");
-            ReplaceScript<CostumeChanger>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.CostumeChanger");
-            ReplaceScript<ItemToggler>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.ItemToggler");
-            ReplaceScript<MaterialModifier>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.MaterialModifier");
-            ReplaceScript<MaterialOptimizer>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.MaterialOptimizer");
-            ReplaceScript<MenuFolder>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.MenuFolder");
-            ReplaceScript<Prop>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.Prop");
-            ReplaceScript<SmoothChanger>(Selection.activeGameObject, assembly, $"{NAME_SPACE}.SmoothChanger");
+            using var element = serializedProperty.GetArrayElementAtIndex(i);
+            return element.FPR(name);
         }
 
-        private static void ReplaceScript<T>(GameObject gameObject, Assembly assembly, string classname) where T : MonoBehaviour
+        // オブジェクトを取得
+        internal static Object GetObjectInProperty(this SerializedObject serializedObject, string name)
         {
-            var tempobj = new GameObject();
-            var components = gameObject.GetComponentsInChildren(assembly.GetType(classname), true);
-            var monoScript = MonoScript.FromMonoBehaviour(tempobj.AddComponent<T>());
-            foreach(var component in components)
-            {
-                var so = new SerializedObject(component);
-                so.Update();
-                so.FindProperty("m_Script").objectReferenceValue = monoScript;
-                so.ApplyModifiedProperties();
-            }
-            Object.DestroyImmediate(tempobj);
+            using var prop = serializedObject.FindProperty(name);
+            return prop.objectReferenceValue;
         }
-        #endif
+
+        internal static Object GetObjectInProperty(this SerializedProperty serializedProperty, string name)
+        {
+            using var prop = serializedProperty.FPR(name);
+            return prop.objectReferenceValue;
+        }
+
+        internal static Object GetObjectInProperty(this SerializedProperty serializedProperty, int i)
+        {
+            using var prop = serializedProperty.GetArrayElementAtIndex(i);
+            return prop.objectReferenceValue;
+        }
+
+        internal static Object GetObjectInProperty(this SerializedProperty serializedProperty, int i, string name)
+        {
+            using var prop = serializedProperty.GetPropertyInArrayElement(i, name);
+            return prop.objectReferenceValue;
+        }
+
+        // stringValueを取得
+        internal static string GetStringInProperty(this SerializedObject serializedObject, string name)
+        {
+            using var prop = serializedObject.FindProperty(name);
+            return prop.stringValue;
+        }
+
+        internal static string GetStringInProperty(this SerializedProperty serializedProperty, string name)
+        {
+            using var prop = serializedProperty.FPR(name);
+            return prop.stringValue;
+        }
+
+        internal static string GetStringInProperty(this SerializedProperty serializedProperty, int i)
+        {
+            using var prop = serializedProperty.GetArrayElementAtIndex(i);
+            return prop.stringValue;
+        }
+
+        internal static string GetStringInProperty(this SerializedProperty serializedProperty, int i, string name)
+        {
+            using var prop = serializedProperty.GetPropertyInArrayElement(i, name);
+            return prop.stringValue;
+        }
     }
 }

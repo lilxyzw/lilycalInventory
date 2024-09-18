@@ -15,11 +15,9 @@ namespace jp.lilxyzw.lilycalinventory
         public override string QualifiedName => ConstantValues.PACKAGE_NAME_FULL;
         public override string DisplayName => ConstantValues.TOOL_NAME;
 
-        #if LIL_NDMF_1_4_0
         // ロゴの色と同じ
         public override Texture2D LogoTexture => m_Logo ? m_Logo : m_Logo = AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath("c174ba1806ba8004db0ed2fa0832479d"));
         public override Color? ThemeColor => new Color(0.572f, 0.549f, 0.858f);
-        #endif
 
         protected override void Configure()
         {

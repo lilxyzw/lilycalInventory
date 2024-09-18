@@ -7,6 +7,8 @@
   "inspector.componentDisabled": "该组件已禁用，并将在构建过程中被忽略。如果要启用该组件，请勾选检查框。",
   "inspector.targetEditorOnly": "The object to be operated or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the Tag.",
   "inspector.targetAnimationClip": "The object to be operated or its parent object is already being operated by the following AnimationClip.",
+  "inspector.ndmfTooOld": "The installed version of NDMF is too old, please update to {0} or higher using VCC or ALCOM.",
+  "inspector.maTooOld": "The installed version of Modular Avatar is too old, please update to {0} or higher using VCC or ALCOM.",
 
   "inspector.referenceMaterial": "引用材质",
   "inspector.referenceMaterial.tooltip": "将从此处指定的材质中复制设定。",

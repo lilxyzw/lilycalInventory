@@ -11,7 +11,7 @@ namespace jp.lilxyzw.lilycalinventory
         // 言語ファイル読み込み専用なので他の型を読み込もうとすると失敗します
         internal static Dictionary<string, T> Deserialize<T>(string json)
         {
-            StringReader sr = new StringReader(json);
+            var sr = new StringReader(json);
             var obj = ParseAnyObject(sr, true);
             return CastDictionary<T>((Dictionary<string, object>)obj);
         }

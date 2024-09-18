@@ -273,9 +273,9 @@ namespace jp.lilxyzw.lilycalinventory
         private static bool isExpandedDetails = false;
         private static GameObject avatarRoot;
 
-        #if LIL_NDMF_1_4_0
+        #if LIL_NDMF
         private static IGrouping<PluginBase, ProvidedParameter>[] groups;
-        private static Dictionary<PluginBase,bool> isExpandeds = new Dictionary<PluginBase, bool>();
+        private static Dictionary<PluginBase,bool> isExpandeds = new();
 
         internal static void Draw(MenuBaseComponent component)
         {

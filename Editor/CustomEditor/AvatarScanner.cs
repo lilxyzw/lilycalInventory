@@ -9,9 +9,9 @@ namespace jp.lilxyzw.lilycalinventory
     {
         private static bool isInitialized = false;
         private static GameObject avatarRoot;
-        private static Dictionary<Object, IEnumerable<AnimationClip>> animatedObjects = new Dictionary<Object, IEnumerable<AnimationClip>>();
-        private static GUIContent HelpContentEditorOnly => new GUIContent(Localization.S("inspector.targetEditorOnly"), EditorGUIUtility.IconContent("console.warnicon").image);
-        private static GUIContent HelpContentAnimationClip => new GUIContent(Localization.S("inspector.targetAnimationClip"), EditorGUIUtility.IconContent("console.warnicon").image);
+        private static Dictionary<Object, IEnumerable<AnimationClip>> animatedObjects = new();
+        private static GUIContent HelpContentEditorOnly => new(Localization.S("inspector.targetEditorOnly"), EditorGUIUtility.IconContent("console.warnicon").image);
+        private static GUIContent HelpContentAnimationClip => new(Localization.S("inspector.targetAnimationClip"), EditorGUIUtility.IconContent("console.warnicon").image);
 
         internal static void Draw(Object[] targets)
         {

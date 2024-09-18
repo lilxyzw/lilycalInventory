@@ -1,4 +1,4 @@
-#if LIL_NDMF_1_4_0
+#if LIL_NDMF
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -118,7 +118,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
-                new ProvidedParameter(
+                new(
                     component.GetMenuName(),
                     ParameterNamespace.Animator,
                     component,
@@ -135,7 +135,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(!component.IsEnabledInBuild()) return new ProvidedParameter[0];
             return new ProvidedParameter[]{
-                new ProvidedParameter(
+                new(
                     component.GetMenuName(),
                     ParameterNamespace.Animator,
                     component,

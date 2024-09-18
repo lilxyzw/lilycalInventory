@@ -1,12 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using System.Globalization;
-#if !UNITY_2020_1_OR_NEWER
-using AnimationModeDriver = UnityEngine.Object;
-#endif
 
 namespace jp.lilxyzw.lilycalinventory
 {
@@ -21,34 +17,13 @@ namespace jp.lilxyzw.lilycalinventory
         private static float previewFrame = 0;
 
         // オブジェクト変更状況を外部から辿れるようにする
-        private static readonly Dictionary<Object, Dictionary<string, object>> valueContainer = new Dictionary<Object, Dictionary<string, object>>();
+        private static readonly Dictionary<Object, Dictionary<string, object>> valueContainer = new();
 
         [SerializeField] private AnimationModeDriver driver;
         private AnimationModeDriver Driver => driver ? driver : driver = CreateDriver();
-        #if UNITY_2020_1_OR_NEWER
         private AnimationModeDriver CreateDriver() => CreateInstance<AnimationModeDriver>();
         private static void StartAnimationMode(AnimationModeDriver driver) => AnimationMode.StartAnimationMode(driver);
         private static void StopAnimationMode(AnimationModeDriver driver) => AnimationMode.StopAnimationMode(driver);
-        #else
-        private AnimationModeDriver CreateDriver() => CreateInstance(typeof(AnimationMode).Assembly.GetType("UnityEditor.AnimationModeDriver"));
-        private static MethodInfo startAnimationMode = null;
-        private static MethodInfo stopAnimationMode = null;
-        private static void StartAnimationMode(AnimationModeDriver driver)
-        {
-            if(startAnimationMode == null)
-                startAnimationMode = typeof(AnimationMode).GetMethod("StartAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
-            if(startAnimationMode != null) startAnimationMode.Invoke(null, new object[]{driver});
-            else AnimationMode.StartAnimationMode();
-        }
-
-        private static void StopAnimationMode(AnimationModeDriver driver)
-        {
-            if(stopAnimationMode == null)
-                stopAnimationMode = typeof(AnimationMode).GetMethod("StopAnimationMode", BindingFlags.Static | BindingFlags.NonPublic, null, new[]{typeof(AnimationModeDriver)}, null);
-            if(stopAnimationMode != null) stopAnimationMode.Invoke(null, new object[]{driver});
-            else AnimationMode.StopAnimationMode();
-        }
-        #endif
 
         private void StartPreview(ParametersPerMenu parameter)
         {
@@ -197,7 +172,9 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(!toggler.obj) continue;
                 var binding = AnimationHelper.CreateToggleBinding(toggler.obj);
-                AddPropertyModification(binding, toggler.obj, new SerializedObject(toggler.obj).FindProperty("m_IsActive").propertyPath, toggler.obj.activeSelf);
+                using var so = new SerializedObject(toggler.obj);
+                using var m_IsActive = so.FindProperty("m_IsActive");
+                AddPropertyModification(binding, toggler.obj, m_IsActive.propertyPath, toggler.obj.activeSelf);
                 toggler.obj.SetActive(toggler.value);
             }
 
@@ -213,10 +190,12 @@ namespace jp.lilxyzw.lilycalinventory
                         {
                             var index = renderer.sharedMesh.GetBlendShapeIndex(namevalue.name);
                             if(index == -1) continue;
-                            var m_BlendShapeWeights = new SerializedObject(renderer).FindProperty("m_BlendShapeWeights");
+                            using var so = new SerializedObject(renderer);
+                            var m_BlendShapeWeights = so.FindProperty("m_BlendShapeWeights");
                             if(index >= m_BlendShapeWeights.arraySize) continue;
                             var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                            AddPropertyModification(binding, renderer, m_BlendShapeWeights.GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
+                            using var element = m_BlendShapeWeights.GetArrayElementAtIndex(index);
+                            AddPropertyModification(binding, renderer, element.propertyPath, renderer.GetBlendShapeWeight(index));
                             renderer.SetBlendShapeWeight(index, namevalue.value);
                         }
                     }
@@ -228,7 +207,10 @@ namespace jp.lilxyzw.lilycalinventory
                     var index = renderer.sharedMesh.GetBlendShapeIndex(namevalue.name);
                     if(index == -1) continue;
                     var binding = AnimationHelper.CreateBlendShapeBinding(renderer, namevalue.name);
-                    AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_BlendShapeWeights").GetArrayElementAtIndex(index).propertyPath, renderer.GetBlendShapeWeight(index));
+                    using var so = new SerializedObject(renderer);
+                    using var m_BlendShapeWeights = so.FindProperty("m_BlendShapeWeights");
+                    using var element = m_BlendShapeWeights.GetArrayElementAtIndex(index);
+                    AddPropertyModification(binding, renderer, element.propertyPath, renderer.GetBlendShapeWeight(index));
                     renderer.SetBlendShapeWeight(index, namevalue.value);
                 }
             }
@@ -242,7 +224,10 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(!replacer.replaceTo[i]) continue;
                     var binding = AnimationHelper.CreateMaterialReplaceBinding(replacer.renderer, i);
-                    AddPropertyModification(binding, replacer.renderer, new SerializedObject(replacer.renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, replacer.renderer.sharedMaterials[i]);
+                    using var so = new SerializedObject(replacer.renderer);
+                    using var m_BlendShapeWeights = so.FindProperty("m_Materials");
+                    using var element = m_BlendShapeWeights.GetArrayElementAtIndex(i);
+                    AddPropertyModification(binding, replacer.renderer, element.propertyPath, replacer.renderer.sharedMaterials[i]);
                     materials[i] = replacer.replaceTo[i];
                     modified = true;
                 }
@@ -264,7 +249,10 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         if(!materials[i]) continue;
                         var binding = AnimationHelper.CreateMaterialReplaceBinding(renderer, i);
-                        AddPropertyModification(binding, renderer, new SerializedObject(renderer).FindProperty("m_Materials").GetArrayElementAtIndex(i).propertyPath, renderer.sharedMaterials[i]);
+                        using var so = new SerializedObject(renderer);
+                        using var m_BlendShapeWeights = so.FindProperty("m_Materials");
+                        using var element = m_BlendShapeWeights.GetArrayElementAtIndex(i);
+                        AddPropertyModification(binding, renderer, element.propertyPath, renderer.sharedMaterials[i]);
                         var material = new Material(materials[i]);
                         foreach(var floatModifier in modifier.floatModifiers)
                         {

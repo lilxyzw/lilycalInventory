@@ -8,14 +8,12 @@ namespace jp.lilxyzw.lilycalinventory
     // 1フレームしか扱えないが高速で処理できる
     internal class InternalClip
     {
-        internal Dictionary<EditorCurveBinding,(float,Object,bool)> bindings = new Dictionary<EditorCurveBinding,(float,Object,bool)>();
+        internal readonly Dictionary<EditorCurveBinding,(float,Object,bool)> bindings = new();
         internal string name = "";
 
         internal AnimationClip ToClip()
         {
             var clip = new AnimationClip{name = name};
-
-            #if UNITY_2022_3_OR_NEWER
             var referenceBindings = new List<EditorCurveBinding>();
             var referenceCurves = new List<ObjectReferenceKeyframe[]>();
             var floatBindings = new List<EditorCurveBinding>();
@@ -38,22 +36,6 @@ namespace jp.lilxyzw.lilycalinventory
             }
             AnimationUtility.SetObjectReferenceCurves(clip, referenceBindings.ToArray(), referenceCurves.ToArray());
             AnimationUtility.SetEditorCurves(clip, floatBindings.ToArray(), floatCurves.ToArray());
-            #else
-            foreach(var b in bindings)
-            {
-                if(b.Value.Item3)
-                {
-                    var curve = new[]{new ObjectReferenceKeyframe{time = 0, value = b.Value.Item2}};
-                    AnimationUtility.SetObjectReferenceCurve(clip, b.Key, curve);
-                }
-                else
-                {
-                    var curve = new AnimationCurve();
-                    curve.AddKey(0, b.Value.Item1);
-                    AnimationUtility.SetEditorCurve(clip, b.Key, curve);
-                }
-            }
-            #endif
             return clip;
         }
 
@@ -74,7 +56,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var obj = AnimationUtility.GetAnimatedObject(root, binding);
                 if(obj)
                 {
-                    var prop = new SerializedObject(obj).FindProperty(binding.propertyName);
+                    using var so = new SerializedObject(obj);
+                    using var prop = so.FindProperty(binding.propertyName);
                     if(prop != null)
                     {
                         switch(prop.propertyType)
@@ -122,7 +105,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var obj = AnimationUtility.GetAnimatedObject(root, binding);
                 if(obj)
                 {
-                    var prop = new SerializedObject(obj).FindProperty(binding.propertyName);
+                    using var so = new SerializedObject(obj);
+                    using var prop = so.FindProperty(binding.propertyName);
                     if(prop != null && prop.propertyType == SerializedPropertyType.ObjectReference)
                     {
                         Add(binding, prop.objectReferenceValue);
