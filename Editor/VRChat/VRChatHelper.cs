@@ -101,6 +101,7 @@ namespace jp.lilxyzw.lilycalinventory
             var map = new Dictionary<Object,Object>();
             VRCExpressionsMenu CloneMenu(VRCExpressionsMenu menu)
             {
+                if(!menu) return menu;
                 menu = (VRCExpressionsMenu)Cloner.CloneObject(menu, ctx, map);
                 foreach(var control in menu.controls)
                 {
@@ -130,7 +131,7 @@ namespace jp.lilxyzw.lilycalinventory
             for(int i = 0; i < menu.controls.Count; i++)
             {
                 var control = menu.controls[i];
-                if(control.type != ControlType.SubMenu) continue;
+                if(control.type != ControlType.SubMenu || !control.subMenu) continue;
                 if(!firsts.ContainsKey(control.name))
                 {
                     firsts[control.name] = control.subMenu;
