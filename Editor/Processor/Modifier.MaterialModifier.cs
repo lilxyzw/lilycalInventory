@@ -23,13 +23,12 @@ namespace jp.lilxyzw.lilycalinventory
 
                 #if LIL_NDMF
                 // NDMF使用時はObjectRegistryでクローン前のマテリアルを追跡
-                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(ObjectRegistry.GetReference(m).Object as Material)).ToArray();
-                if(materialsMod.Length == 0) continue;
+                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(m) && !modifier.ignoreMaterials.Any(i => ObjectRegistry.GetReference(i) == ObjectRegistry.GetReference(m))).ToArray();
                 #else
                 // そうでない場合はクローンマップから追跡
-                var ignoreMaterials = modifier.ignoreMaterials.Where(m => m && Cloner.materialMap.ContainsKey(m)).Select(m => Cloner.materialMap[m]);
-                var materialsMod = materials.Except(ignoreMaterials).ToArray();
+                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(m) && !modifier.ignoreMaterials.Any(i => Cloner.materialMap.ContainsKey(i) && Cloner.materialMap[i] == m)).ToArray();
                 #endif
+                if(materialsMod.Length == 0) continue;
 
                 // 参照マテリアルからプロパティを取得
                 var textureOverride = new Dictionary<string,Object>();

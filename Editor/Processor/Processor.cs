@@ -207,7 +207,8 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void ModifyPostProcess(BuildContext ctx)
         {
             if(!shouldModify) return;
-            materials = Cloner.CloneAllMaterials(ctx);
+            if(modifiers.Length > 0 || optimizers.Length > 0)
+                materials = Cloner.CloneAllMaterials(ctx);
             Modifier.ApplyMaterialModifier(materials, modifiers);
             Modifier.ApplyMeshSettingsModifier(ctx.AvatarRootObject, meshSettings);
         }
@@ -222,7 +223,12 @@ namespace jp.lilxyzw.lilycalinventory
         // マテリアルから不要なプロパティを除去
         internal static void Optimize(BuildContext ctx)
         {
-            if(shouldModify && optimizers.Length != 0) Optimizer.OptimizeMaterials(materials, ctx);
+            if(!shouldModify || optimizers.Length == 0) return;
+            #if LIL_NDMF
+            // NDMF環境では動作タイミングが分かれているため再取得
+            materials = Cloner.CloneAllMaterials(ctx);
+            #endif
+            Optimizer.OptimizeMaterials(materials, ctx);
         }
     }
 }
