@@ -119,11 +119,11 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            using var objects = property.FPR("objects");
-            using var blendShapeModifiers = property.FPR("blendShapeModifiers");
-            using var materialReplacers = property.FPR("materialReplacers");
-            using var materialPropertyModifiers = property.FPR("materialPropertyModifiers");
-            using var clips = property.FPR("clips");
+            var objects = property.FPR("objects");
+            var blendShapeModifiers = property.FPR("blendShapeModifiers");
+            var materialReplacers = property.FPR("materialReplacers");
+            var materialPropertyModifiers = property.FPR("materialPropertyModifiers");
+            var clips = property.FPR("clips");
             position = GUIHelper.DragAndDropList(position, objects, true, "obj", prop =>
             {
                 prop.FPR("obj").objectReferenceValue = null;
@@ -145,16 +145,11 @@ namespace jp.lilxyzw.lilycalinventory
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            using var objects = property.FPR("objects");
-            using var blendShapeModifiers = property.FPR("blendShapeModifiers");
-            using var materialReplacers = property.FPR("materialReplacers");
-            using var materialPropertyModifiers = property.FPR("materialPropertyModifiers");
-            using var clips = property.FPR("clips");
-            return GUIHelper.GetListHeight(objects) +
-                GUIHelper.GetListHeight(blendShapeModifiers) +
-                GUIHelper.GetListHeight(materialReplacers) +
-                GUIHelper.GetListHeight(materialPropertyModifiers) +
-                GUIHelper.GetListHeight(clips) +
+            return GUIHelper.GetListHeight(property, "objects") +
+                GUIHelper.GetListHeight(property, "blendShapeModifiers") +
+                GUIHelper.GetListHeight(property, "materialReplacers") +
+                GUIHelper.GetListHeight(property, "materialPropertyModifiers") +
+                GUIHelper.GetListHeight(property, "clips") +
                 GUIHelper.GetSpaceHeight(3);
         }
     }
@@ -216,7 +211,7 @@ namespace jp.lilxyzw.lilycalinventory
             // Foldoutを表示
             if(!GUIHelper.FoldoutOnly(position, property)) return;
 
-            using var blendShapeNameValues = property.FPR("blendShapeNameValues");
+            var blendShapeNameValues = property.FPR("blendShapeNameValues");
             position = GUIHelper.List(position.NewLine(), blendShapeNameValues, false, prop =>
                 {
                     if(!mesh) return;
@@ -242,9 +237,8 @@ namespace jp.lilxyzw.lilycalinventory
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             if(!property.isExpanded) return GUIHelper.propertyHeight;
-            using var blendShapeNameValues = property.FPR("blendShapeNameValues");
             return GUIHelper.propertyHeight +
-                GUIHelper.GetListHeight(blendShapeNameValues) +
+                GUIHelper.GetListHeight(property, "blendShapeNameValues") +
                 GUIHelper.GetSpaceHeight(2);
         }
 

@@ -128,7 +128,7 @@ namespace jp.lilxyzw.lilycalinventory
             // 配列の描画
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                using var prop = property.Copy();
+                var prop = property.Copy();
                 var arrayElementType = prop.arrayElementType;
 
                 // 参照でない場合はD&D非対応
@@ -170,7 +170,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                using var copy = property.Copy();
+                var copy = property.Copy();
                 List(copy, drawFoldout);
             }
             else
@@ -183,7 +183,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                using var copy = property.Copy();
+                var copy = property.Copy();
                 return GetListHeight(copy, drawFoldout) + GetSpaceHeight();
             }
             else

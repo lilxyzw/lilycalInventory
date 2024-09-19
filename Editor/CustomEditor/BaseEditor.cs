@@ -91,7 +91,7 @@ namespace jp.lilxyzw.lilycalinventory
             var hasProperty = false;
 
             serializedObject.UpdateIfRequiredOrScript();
-            SerializedProperty iterator = serializedObject.GetIterator();
+            using var iterator = serializedObject.GetIterator();
             iterator.NextVisible(true); // Skip m_Script
 
             // メニュー系コンポーネントである場合はアイコン等を整理して表示
@@ -204,7 +204,7 @@ namespace jp.lilxyzw.lilycalinventory
             using var so = new SerializedObject(obj);
             so.UpdateIfRequiredOrScript();
 
-            var iterator = so.GetIterator();
+            using var iterator = so.GetIterator();
             iterator.NextVisible(true);
             DrawMenuBaseParameters(obj, so, iterator);
 

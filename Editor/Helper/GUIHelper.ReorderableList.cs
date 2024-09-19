@@ -11,7 +11,12 @@ namespace jp.lilxyzw.lilycalinventory
     {
         // プロパティごとの固有IDとListを保存して再生成を防ぐ
         private static readonly Dictionary<string, ReorderableList> reorderableLists = new();
-        internal static void ResetList() => reorderableLists.Clear();
+        internal static void ResetList()
+        {
+            foreach(var kv in reorderableLists)
+                kv.Value.serializedProperty.Dispose();
+            reorderableLists.Clear();
+        }
 
         internal static Rect List(Rect position, SerializedProperty property, bool drawFoldout, Action<SerializedProperty> initializeFunction = null)
         {
@@ -53,20 +58,40 @@ namespace jp.lilxyzw.lilycalinventory
                 TryGetReorderableList(property, initializeFunction).DoLayoutList();
         }
 
+        private static ReorderableList Get(SerializedProperty property)
+        {
+            var name = property.GetUniqueName();
+            if(!reorderableLists.ContainsKey(name)) return null;
+            var list = reorderableLists[name];
+            list.serializedProperty = property;
+            return list;
+        }
+
         private static ReorderableList TryGetReorderableList(SerializedProperty property, Action<SerializedProperty> initializeFunction)
         {
             var name = property.GetUniqueName();
             if(!reorderableLists.ContainsKey(name))
-                reorderableLists[name] = CreateReorderableList(property, initializeFunction);
-            return reorderableLists[name];
+                return reorderableLists[name] = CreateReorderableList(property, initializeFunction);
+            var list = reorderableLists[name];
+            list.serializedProperty = property;
+            return list;
         }
 
         internal static float GetListHeight(SerializedProperty property, bool drawFoldout = true)
         {
             if(drawFoldout && !property.isExpanded) return propertyHeight;
-            var name = property.GetUniqueName();
-            if(!reorderableLists.ContainsKey(name)) return EditorGUI.GetPropertyHeight(property);
-            return reorderableLists[name].GetHeight() + propertyHeight;
+            var list = Get(property);
+            if(list == null) return EditorGUI.GetPropertyHeight(property);
+            return list.GetHeight() + propertyHeight;
+        }
+
+        internal static float GetListHeight(SerializedProperty parent, string propertyName, bool drawFoldout = true)
+        {
+            using var property = parent.FPR(propertyName);
+            if(drawFoldout && !property.isExpanded) return propertyHeight;
+            var list = Get(property);
+            if(list == null) return EditorGUI.GetPropertyHeight(property);
+            return list.GetHeight() + propertyHeight;
         }
 
         private static ReorderableList CreateReorderableList(SerializedProperty property, Action<SerializedProperty> initializeFunction = null)
