@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2024-09-19
+### Changed
+- end of support for Unity 2019
+- optimize processing
+
+### Fixed
+- error when use VRCAnimatorPlayAudio #115
+- error when submenu is empty #116
+- supports materials being cloned by other tools
+- error due to circular reference in menu
+
 ## [1.2.0] - 2024-09-16
 ### Changed
 - Create folders if menu name contains slash
