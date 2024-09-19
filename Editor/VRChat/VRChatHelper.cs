@@ -99,34 +99,38 @@ namespace jp.lilxyzw.lilycalinventory
 
             // クローン
             var map = new Dictionary<Object,Object>();
-            VRCExpressionsMenu CloneMenu(VRCExpressionsMenu menu)
-            {
-                if(!menu) return menu;
-                menu = (VRCExpressionsMenu)Cloner.CloneObject(menu, ctx, map);
-                foreach(var control in menu.controls)
-                {
-                    if(control.type != ControlType.SubMenu) continue;
-                    control.subMenu = CloneMenu(control.subMenu);
-                }
-                return menu;
-            }
             ctx.AvatarDescriptor.expressionParameters = (VRCExpressionParameters)Cloner.CloneObject(ctx.AvatarDescriptor.expressionParameters, ctx, map);
-            ctx.AvatarDescriptor.expressionsMenu = CloneMenu(ctx.AvatarDescriptor.expressionsMenu);
+            ctx.AvatarDescriptor.expressionsMenu = CloneMenu(ctx.AvatarDescriptor.expressionsMenu, ctx, map, new HashSet<VRCExpressionsMenu>());
 
             // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
             if(descriptor.expressionsMenu) descriptor.expressionsMenu.Merge(menu);
             else descriptor.expressionsMenu = menu;
-            descriptor.expressionsMenu.CombineSubMenu();
-            descriptor.expressionsMenu.ResolveOver(ctx);
+            descriptor.expressionsMenu.CombineSubMenu(new HashSet<VRCExpressionsMenu>());
+            descriptor.expressionsMenu.ResolveOver(ctx, new HashSet<VRCExpressionsMenu>());
 
             // ExpressionParametetsも同様
             if(descriptor.expressionParameters) descriptor.expressionParameters.Merge(parameters);
             else descriptor.expressionParameters = parameters;
         }
 
-        private static void CombineSubMenu(this VRCExpressionsMenu menu)
+        private static VRCExpressionsMenu CloneMenu(VRCExpressionsMenu menu, BuildContext ctx, Dictionary<Object,Object> map, HashSet<VRCExpressionsMenu> visited)
+            {
+                if(!menu || visited.Contains(menu)) return menu;
+                visited.Add(menu);
+                menu = (VRCExpressionsMenu)Cloner.CloneObject(menu, ctx, map);
+                foreach(var control in menu.controls)
+                {
+                    if(control.type != ControlType.SubMenu) continue;
+                    control.subMenu = CloneMenu(control.subMenu, ctx, map, visited);
+                }
+                return menu;
+            }
+
+        private static void CombineSubMenu(this VRCExpressionsMenu menu, HashSet<VRCExpressionsMenu> visited)
         {
             // 同名のSubMenuを統合
+            if(!menu || visited.Contains(menu)) return;
+            visited.Add(menu);
             var firsts = new Dictionary<string, VRCExpressionsMenu>();
             for(int i = 0; i < menu.controls.Count; i++)
             {
@@ -143,12 +147,14 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             foreach(var child in menu.controls)
-                if(child.subMenu) child.subMenu.CombineSubMenu();
+                if(child.subMenu) child.subMenu.CombineSubMenu(visited);
         }
 
-        private static void ResolveOver(this VRCExpressionsMenu menu, BuildContext ctx)
+        private static void ResolveOver(this VRCExpressionsMenu menu, BuildContext ctx, HashSet<VRCExpressionsMenu> visited)
         {
             // メニュー項目がオーバーしてる場合は子メニューを作成してそこにオーバー分を入れる
+            if(!menu || visited.Contains(menu)) return;
+            visited.Add(menu);
             if(menu.controls.Count > VRCExpressionsMenu.MAX_CONTROLS)
             {
                 int last = VRCExpressionsMenu.MAX_CONTROLS - 1;
@@ -160,7 +166,7 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             foreach(var child in menu.controls)
-                if(child.subMenu) child.subMenu.ResolveOver(ctx);
+                if(child.subMenu) child.subMenu.ResolveOver(ctx, visited);
         }
 
         internal static VRCExpressionsMenu CreateMenu(BuildContext ctx, string name = ConstantValues.TOOL_NAME)
