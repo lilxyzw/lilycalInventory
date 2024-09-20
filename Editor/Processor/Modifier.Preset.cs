@@ -62,10 +62,12 @@ namespace jp.lilxyzw.lilycalinventory
                 driver.localOnly = true;
                 foreach(var item in preset.presetItems)
                 {
-                    if(item.obj)
+                    if(!item.obj) continue;
+                    var parameter = item.obj.GetMenuName();
+                    if(item.obj is CostumeChanger) parameter = $"{parameter}_Local";
                     driver.parameters.Add(new VRC_AvatarParameterDriver.Parameter(){
                         type = VRC_AvatarParameterDriver.ChangeType.Set,
-                        name = item.obj.GetMenuName(),
+                        name = parameter,
                         value = item.value
                     });
                 }
