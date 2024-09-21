@@ -260,5 +260,67 @@ namespace jp.lilxyzw.lilycalinventory
 
             ModularAvatarHelper.Inspector(obj, iterator);
         }
+
+        // オブジェクトの参照がアバター外のオブジェクトになっている場合、アバター内に修正
+        [InitializeOnLoadMethod] private static void Initialize() => ObjectChangeEvents.changesPublished += (ref ObjectChangeEventStream stream) =>
+        {
+            var components = new HashSet<AvatarTagComponent>();
+            for(int i = 0; i < stream.length; i++)
+            {
+                switch(stream.GetEventType(i))
+                {
+                    case ObjectChangeKind.ChangeGameObjectParent:
+                    {
+                        stream.GetChangeGameObjectParentEvent(i, out var data);
+                        if(EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go) components.UnionWith(go.GetComponentsInChildren<AvatarTagComponent>(true));
+                        break;
+                    }
+                    case ObjectChangeKind.ChangeGameObjectStructure:
+                    {
+                        stream.GetChangeGameObjectStructureEvent(i, out var data);
+                        if(EditorUtility.InstanceIDToObject(data.instanceId) is GameObject go) components.UnionWith(go.GetComponents<AvatarTagComponent>());
+                        break;
+                    }
+                    default: continue;
+                }
+            }
+
+            if(components.Count == 0) return;
+            foreach(var component in components) FixObjectReferences(component);
+        };
+
+        private static void FixObjectReferences(AvatarTagComponent component)
+        {
+            if(!component || !component.gameObject ||
+                component is Comment ||
+                component is MaterialModifier ||
+                component is MaterialOptimizer
+            ) return;
+            var root = component.gameObject.GetAvatarRoot();
+            if(!root) return;
+            using var so = new SerializedObject(component);
+            using var iter = so.GetIterator();
+            var enterChildren = true;
+            while(iter.Next(enterChildren))
+            {
+                enterChildren = iter.propertyType != SerializedPropertyType.String;
+                if(iter.propertyType != SerializedPropertyType.ObjectReference) continue;
+                if(iter.objectReferenceValue is GameObject gameObject && gameObject.GetAvatarRoot() != root)
+                {
+                    var lastPath = gameObject.GetPathInAvatar();
+                    if(string.IsNullOrEmpty(lastPath)) continue;
+                    iter.objectReferenceValue = root.transform.Find(lastPath);
+                }
+                else if(iter.objectReferenceValue is Component c && c.gameObject.GetAvatarRoot() != root)
+                {
+                    var lastPath = c.GetPathInAvatar();
+                    if(string.IsNullOrEmpty(lastPath)) continue;
+                    var t = root.transform.Find(lastPath);
+                    if(t) iter.objectReferenceValue = t.GetComponent(c.GetType());
+                    else iter.objectReferenceValue = null;
+                }
+            }
+            so.ApplyModifiedProperties();
+        }
     }
 }
