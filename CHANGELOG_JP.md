@@ -3,6 +3,14 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.3.1] - 2024-09-22
+### 変更
+- コンポーネントを他アバターにコピーした際に参照を自動修正するように #121
+
+### 修正
+- Presetがn-bit intに対応していなかったのを修正 #123
+- CostumeChangerがModular Avatarで管理されている場合のメニューで操作されるパラメーターを修正 #122
+
 ## [1.3.0] - 2024-09-19
 ### 変更
 - Unity 2019のサポートを終了
