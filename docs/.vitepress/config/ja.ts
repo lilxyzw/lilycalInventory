@@ -50,7 +50,8 @@ export const ja = defineConfig({
             ]
           },
           { text: 'Direct Blend Treeを使用した最適化', link: langName + '/docs/directblendtree' },
-          { text: 'NDMFや他ツールとの互換性', link: langName + '/docs/compatibility' }
+          { text: 'NDMFや他ツールとの互換性', link: langName + '/docs/compatibility' },
+          { text: '付属Prefabの説明', link: langName + '/docs/prefabs' }
         ]
       },
       {
