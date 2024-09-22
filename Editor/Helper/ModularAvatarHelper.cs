@@ -157,16 +157,18 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void Resolve(this CostumeChanger m, Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, List<Component> duplicates)
         {
+            var parameterName = m.menuName;
+            if(!m.isLocalOnly) parameterName += "_Local";
             if(!m.parentOverride) m.parentOverride = m.GetMenuParent();
             for(int i = 0; i < m.costumes.Length; i++)
             {
                 var c = m.costumes[i];
                 if(!c.parentOverrideMA && c.parentOverride && c.parentOverride.parentOverrideMA)
                 {
-                    c.parentOverrideMA = CreateChildMenu(c.parentOverride.parentOverrideMA.transform, c.menuName, c.icon, ControlType.Toggle, m.menuName, i);
+                    c.parentOverrideMA = CreateChildMenu(c.parentOverride.parentOverrideMA.transform, c.menuName, c.icon, ControlType.Toggle, parameterName, i);
                 }
                 if(!c.parentOverrideMA) continue;
-                c.parentOverrideMA.Set(ControlType.Toggle, m.menuName, i);
+                c.parentOverrideMA.Set(ControlType.Toggle, parameterName, i);
                 menus.TryAdd(c.parentOverrideMA, duplicates, m);
             }
             Transform parent;
@@ -189,7 +191,7 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 var c = m.costumes[i];
                 if(c.parentOverrideMA) continue;
-                c.parentOverrideMA = CreateChildMenu(parent, c.menuName, c.icon, ControlType.Toggle, m.menuName, i);
+                c.parentOverrideMA = CreateChildMenu(parent, c.menuName, c.icon, ControlType.Toggle, parameterName, i);
                 menus.TryAdd(c.parentOverrideMA, duplicates, m);
             }
         }
