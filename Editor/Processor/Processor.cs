@@ -167,12 +167,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var menu = VRChatHelper.CreateMenu(ctx);
                 var parameters = VRChatHelper.CreateParameters(ctx);
 
-                // パラメーター名の重複チェック
-                parameterNames = new HashSet<string>();
-                if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
-                if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
-                var parameterDuplicates = menuBaseComponents.Where(c => c is IGenerateParameter && parameterNames.Contains(c.menuName)).Select(c => c.gameObject).ToArray();
-                if(parameterDuplicates.Length > 0) ErrorHelper.Report("dialog.error.parameterDuplication", parameterDuplicates);
+                // パラメーター名の重複回避
+                Modifier.ResolveParameterNames(ctx, controller, togglers, costumeChangers, smoothChangers, presets);
 
                 // DirectBlendTreeのルートを作成
                 BlendTree tree = null;

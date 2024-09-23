@@ -48,7 +48,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(toggler.parentOverrideMA) continue;
                 controls[toggler] = new List<(MenuBaseComponent, Control)>()
                 {
-                    (toggler.GetMenuParent(), VRChatHelper.CreateControl(toggler.menuName, toggler.icon, ControlType.Toggle, toggler.menuName))
+                    (toggler.GetMenuParent(), VRChatHelper.CreateControl(toggler.menuName, toggler.icon, ControlType.Toggle, toggler.parameterName))
                 };
             }
 
@@ -58,7 +58,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(changer.parentOverrideMA || changer.frames.Length == 0) continue;
                 controls[changer] = new List<(MenuBaseComponent, Control)>()
                 {
-                    (changer.GetMenuParent(), VRChatHelper.CreateControl(changer.menuName, changer.icon, ControlType.RadialPuppet, changer.menuName))
+                    (changer.GetMenuParent(), VRChatHelper.CreateControl(changer.menuName, changer.icon, ControlType.RadialPuppet, changer.parameterName))
                 };
             }
 
@@ -76,9 +76,6 @@ namespace jp.lilxyzw.lilycalinventory
                     };
                 }
 
-                var parameterName = changer.menuName;
-                if(!changer.isLocalOnly) parameterName += "_Local";
-
                 for(int i = 0; i < changer.costumes.Length; i++)
                 {
                     var costume = changer.costumes[i];
@@ -88,7 +85,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         controls[changer] = new List<(MenuBaseComponent, Control)>();
                     }
-                    controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, parameterName, i)));
+                    controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, changer.isLocalOnly ? changer.parameterName : changer.parameterNameLocal, i)));
                 }
             }
 

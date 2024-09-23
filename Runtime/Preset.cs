@@ -12,6 +12,8 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     public class Preset : MenuBaseComponent
     {
         [NotKeyable] [SerializeField] internal PresetItem[] presetItems = new PresetItem[]{};
+
+        [System.NonSerialized] internal string parameterName;
     }
 
     [Serializable]

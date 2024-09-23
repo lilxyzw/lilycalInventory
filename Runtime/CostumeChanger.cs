@@ -16,5 +16,9 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [SerializeField] internal Costume[] costumes = new Costume[]{};
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
         [NotKeyable] [DefaultValue("costumes")] [SerializeField] internal int defaultValue = 0;
+
+        [System.NonSerialized] internal string parameterName;
+        [System.NonSerialized] internal string parameterNameLocal;
+        [System.NonSerialized] internal string[] parameterNameBits;
     }
 }

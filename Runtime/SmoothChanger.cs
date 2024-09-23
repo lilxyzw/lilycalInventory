@@ -14,5 +14,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
         [NotKeyable] [Frame] [SerializeField] internal float defaultFrameValue;
         [NotKeyable] [SerializeField] internal Frame[] frames;
+
+        [System.NonSerialized] internal string parameterName;
     }
 }

@@ -68,7 +68,7 @@ namespace jp.lilxyzw.lilycalinventory
             root.children = children;
         }
 
-        internal static void AddItemTogglerTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, bool defaultValue, BlendTree root)
+        internal static void AddItemTogglerTree(AnimatorController controller, AnimationClip clipDefault, AnimationClip clipChanged, string name, string parameterName, bool defaultValue, BlendTree root)
         {
             var layer = new BlendTree
             {
@@ -92,16 +92,16 @@ namespace jp.lilxyzw.lilycalinventory
 
             root.AddChild(layer);
 
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue ? 1 : 0 });
+            if(!controller.parameters.Any(p => p.name == parameterName))
+                controller.AddParameter(new AnimatorControllerParameter() { name = parameterName, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue ? 1 : 0 });
         }
 
-        internal static void AddCostumeChangerTree(AnimatorController controller, AnimationClip[] clips, string name, int defaultValue, BlendTree root)
+        internal static void AddCostumeChangerTree(AnimatorController controller, AnimationClip[] clips, string name, string parameterName, int defaultValue, BlendTree root)
         {
             var layer = new BlendTree
             {
                 blendType = BlendTreeType.Simple1D,
-                blendParameter = name,
+                blendParameter = parameterName,
                 name = name,
                 useAutomaticThresholds = false
             };
@@ -112,16 +112,16 @@ namespace jp.lilxyzw.lilycalinventory
 
             root.AddChild(layer);
 
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
+            if(!controller.parameters.Any(p => p.name == parameterName))
+                controller.AddParameter(new AnimatorControllerParameter() { name = parameterName, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
         }
 
-        internal static void AddSmoothChangerTree(AnimatorController controller, AnimationClip[] clips, float[] frames, string name, float defaultValue, BlendTree root)
+        internal static void AddSmoothChangerTree(AnimatorController controller, AnimationClip[] clips, float[] frames, string name, string parameterName, float defaultValue, BlendTree root)
         {
             var layer = new BlendTree
             {
                 blendType = BlendTreeType.Simple1D,
-                blendParameter = name,
+                blendParameter = parameterName,
                 name = name,
                 useAutomaticThresholds = false
             };
@@ -132,8 +132,8 @@ namespace jp.lilxyzw.lilycalinventory
 
             root.AddChild(layer);
 
-            if(!controller.parameters.Any(p => p.name == name))
-                controller.AddParameter(new AnimatorControllerParameter() { name = name, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
+            if(!controller.parameters.Any(p => p.name == parameterName))
+                controller.AddParameter(new AnimatorControllerParameter() { name = parameterName, type = AnimatorControllerParameterType.Float, defaultFloat = defaultValue });
         }
 
         // 複数コンポーネントから操作されるオブジェクト用

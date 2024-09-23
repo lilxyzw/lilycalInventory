@@ -42,20 +42,19 @@ namespace jp.lilxyzw.lilycalinventory
             int i = 0;
             foreach(var preset in presets)
             {
-                var name = preset.menuName;
                 var stateChanged = new AnimatorState
                 {
                     motion = emptyClip,
-                    name = name,
+                    name = preset.menuName,
                     writeDefaultValues = hasWriteDefaultsState
                 };
                 stateMachine.AddState(stateChanged, stateMachine.entryPosition + new Vector3(450,100*(i-presets.Length/2),0));
 
                 var transitionToChanged = stateDefault.AddTransition(stateChanged);
-                transitionToChanged.AddCondition(AnimatorConditionMode.If, 1, name);
+                transitionToChanged.AddCondition(AnimatorConditionMode.If, 1, preset.parameterName);
                 transitionToChanged.duration = 0;
                 var transitionToDefault = stateChanged.AddTransition(stateDefault);
-                transitionToDefault.AddCondition(AnimatorConditionMode.IfNot, 1, name);
+                transitionToDefault.AddCondition(AnimatorConditionMode.IfNot, 1, preset.parameterName);
                 transitionToDefault.duration = 0;
 
                 var driver = stateChanged.AddStateMachineBehaviour<VRCAvatarParameterDriver>();
@@ -63,20 +62,27 @@ namespace jp.lilxyzw.lilycalinventory
                 foreach(var item in preset.presetItems)
                 {
                     if(!item.obj) continue;
-                    var parameter = item.obj.GetMenuName();
-                    if(item.obj is CostumeChanger) parameter = $"{parameter}_Local";
+                    string parameterName;
+                    switch(item.obj)
+                    {
+                        case ItemToggler c: parameterName = c.parameterName; break;
+                        case CostumeChanger c: parameterName = c.isLocalOnly ? c.parameterName : c.parameterNameLocal; break;
+                        case SmoothChanger c: parameterName = c.parameterName; break;
+                        default: throw new System.Exception($"Unknown type {item.obj}");
+                    }
+
                     driver.parameters.Add(new VRC_AvatarParameterDriver.Parameter(){
                         type = VRC_AvatarParameterDriver.ChangeType.Set,
-                        name = parameter,
+                        name = parameterName,
                         value = item.value
                     });
                 }
                 AssetDatabase.AddObjectToAsset(driver, ctx.AssetContainer);
 
-                controller.TryAddParameter(name, false);
+                controller.TryAddParameter(preset.parameterName, false);
 
                 // パラメーターを追加
-                parameters.AddParameterToggle(name, true, false, false);
+                parameters.AddParameterToggle(preset.parameterName, true, false, false);
 
                 i++;
             }

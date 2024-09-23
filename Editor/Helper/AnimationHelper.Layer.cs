@@ -9,7 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
     // AnimationHelper.DirectBlendTree.cs と対になっています
     internal static partial class AnimationHelper
     {
-        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, bool defaultValue)
+        internal static void AddItemTogglerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip clipDefault, AnimationClip clipChanged, string name, string parameterName, bool defaultValue)
         {
             // オンオフアニメーションを追加
             var stateDefault = new AnimatorState
@@ -39,10 +39,10 @@ namespace jp.lilxyzw.lilycalinventory
             // defaultValueがfalseの場合、ItemTogglerに設定されている状態にする条件はAnimatorConditionMode.Ifとなり、
             // defaultValueがtrueの場合、ItemTogglerに設定されている状態にする条件はAnimatorConditionMode.IfNotとなる
             var transitionToChanged = stateDefault.AddTransition(stateChanged);
-            transitionToChanged.AddCondition(!defaultValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, name);
+            transitionToChanged.AddCondition(!defaultValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, parameterName);
             transitionToChanged.duration = 0;
             var transitionToDefault = stateChanged.AddTransition(stateDefault);
-            transitionToDefault.AddCondition(!defaultValue ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, name);
+            transitionToDefault.AddCondition(!defaultValue ? AnimatorConditionMode.IfNot : AnimatorConditionMode.If, 0, parameterName);
             transitionToDefault.duration = 0;
 
             var layer = new AnimatorControllerLayer
@@ -54,10 +54,10 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            controller.TryAddParameter(name, defaultValue);
+            controller.TryAddParameter(parameterName, defaultValue);
         }
 
-        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name, int defaultValue)
+        internal static void AddCostumeChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, string name, string parameterName, int defaultValue)
         {
             var stateMachine = new AnimatorStateMachine();
 
@@ -74,9 +74,9 @@ namespace jp.lilxyzw.lilycalinventory
                 stateMachine.AddState(state, stateMachine.entryPosition + new Vector3(200,clips.Length*25-i*50,0));
                 if(i == defaultValue) stateMachine.defaultState = state;
 
-                stateMachine.AddEntryTransition(state).AddCondition(AnimatorConditionMode.Equals, i, name);
+                stateMachine.AddEntryTransition(state).AddCondition(AnimatorConditionMode.Equals, i, parameterName);
                 var toExit = state.AddExitTransition();
-                toExit.AddCondition(AnimatorConditionMode.NotEqual, i, name);
+                toExit.AddCondition(AnimatorConditionMode.NotEqual, i, parameterName);
                 toExit.duration = 0;
             }
 
@@ -89,15 +89,15 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            controller.TryAddParameter(name, defaultValue);
+            controller.TryAddParameter(parameterName, defaultValue);
         }
 
-        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, float defaultValue)
+        internal static void AddSmoothChangerLayer(AnimatorController controller, bool hasWriteDefaultsState, AnimationClip[] clips, float[] frames, string name, string parameterName, float defaultValue)
         {
             var stateMachine = new AnimatorStateMachine();
             var tree = new BlendTree
             {
-                blendParameter = name,
+                blendParameter = parameterName,
                 blendType = BlendTreeType.Simple1D,
                 name = name,
                 useAutomaticThresholds = false
@@ -125,7 +125,7 @@ namespace jp.lilxyzw.lilycalinventory
             };
 
             controller.AddLayer(layer);
-            controller.TryAddParameter(name, defaultValue);
+            controller.TryAddParameter(parameterName, defaultValue);
         }
 
         // 複数コンポーネントから操作されるオブジェクト用

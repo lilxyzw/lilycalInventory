@@ -26,7 +26,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             foreach(var changer in changers)
             {
-                var name = changer.menuName;
                 var costumeCount = changer.costumes.Length;
                 var bits = ObjHelper.ToNBitInt(costumeCount);
                 if(costumeCount != 0)
@@ -61,31 +60,30 @@ namespace jp.lilxyzw.lilycalinventory
                     }
 
                     // AnimatorControllerに追加
-                    if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, name, changer.defaultValue, root);
-                    else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, name, changer.defaultValue);
+                    if(root) AnimationHelper.AddCostumeChangerTree(controller, clips, changer.menuName, changer.parameterName, changer.defaultValue, root);
+                    else AnimationHelper.AddCostumeChangerLayer(controller, hasWriteDefaultsState, clips, changer.menuName, changer.parameterName, changer.defaultValue);
                 }
                 else
                 {
-                    controller.TryAddParameter(name, changer.defaultValue);
+                    controller.TryAddParameter(changer.parameterName, changer.defaultValue);
                 }
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加
                 if(changer.isLocalOnly)
                 {
-                    parameters.AddParameterInt(name, true, changer.isSave, changer.defaultValue);
+                    parameters.AddParameterInt(changer.parameterName, true, changer.isSave, changer.defaultValue);
                 }
                 else
                 {
                     // Localでつかうintと同期されるboolを生成
-                    var localName = $"{name}_Local";
-                    controller.TryAddParameter(localName, changer.defaultValue);
-                    parameters.AddParameterInt(localName, true, changer.isSave, changer.defaultValue);
+                    controller.TryAddParameter(changer.parameterNameLocal, changer.defaultValue);
+                    parameters.AddParameterInt(changer.parameterNameLocal, true, changer.isSave, changer.defaultValue);
                     for(int bit = 0; bit < bits; bit++)
                     {
                         bool defaultValue = (changer.defaultValue & 1 << bit) != 0;
-                        controller.TryAddParameter($"{name}_Bool{bit}", defaultValue);
-                        parameters.AddParameterToggle($"{name}_Bool{bit}", false, changer.isSave, defaultValue);
+                        controller.TryAddParameter(changer.parameterNameBits[bit], defaultValue);
+                        parameters.AddParameterToggle(changer.parameterNameBits[bit], false, changer.isSave, defaultValue);
                     }
 
                     // 空のClip
@@ -100,7 +98,7 @@ namespace jp.lilxyzw.lilycalinventory
                         var stateComp = new AnimatorState
                         {
                             motion = emptyClip,
-                            name = $"{name}To{i}",
+                            name = $"{changer.menuName}To{i}",
                             writeDefaultValues = hasWriteDefaultsState
                         };
 
@@ -111,16 +109,16 @@ namespace jp.lilxyzw.lilycalinventory
                         if(i == changer.defaultValue) stateMachineComp.defaultState = stateComp;
 
                         var transitionToStateComp = stateMachineComp.AddEntryTransition(stateComp);
-                        transitionToStateComp.AddCondition(AnimatorConditionMode.Equals, i, localName);
+                        transitionToStateComp.AddCondition(AnimatorConditionMode.Equals, i, changer.parameterNameLocal);
                         var transitionToExitComp = stateComp.AddExitTransition();
-                        transitionToExitComp.AddCondition(AnimatorConditionMode.NotEqual, i, localName);
+                        transitionToExitComp.AddCondition(AnimatorConditionMode.NotEqual, i, changer.parameterNameLocal);
                         transitionToExitComp.duration = 0;
 
                         // 展開用
                         var stateDecomp = new AnimatorState
                         {
                             motion = emptyClip,
-                            name = $"{name}To{i}",
+                            name = $"{changer.menuName}To{i}",
                             writeDefaultValues = hasWriteDefaultsState
                         };
 
@@ -128,7 +126,7 @@ namespace jp.lilxyzw.lilycalinventory
                         driverDecomp.localOnly = false; // 展開はグローバル
                         driverDecomp.parameters.Add(new VRC_AvatarParameterDriver.Parameter(){
                             type = VRC_AvatarParameterDriver.ChangeType.Set,
-                            name = name,
+                            name = changer.menuName,
                             value = i
                         });
 
@@ -140,17 +138,16 @@ namespace jp.lilxyzw.lilycalinventory
                         // ビットごとの処理
                         for(int bit = 0; bit < bits; bit++)
                         {
-                            var boolName = $"{name}_Bool{bit}";
                             var boolValue = (i & 1 << bit) != 0;
                             driverComp.parameters.Add(new VRC_AvatarParameterDriver.Parameter(){
                                 type = VRC_AvatarParameterDriver.ChangeType.Set,
-                                name = boolName,
+                                name = changer.parameterNameBits[bit],
                                 value = boolValue ? 1 : 0
                             });
 
-                            transitionToStateDecomp.AddCondition(boolValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, boolName);
+                            transitionToStateDecomp.AddCondition(boolValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, changer.parameterNameBits[bit]);
                             var transitionToExitDecomp = stateDecomp.AddExitTransition();
-                            transitionToExitDecomp.AddCondition(!boolValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, boolName);
+                            transitionToExitDecomp.AddCondition(!boolValue ? AnimatorConditionMode.If : AnimatorConditionMode.IfNot, 0, changer.parameterNameBits[bit]);
                             transitionToExitDecomp.duration = 0;
                         }
                     }
@@ -159,7 +156,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         blendingMode = AnimatorLayerBlendingMode.Override,
                         defaultWeight = 1,
-                        name = $"{name}_Comp",
+                        name = $"{changer.menuName}_Comp",
                         stateMachine = stateMachineComp
                     };
                     controller.AddLayer(layerComp);
@@ -168,7 +165,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         blendingMode = AnimatorLayerBlendingMode.Override,
                         defaultWeight = 1,
-                        name = $"{name}_Decomp",
+                        name = $"{changer.menuName}_Decomp",
                         stateMachine = stateMachineDecomp
                     };
                     controller.AddLayer(layerDecomp);

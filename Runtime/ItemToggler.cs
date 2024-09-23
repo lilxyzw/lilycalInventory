@@ -15,6 +15,8 @@ namespace jp.lilxyzw.lilycalinventory.runtime
         [NotKeyable] [SerializeField] internal ParametersPerMenu parameter = new ParametersPerMenu();
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
         [NotKeyable] [DefaultValue] [SerializeField] internal bool defaultValue = false;
+
+        [System.NonSerialized] internal string parameterName;
     }
 
     // こちらは上記と全く同じフィールドを持つクラスです。

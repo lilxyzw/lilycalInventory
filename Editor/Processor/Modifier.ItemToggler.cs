@@ -23,27 +23,26 @@ namespace jp.lilxyzw.lilycalinventory
         {
             foreach(var toggler in togglers)
             {
-                var name = toggler.menuName;
                 if(toggler.parameter.objects.Length + toggler.parameter.blendShapeModifiers.Length + toggler.parameter.materialReplacers.Length + toggler.parameter.materialPropertyModifiers.Length + toggler.parameter.clips.Length > 0)
                 {
                     // コンポーネントの設定値とprefab初期値を取得したAnimationClipを作成
-                    var clips = toggler.parameter.CreateClip(ctx, name);
+                    var clips = toggler.parameter.CreateClip(ctx, toggler.menuName);
                     var (clipDefault, clipChanged) = (clips.clipDefault.ToClip(), clips.clipChanged.ToClip());
                     AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
                     AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
 
                     // AnimatorControllerに追加
-                    if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, name, toggler.defaultValue, root);
-                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, toggler.defaultValue);
+                    if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, toggler.menuName, toggler.parameterName, toggler.defaultValue, root);
+                    else AnimationHelper.AddItemTogglerLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, toggler.menuName, toggler.parameterName, toggler.defaultValue);
                 }
                 else
                 {
-                    controller.TryAddParameter(name, toggler.defaultValue);
+                    controller.TryAddParameter(toggler.parameterName, toggler.defaultValue);
                 }
 
                 #if LIL_VRCSDK3A
                 // パラメーターを追加
-                parameters.AddParameterToggle(name, toggler.isLocalOnly, toggler.isSave, toggler.defaultValue);
+                parameters.AddParameterToggle(toggler.parameterName, toggler.isLocalOnly, toggler.isSave, toggler.defaultValue);
                 #endif
             }
         }
