@@ -111,27 +111,15 @@ namespace jp.lilxyzw.lilycalinventory
                         m.parentOverrideMA.MenuSource = SubmenuSource.Children;
                         resolved.Add(m);
                         menus.TryAdd(m.parentOverrideMA, duplicates, m);
-                        continue;
-                    }
-                    else if(m.parentOverride)
-                    {
-                        if(m.parentOverride.parentOverrideMA)
-                        {
-                            m.parentOverrideMA = CreateChildMenuFolder(m.parentOverride.parentOverrideMA.transform, m);
-                            resolved.Add(m);
-                            menus.TryAdd(m.parentOverrideMA, duplicates, m);
-                            continue;
-                        }
                     }
                     else
                     {
-                        var parent = m.gameObject.GetComponentInParentInAvatar<MenuFolder>();
+                        var parent = m.GetMenuParent();
                         if(parent && parent.parentOverrideMA)
                         {
-                            m.parentOverrideMA = CreateChildMenuFolder(parent.transform, m);
+                            m.parentOverrideMA = CreateChildMenuFolder(parent.parentOverrideMA.transform, m);
                             resolved.Add(m);
                             menus.TryAdd(m.parentOverrideMA, duplicates, m);
-                            continue;
                         }
                     }
                 }
