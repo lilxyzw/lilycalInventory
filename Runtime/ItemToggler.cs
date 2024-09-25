@@ -11,6 +11,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     {
         [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
         [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool autoFixDuplicate = true;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
         [NotKeyable] [SerializeField] internal ParametersPerMenu parameter = new ParametersPerMenu();
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]
@@ -24,16 +25,17 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     // Propからの変換時に使用されます。
     internal class ItemTogglerInternal
     {
-        [NotKeyable] [MenuName] public string menuName;
-        [NotKeyable] [MenuFolderOverride] public MenuFolder parentOverride;
-        [NotKeyable] [LILLocalize] public Texture2D icon;
+        internal string menuName;
+        internal MenuFolder parentOverride;
+        internal Texture2D icon;
         #if LIL_MODULAR_AVATAR
-        [NotKeyable] [LILLocalize] public nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
+        internal nadena.dev.modular_avatar.core.ModularAvatarMenuItem parentOverrideMA;
         #else
-        [NotKeyable] [HideInInspector] public Object parentOverrideMA;
+        internal Object parentOverrideMA;
         #endif
-        [NotKeyable] [LILLocalize] public bool isSave = true;
-        [NotKeyable] [LILLocalize] public bool isLocalOnly = false;
-        [NotKeyable] public ParametersPerMenu parameter = new ParametersPerMenu();
+        internal bool isSave = true;
+        internal bool isLocalOnly = false;
+        internal bool autoFixDuplicate = true;
+        internal ParametersPerMenu parameter = new ParametersPerMenu();
     }
 }

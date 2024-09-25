@@ -12,6 +12,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     {
         [NotKeyable] [LILLocalize] [SerializeField] internal bool isSave = true;
         [NotKeyable] [LILLocalize] [SerializeField] internal bool isLocalOnly = false;
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool autoFixDuplicate = true;
         [Space(order = 0)] [LILLocalizeHeader("inspector.animationSettings", 1)]
         [NotKeyable] [SerializeField] internal Costume[] costumes = new Costume[]{};
         [Space(order = 0)] [LILLocalizeHeader("inspector.detailSettings", 1)]

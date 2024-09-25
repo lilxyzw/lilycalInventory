@@ -50,7 +50,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         private void StartPreview(Prop prop)
         {
-            StartPreview(prop.PropToToggler().parameter);
+            StartPreview(prop.PropToTogglerParameters());
         }
 
         private void StartPreview(CostumeChanger changer)

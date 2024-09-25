@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
+    using nadena.dev.ndmf;
     using runtime;
 
     internal static partial class ObjHelper
@@ -147,31 +148,29 @@ namespace jp.lilxyzw.lilycalinventory
         internal static void DresserToChanger(this AutoDresser[] dressers, AutoDresserSettings[] settings, Preset[] presets)
         {
             if(dressers == null || dressers.Length == 0) return;
+            CostumeChanger changer;
             if(settings.Length == 1 && settings[0])
             {
                 var s = settings[0];
-                var obj = s.gameObject;
-                var menuName = s.menuName;
-                var icon = s.icon;
-                var parentOverride = s.parentOverride;
-                var parentOverrideMA = s.parentOverrideMA;
-                var isSave = s.isSave;
-                var isLocalOnly = s.isLocalOnly;
-                Object.DestroyImmediate(s);
-                var changer = obj.AddComponent<CostumeChanger>();
-                changer.menuName = menuName;
-                changer.icon = icon;
-                changer.parentOverride = parentOverride;
-                changer.parentOverrideMA = parentOverrideMA;
-                changer.isSave = isSave;
-                changer.isLocalOnly = isLocalOnly;
+                changer = s.gameObject.AddComponent<CostumeChanger>();
+                changer.menuName = s.menuName;
+                changer.icon = s.icon;
+                changer.parentOverride = s.parentOverride;
+                changer.parentOverrideMA = s.parentOverrideMA;
+                changer.isSave = s.isSave;
+                changer.isLocalOnly = s.isLocalOnly;
+                changer.autoFixDuplicate = s.autoFixDuplicate;
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
+                #if LIL_NDMF
+                else ObjectRegistry.RegisterReplacedObject(s, changer);
+                #endif
+                Object.DestroyImmediate(s);
             }
             else
             {
                 var newObj = new GameObject(nameof(AutoDresser));
-                var changer = newObj.AddComponent<CostumeChanger>();
+                changer = newObj.AddComponent<CostumeChanger>();
                 changer.menuName = nameof(AutoDresser);
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
@@ -187,8 +186,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var prop in props)
             {
                 var obj = prop.gameObject;
-                var toggler = prop.PropToToggler();
-                ItemToggler toggler2;
+                ItemToggler toggler;
                 var items = presets.SelectMany(p => p.presetItems).Where(i => i.obj == prop);
                 Undo.RecordObjects(presets.Where(p => items.Any(i => p.presetItems.Contains(i))).ToArray(), "Convert to ItemToggler");
                 if(createNewObject)
@@ -197,45 +195,39 @@ namespace jp.lilxyzw.lilycalinventory
                     if(prop.parentOverride) obj.transform.parent = prop.parentOverride.transform;
                     else obj.transform.parent = prop.transform.parent;
                     Undo.RegisterCreatedObjectUndo(obj, "Convert to ItemToggler");
-                    Undo.DestroyObjectImmediate(prop);
-                    toggler2 = Undo.AddComponent<ItemToggler>(obj);
+                    toggler = Undo.AddComponent<ItemToggler>(obj);
                     EditorGUIUtility.PingObject(obj);
                 }
                 else
                 {
-                    Object.DestroyImmediate(prop);
-                    toggler2 = obj.AddComponent<ItemToggler>();
+                    toggler = obj.AddComponent<ItemToggler>();
+                    #if LIL_NDMF
+                    ObjectRegistry.RegisterReplacedObject(prop, toggler);
+                    #endif
                 }
                 foreach(var item in items)
                 {
-                    item.obj = toggler2;
+                    item.obj = toggler;
                     item.value = 1;
                 }
-                toggler2.menuName = toggler.menuName;
-                toggler2.parentOverride = toggler.parentOverride;
-                toggler2.parentOverrideMA = toggler.parentOverrideMA;
-                toggler2.icon = toggler.icon;
-                toggler2.isSave = toggler.isSave;
-                toggler2.isLocalOnly = toggler.isLocalOnly;
-                toggler2.parameter = toggler.parameter;
+                toggler.menuName = prop.menuName;
+                toggler.parentOverride = prop.parentOverride;
+                toggler.parentOverrideMA = prop.parentOverrideMA;
+                toggler.icon = prop.icon;
+                toggler.isSave = prop.isSave;
+                toggler.isLocalOnly = prop.isLocalOnly;
+                toggler.autoFixDuplicate = prop.autoFixDuplicate;
+                toggler.parameter = prop.PropToTogglerParameters();
+                if(createNewObject) Undo.DestroyObjectImmediate(prop);
+                else Object.DestroyImmediate(prop);
             }
         }
 
-        // ItemTogglerをnewするとUnityに怒られるためItemTogglerInternalを使用
-        internal static ItemTogglerInternal PropToToggler(this Prop prop)
+        internal static ParametersPerMenu PropToTogglerParameters(this Prop prop)
         {
-            var obj = prop.gameObject;
-            var toggler = new ItemTogglerInternal{
-                menuName = prop.menuName,
-                parentOverride = prop.parentOverride,
-                parentOverrideMA = prop.parentOverrideMA,
-                icon = prop.icon,
-                isSave = prop.isSave,
-                isLocalOnly = prop.isLocalOnly,
-                parameter = prop.parameter.Clone()
-            };
-            toggler.parameter.objects = prop.parameter.objects.Append(new ObjectToggler{obj = obj, value = !obj.activeSelf}).ToArray();
-            return toggler;
+            var parameters = prop.parameter.Clone();
+            parameters.objects = parameters.objects.Append(new ObjectToggler{obj = prop.gameObject, value = !prop.gameObject.activeSelf}).ToArray();
+            return parameters;
         }
 
         // Preset内のComponentを置換

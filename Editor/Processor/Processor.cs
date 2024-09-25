@@ -36,7 +36,6 @@ namespace jp.lilxyzw.lilycalinventory
         private static Preset[] presets;
         private static MenuBaseComponent[] menuBaseComponents;
         private static Material[] materials;
-        private static HashSet<string> parameterNames;
 
         // 強制アクティブにするオブジェクトとそのオブジェクトの元のアクティブ状態の配列
         private static (GameObject,bool)[] actives;

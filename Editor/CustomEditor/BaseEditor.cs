@@ -69,6 +69,15 @@ namespace jp.lilxyzw.lilycalinventory
             // コンポーネントがオフになっている場合にビルド時に無視される旨の警告を表示
             if(targets.All(t => !((AvatarTagComponent)t).enabled)) EditorGUILayout.HelpBox(Localization.S("inspector.componentDisabled"), MessageType.Warning);
 
+            // 他メニューが同じオブジェクトについている場合警告を表示
+            if(target is Prop || target is AutoDresserSettings)
+            {
+                MenuBaseComponent dis = (target as Component).gameObject.GetComponent<MenuBaseDisallowMultipleComponent>();
+                if(!dis && target is Prop) dis = (target as Component).gameObject.GetComponent<AutoDresserSettings>();
+                if(!dis && target is AutoDresserSettings) dis = (target as Component).gameObject.GetComponent<Prop>();
+                if(dis) EditorGUILayout.HelpBox(string.Format(Localization.S("inspector.componentDuplicate"), target.GetType().Name, dis.GetType().Name), MessageType.Error);
+            }
+
             if(target is MenuBaseComponent comp)
             {
                 // ExpressionParameters

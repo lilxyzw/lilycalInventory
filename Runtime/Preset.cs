@@ -11,6 +11,7 @@ namespace jp.lilxyzw.lilycalinventory.runtime
     [HelpURL(ConstantValues.URL_DOCS_COMPONENT + "preset")]
     public class Preset : MenuBaseComponent
     {
+        [NotKeyable] [LILLocalize] [SerializeField] internal bool autoFixDuplicate = true;
         [NotKeyable] [SerializeField] internal PresetItem[] presetItems = new PresetItem[]{};
 
         [System.NonSerialized] internal string parameterName;

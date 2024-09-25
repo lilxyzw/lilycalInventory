@@ -64,8 +64,12 @@ namespace jp.lilxyzw.lilycalinventory
                 default:
                     throw new Exception("Unknown RuntimeAnimatorContoller type " + controller.GetType());
             }
-
-            return merger.Finish();
+            
+            var clone = merger.Finish();
+            #if LIL_NDMF
+            ObjectRegistry.RegisterReplacedObject(controller, clone);
+            #endif
+            return clone;
         }
 
         private readonly AnimatorController _combined;

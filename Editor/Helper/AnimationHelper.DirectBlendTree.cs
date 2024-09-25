@@ -73,7 +73,7 @@ namespace jp.lilxyzw.lilycalinventory
             var layer = new BlendTree
             {
                 blendType = BlendTreeType.Simple1D,
-                blendParameter = name,
+                blendParameter = parameterName,
                 name = name,
                 useAutomaticThresholds = true
             };
