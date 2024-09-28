@@ -126,6 +126,8 @@
   "inspector.convertToItemToggler": "Convert to ItemToggler",
   "inspector.generateMenuFolder": "Generate MenuFolder",
 
+  "inspector.layerPriority": "动画层合并优先级",
+
   "inspector.ParameterViewer.memoryUsed": "已使用的参数",
   "inspector.ParameterViewer.memoryRemaining": "剩余",
   "inspector.ParameterViewer.memoryAvatar": "虚拟形象",

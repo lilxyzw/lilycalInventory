@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
 using nadena.dev.modular_avatar.core;
+using VRC.SDK3.Avatars.Components;
 using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
 using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
 using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.Parameter;
@@ -10,7 +13,6 @@ using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.
 
 namespace jp.lilxyzw.lilycalinventory
 {
-    using System.Linq;
     using runtime;
 
     internal static class ModularAvatarHelper
@@ -79,6 +81,20 @@ namespace jp.lilxyzw.lilycalinventory
                 foreach(var c in m.costumes) c.parentOverrideMA = null;
             }
             foreach(var m in presets) m.parentOverrideMA = null;
+            #endif
+        }
+
+        internal static void ToMergeAnimator(AsMAMergeAnimator asMAMergeAnimator, AnimatorController animatorController)
+        {
+            if(!asMAMergeAnimator) return;
+            #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
+            var mama = asMAMergeAnimator.gameObject.AddComponent<ModularAvatarMergeAnimator>();
+            mama.animator = animatorController;
+            mama.layerType = VRCAvatarDescriptor.AnimLayerType.FX;
+            mama.deleteAttachedAnimator = false;
+            mama.matchAvatarWriteDefaults = false;
+            mama.pathMode = MergeAnimatorPathMode.Absolute;
+            mama.layerPriority = asMAMergeAnimator.layerPriority;
             #endif
         }
 

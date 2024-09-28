@@ -126,6 +126,8 @@
   "inspector.convertToItemToggler": "Convert to ItemToggler",
   "inspector.generateMenuFolder": "Generate MenuFolder",
 
+  "inspector.layerPriority": "Layer Priority",
+
   "inspector.ParameterViewer.memoryUsed": "Parameter Memory Used",
   "inspector.ParameterViewer.memoryRemaining": "Remaining",
   "inspector.ParameterViewer.memoryAvatar": "Avatar",

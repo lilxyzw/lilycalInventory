@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 #if LIL_NDMF
@@ -9,8 +11,6 @@ using nadena.dev.ndmf;
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
-    using UnityEditor;
-    using UnityEditor.Animations;
 
     internal static partial class Processor
     {
@@ -38,6 +38,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static Preset[] presets;
         private static MenuBaseComponent[] menuBaseComponents;
         private static Material[] materials;
+        private static AsMAMergeAnimator asMAMergeAnimator;
 
         // マテリアルプロパティを1度取得したらその値を保存
         private static readonly Dictionary<(Material material, string name), float> floatValues = new();
@@ -148,6 +149,7 @@ namespace jp.lilxyzw.lilycalinventory
             smoothChangers = components.SelectComponents<SmoothChanger>();
             presets = components.SelectComponents<Preset>();
             menuBaseComponents = components.SelectComponents<MenuBaseComponent>();
+            asMAMergeAnimator = components.FirstOrDefault(c => c is AsMAMergeAnimator) as AsMAMergeAnimator;
             shouldModify = components.Length != 0;
             if(!shouldModify) return;
 
@@ -174,11 +176,26 @@ namespace jp.lilxyzw.lilycalinventory
             ObjHelper.pathInAvatars.Clear();
             if(togglers.Length + costumeChangers.Length + smoothChangers.Length + presets.Length > 0)
             {
+                bool shouldMakeNewController = false;
+                #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
+                shouldMakeNewController = asMAMergeAnimator;
+                #endif
+
+                AnimatorController controller;
+                if(shouldMakeNewController)
+                {
+                    controller = new AnimatorController();
+                    AssetDatabase.AddObjectToAsset(controller, ctx.AssetContainer);
+                }
                 #if LIL_VRCSDK3A
-                var controller = VRChatUtils.TryGetFXAnimatorController();
+                else controller = VRChatUtils.TryGetFXAnimatorController();
                 #else
                 // 各SNSごとに処理を追加していく必要あり
-                var controller = new AnimatorController();
+                else
+                {
+                    controller = new AnimatorController();
+                    AssetDatabase.AddObjectToAsset(controller, ctx.AssetContainer);
+                }
                 #endif
 
                 var hasWriteDefaultsState = controller.HasWriteDefaultsState();
@@ -213,6 +230,10 @@ namespace jp.lilxyzw.lilycalinventory
                 VRChatUtils.Apply(menu, parameters);
                 #else
                 // 各SNSごとに処理を追加していく必要あり
+                #endif
+
+                #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
+                if(shouldMakeNewController) ModularAvatarHelper.ToMergeAnimator(asMAMergeAnimator, controller);
                 #endif
             }
         }
