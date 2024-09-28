@@ -12,9 +12,9 @@ namespace jp.lilxyzw.lilycalinventory
     using UnityEditor;
     using UnityEditor.Animations;
 
-    internal static class Processor
+    internal static partial class Processor
     {
-        internal static BuildContext ctx;
+        private static BuildContext ctx;
 
         // lilycalInventoryの処理を行うか
         private static bool shouldModify;
@@ -166,7 +166,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(togglers.Length + costumeChangers.Length + smoothChangers.Length + presets.Length > 0)
             {
                 #if LIL_VRCSDK3A
-                var controller = VRChatHelper.TryGetFXAnimatorController();
+                var controller = VRChatUtils.TryGetFXAnimatorController();
                 #else
                 // 各SNSごとに処理を追加していく必要あり
                 var controller = new AnimatorController();
@@ -201,7 +201,7 @@ namespace jp.lilxyzw.lilycalinventory
 
                 // 生成したメニュー・パラメーターをマージ
                 #if LIL_VRCSDK3A
-                VRChatHelper.Apply(menu, parameters);
+                VRChatUtils.Apply(menu, parameters);
                 #else
                 // 各SNSごとに処理を追加していく必要あり
                 #endif
@@ -240,6 +240,112 @@ namespace jp.lilxyzw.lilycalinventory
             materials = Cloner.CloneAllMaterials();
             #endif
             Optimizer.OptimizeMaterials(materials);
+        }
+
+        // 汎用クローン
+        private static Object CloneObject(Object obj, BuildContext ctx, Dictionary<Object,Object> map)
+        {
+            if(!obj || ctx.IsTemporaryAsset(obj)) return obj;
+            if(map.ContainsKey(obj)) return map[obj];
+            var clone = Object.Instantiate(obj);
+            RegisterReplacedObject(obj, clone);
+            AssetDatabase.AddObjectToAsset(clone, ctx.AssetContainer);
+            return map[obj] = clone;
+        }
+
+        private static void RegisterReplacedObject(Object origin, Object clone)
+        {
+            #if LIL_NDMF
+            ObjectRegistry.RegisterReplacedObject(origin, clone);
+            #endif
+        }
+
+        private static bool OriginEquals(Material origin, Material clone)
+        {
+            #if LIL_NDMF
+            return ObjectRegistry.GetReference(origin) == ObjectRegistry.GetReference(clone);
+            #else
+            return materialMap.ContainsKey(origin) && materialMap[origin] == clone;
+            #endif
+        }
+
+        private static void DresserToChanger(this AutoDresser[] dressers, AutoDresserSettings[] settings, Preset[] presets)
+        {
+            if(dressers == null || dressers.Length == 0) return;
+            CostumeChanger changer;
+            if(settings.Length == 1 && settings[0])
+            {
+                var s = settings[0];
+                changer = s.gameObject.AddComponent<CostumeChanger>();
+                changer.menuName = s.menuName;
+                changer.icon = s.icon;
+                changer.parentOverride = s.parentOverride;
+                changer.parentOverrideMA = s.parentOverrideMA;
+                changer.isSave = s.isSave;
+                changer.isLocalOnly = s.isLocalOnly;
+                changer.autoFixDuplicate = s.autoFixDuplicate;
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
+                if(changer.costumes == null) Object.DestroyImmediate(changer);
+                RegisterReplacedObject(s, changer);
+                Object.DestroyImmediate(s);
+            }
+            else
+            {
+                var newObj = new GameObject(nameof(AutoDresser));
+                changer = newObj.AddComponent<CostumeChanger>();
+                changer.menuName = nameof(AutoDresser);
+                changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
+                if(changer.costumes == null) Object.DestroyImmediate(changer);
+                newObj.transform.parent = avatarRoot;
+                newObj.transform.SetAsFirstSibling();
+            }
+        }
+
+        // PropをItemTogglerに変換
+        private static void PropToToggler(this Prop[] props, Preset[] presets, bool createNewObject = false)
+        {
+            if(props == null || props.Length == 0) return;
+            foreach(var prop in props)
+            {
+                var obj = prop.gameObject;
+                ItemToggler toggler;
+                var items = presets.SelectMany(p => p.presetItems).Where(i => i.obj == prop);
+                Undo.RecordObjects(presets.Where(p => items.Any(i => p.presetItems.Contains(i))).ToArray(), "Convert to ItemToggler");
+                if(createNewObject)
+                {
+                    obj = new GameObject(prop.GetMenuName());
+                    if(prop.parentOverride) obj.transform.parent = prop.parentOverride.transform;
+                    else obj.transform.parent = prop.transform.parent;
+                    Undo.RegisterCreatedObjectUndo(obj, "Convert to ItemToggler");
+                    toggler = Undo.AddComponent<ItemToggler>(obj);
+                    EditorGUIUtility.PingObject(obj);
+                }
+                else
+                {
+                    toggler = obj.AddComponent<ItemToggler>();
+                    RegisterReplacedObject(prop, toggler);
+                }
+                foreach(var item in items)
+                {
+                    item.obj = toggler;
+                    item.value = 1;
+                }
+                toggler.menuName = prop.menuName;
+                toggler.parentOverride = prop.parentOverride;
+                toggler.parentOverrideMA = prop.parentOverrideMA;
+                toggler.icon = prop.icon;
+                toggler.isSave = prop.isSave;
+                toggler.isLocalOnly = prop.isLocalOnly;
+                toggler.autoFixDuplicate = prop.autoFixDuplicate;
+                toggler.parameter = prop.PropToTogglerParameters();
+                if(createNewObject) Undo.DestroyObjectImmediate(prop);
+                else Object.DestroyImmediate(prop);
+            }
+        }
+
+        internal static void PropToToggler(Prop[] props, Preset[] presets)
+        {
+            PropToToggler(props, presets, true);
         }
     }
 }

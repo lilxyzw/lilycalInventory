@@ -160,7 +160,7 @@ namespace jp.lilxyzw.lilycalinventory
             // Prop => ItemToggler 変換ボタン
             if(target is Prop && GUILayout.Button(Localization.S("inspector.convertToItemToggler")))
                 foreach(var prop in targets.Select(t => t as Prop).Where(t => t).ToArray())
-                    new[]{prop}.PropToToggler(prop.gameObject.GetAvatarRoot().GetComponentsInChildren<Preset>(true), true);
+                    Processor.PropToToggler(new[]{prop}, prop.gameObject.GetAvatarRoot().GetComponentsInChildren<Preset>(true));
 
             // ----------------------------------------------------------------
             // フォルダ生成ボタン
