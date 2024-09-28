@@ -3,6 +3,17 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.4.0] - 2024-09-29
+### 追加
+- パラメーター名重複時に自動で重複回避する機能を追加
+- lilycalInventoryをMA MergeAnimatorとしてアバターに追加するコンポーネント`LI AsMAMergeAnimator`を追加
+
+### 変更
+- MaterialModifierで変更したプロパティがlilycalInventoryで生成されるメニューの初期値に反映されるように
+
+### 修正
+- 親フォルダがMA MenuItemで管理されているときに子のメニューが生成されない不具合を修正
+
 ## [1.3.1] - 2024-09-22
 ### 変更
 - コンポーネントを他アバターにコピーした際に参照を自動修正するように #121

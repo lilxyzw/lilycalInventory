@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2024-09-29
+### Added
+- Auto-avoiding duplicate parameter names
+- Component `LI AsMAMergeAnimator` that adds lilycalInventory to the avatar as MA MergeAnimator
+
+### Changed
+- Consider MaterialModifier when getting material properties
+
+### Fixed
+- Child menu not generated if parent folder is overridden with MA MenuItem
+
 ## [1.3.1] - 2024-09-22
 ### Changed
 - replace object references when copying components to other avatars #121
