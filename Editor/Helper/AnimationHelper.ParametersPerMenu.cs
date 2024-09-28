@@ -3,10 +3,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
@@ -75,11 +71,6 @@ namespace jp.lilxyzw.lilycalinventory
                 clipChanged.Add(clip);
             }
             return (clipDefault, clipChanged);
-        }
-
-        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, BuildContext ctx, string name)
-        {
-            return parameter.CreateClip(ctx.AvatarRootObject, name);
         }
 
         // ObjectToggler

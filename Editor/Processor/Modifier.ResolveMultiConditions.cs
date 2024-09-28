@@ -4,17 +4,13 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
     internal partial class Modifier
     {
-        internal static void ResolveMultiConditions(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, CostumeChanger[] costumeChangers, BlendTree root)
+        internal static void ResolveMultiConditions(AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, CostumeChanger[] costumeChangers, BlendTree root)
         {
             // 複数コンポーネントから操作されるオブジェクトを見つける
             var toggleBools = new Dictionary<GameObject, HashSet<(string name, bool toActive, bool defaultValue)>>();
@@ -126,8 +122,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var clipDefault = clips.clipDefault.ToClip();
                 var clipChanged = clips.clipChanged.ToClip();
 
-                AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
-                AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
+                AssetDatabase.AddObjectToAsset(clipDefault, Processor.ctx.AssetContainer);
+                AssetDatabase.AddObjectToAsset(clipChanged, Processor.ctx.AssetContainer);
                 if(root) AnimationHelper.AddMultiConditionTree(controller, clipDefault, clipChanged, bools, ints, root, isActive);
                 else AnimationHelper.AddMultiConditionLayer(controller, hasWriteDefaultsState, clipDefault, clipChanged, name, bools, ints, isActive);
             }

@@ -1,14 +1,7 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
-
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
-#if LIL_VRCSDK3A
-using VRC.SDK3.Avatars.ScriptableObjects;
-#endif
 
 namespace jp.lilxyzw.lilycalinventory
 {
@@ -16,11 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal partial class Modifier
     {
-        internal static void ApplySmoothChanger(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, SmoothChanger[] changers, BlendTree root
-        #if LIL_VRCSDK3A
-        , VRCExpressionParameters parameters
-        #endif
-        )
+        internal static void ApplySmoothChanger(AnimatorController controller, bool hasWriteDefaultsState, SmoothChanger[] changers, BlendTree root, List<InternalParameter> parameters)
         {
             foreach(var changer in changers)
             {
@@ -35,7 +24,7 @@ namespace jp.lilxyzw.lilycalinventory
                     {
                         var frame = changer.frames[i];
                         var frameValue = Mathf.Clamp01(frame.frameValue);
-                        var clip2 = frame.parametersPerMenu.CreateClip(ctx, $"{changer.menuName}_{i}");
+                        var clip2 = frame.parametersPerMenu.CreateClip(Processor.ctx.AvatarRootObject, $"{changer.menuName}_{i}");
                         clipDefaults[i] = clip2.Item1;
                         clipChangeds[i] = clip2.Item2;
                         frames[i] = frameValue;
@@ -51,7 +40,7 @@ namespace jp.lilxyzw.lilycalinventory
                         clipChangeds[i] = InternalClip.MergeAndCreate(clipChangeds[i], clipDefault);
                         clipChangeds[i].name = $"{changer.menuName}_{i}_Merged";
                         clips[i] = clipChangeds[i].ToClip();
-                        AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
+                        AssetDatabase.AddObjectToAsset(clips[i], Processor.ctx.AssetContainer);
                     }
 
                     // AnimatorControllerに追加
@@ -63,10 +52,7 @@ namespace jp.lilxyzw.lilycalinventory
                     controller.TryAddParameter(changer.parameterName, changer.defaultFrameValue);
                 }
 
-                #if LIL_VRCSDK3A
-                // パラメーターを追加
-                parameters.AddParameterFloat(changer.parameterName, changer.isLocalOnly, changer.isSave, changer.defaultFrameValue);
-                #endif
+                parameters.Add(new InternalParameter(changer.parameterName, changer.defaultFrameValue, changer.isLocalOnly, changer.isSave, InternalParameterType.Float));
             }
         }
     }

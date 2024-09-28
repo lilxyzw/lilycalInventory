@@ -107,12 +107,7 @@ namespace jp.lilxyzw.lilycalinventory
                 if(animator && animator.runtimeAnimatorController) controllers.Add(animator.runtimeAnimatorController);
 
                 #if LIL_VRCSDK3A
-                var descriptor = avatarRoot.GetComponent<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>();
-                if(descriptor)
-                {
-                    controllers.UnionWith(descriptor.baseAnimationLayers.Select(l => l.animatorController));
-                    controllers.UnionWith(descriptor.specialAnimationLayers.Select(l => l.animatorController));
-                }
+                VRChatHelper.GetAnimatorControllers(avatarRoot, controllers);
                 #endif
 
                 animatedObjects = controllers.Where(c => c).SelectMany(c => c.animationClips).Distinct()

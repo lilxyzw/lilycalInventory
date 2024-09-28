@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace jp.lilxyzw.lilycalinventory
 {
-    using nadena.dev.ndmf;
     using runtime;
 
     internal static partial class ObjHelper
@@ -162,9 +161,7 @@ namespace jp.lilxyzw.lilycalinventory
                 changer.autoFixDuplicate = s.autoFixDuplicate;
                 changer.costumes = dressers.DresserToCostumes(out Transform avatarRoot, changer, presets);
                 if(changer.costumes == null) Object.DestroyImmediate(changer);
-                #if LIL_NDMF
-                else ObjectRegistry.RegisterReplacedObject(s, changer);
-                #endif
+                Cloner.RegisterReplacedObject(s, changer);
                 Object.DestroyImmediate(s);
             }
             else
@@ -201,9 +198,7 @@ namespace jp.lilxyzw.lilycalinventory
                 else
                 {
                     toggler = obj.AddComponent<ItemToggler>();
-                    #if LIL_NDMF
-                    ObjectRegistry.RegisterReplacedObject(prop, toggler);
-                    #endif
+                    Cloner.RegisterReplacedObject(prop, toggler);
                 }
                 foreach(var item in items)
                 {

@@ -3,10 +3,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
@@ -21,13 +17,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var refMaterial = modifier.referenceMaterial;
                 if(!refMaterial || !refMaterial.shader) continue;
 
-                #if LIL_NDMF
-                // NDMF使用時はObjectRegistryでクローン前のマテリアルを追跡
-                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(m) && !modifier.ignoreMaterials.Any(i => ObjectRegistry.GetReference(i) == ObjectRegistry.GetReference(m))).ToArray();
-                #else
-                // そうでない場合はクローンマップから追跡
-                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(m) && !modifier.ignoreMaterials.Any(i => Cloner.materialMap.ContainsKey(i) && Cloner.materialMap[i] == m)).ToArray();
-                #endif
+                var materialsMod = materials.Where(m => !modifier.ignoreMaterials.Contains(m) && !modifier.ignoreMaterials.Any(i => Cloner.OriginEquals(i,m))).ToArray();
                 if(materialsMod.Length == 0) continue;
 
                 // 参照マテリアルからプロパティを取得

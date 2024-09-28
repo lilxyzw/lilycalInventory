@@ -35,10 +35,6 @@ using UnityEngine;
 using nadena.dev.ndmf;
 #endif
 
-#if LIL_VRCSDK3A
-using VRC.SDK3.Avatars.Components;
-#endif
-
 using Object = UnityEngine.Object;
 
 #endregion
@@ -310,7 +306,7 @@ namespace jp.lilxyzw.lilycalinventory
 #if LIL_VRCSDK3A
             switch (behavior)
             {
-                case VRCAnimatorLayerControl layerControl:
+                case VRC.SDK3.Avatars.Components.VRCAnimatorLayerControl layerControl:
                 {
                     // TODO - need to figure out how to handle cross-layer references. For now this will handle
                     // intra-animator cases.
@@ -319,24 +315,6 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 #endif
-        }
-
-        private static string MapPath(EditorCurveBinding binding, string basePath)
-        {
-            if (binding.type == typeof(Animator) && binding.path == "")
-            {
-                return "";
-            }
-            else
-            {
-                var newPath = binding.path == "" ? basePath : basePath + binding.path;
-                if (newPath.EndsWith("/"))
-                {
-                    newPath = newPath.Substring(0, newPath.Length - 1);
-                }
-
-                return newPath;
-            }
         }
 
         private Object customClone(Object o, string basePath)

@@ -2,16 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
-#if LIL_VRCSDK3A
-using VRC.SDK3.Avatars.ScriptableObjects;
-using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
-using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
@@ -20,25 +10,20 @@ namespace jp.lilxyzw.lilycalinventory
     {
         // メニューの追加処理
         // 順序処理を追加するにあたって大幅な書き換えを予定
-        internal static void Generate(BuildContext ctx, MenuFolder[] folders, ItemToggler[] togglers, SmoothChanger[] smoothChangers, CostumeChanger[] costumeChangers, Preset[] presets
-        , MenuBaseComponent[] menuBaseComponents
-        #if LIL_VRCSDK3A
-        , VRCExpressionsMenu menu
-        #endif
-        )
+        internal static InternalMenu Generate(MenuFolder[] folders, ItemToggler[] togglers, SmoothChanger[] smoothChangers, CostumeChanger[] costumeChangers, Preset[] presets, MenuBaseComponent[] menuBaseComponents)
         {
-            #if LIL_VRCSDK3A
-            var menus = new Dictionary<MenuBaseComponent, VRCExpressionsMenu>();
-            var controls = new Dictionary<MenuBaseComponent, List<(MenuBaseComponent parent, Control control)>>();
+            var root = new InternalMenu();
+            var menus = new Dictionary<MenuBaseComponent, InternalMenu>();
+            var controls = new Dictionary<MenuBaseComponent, List<(MenuBaseComponent parent, InternalMenu menu)>>();
 
             // 親フォルダを生成
             foreach(var folder in folders)
             {
                 if(folder.parentOverrideMA) continue;
-                menus[folder] = VRChatHelper.CreateMenu(ctx, folder.menuName);
-                controls[folder] = new List<(MenuBaseComponent, Control)>()
+                menus[folder] = InternalMenu.CreateFolder(folder.menuName, folder.icon);
+                controls[folder] = new List<(MenuBaseComponent, InternalMenu)>()
                 {
-                    (folder.GetMenuParent(), VRChatHelper.CreateControl(folder.menuName, folder.icon, menus[folder]))
+                    (folder.GetMenuParent(), menus[folder])
                 };
             }
 
@@ -46,9 +31,9 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var toggler in togglers)
             {
                 if(toggler.parentOverrideMA) continue;
-                controls[toggler] = new List<(MenuBaseComponent, Control)>()
+                controls[toggler] = new List<(MenuBaseComponent, InternalMenu)>()
                 {
-                    (toggler.GetMenuParent(), VRChatHelper.CreateControl(toggler.menuName, toggler.icon, ControlType.Toggle, toggler.parameterName))
+                    (toggler.GetMenuParent(), InternalMenu.CreateToggle(toggler.menuName, toggler.icon, toggler.parameterName))
                 };
             }
 
@@ -56,9 +41,9 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var changer in smoothChangers)
             {
                 if(changer.parentOverrideMA || changer.frames.Length == 0) continue;
-                controls[changer] = new List<(MenuBaseComponent, Control)>()
+                controls[changer] = new List<(MenuBaseComponent, InternalMenu)>()
                 {
-                    (changer.GetMenuParent(), VRChatHelper.CreateControl(changer.menuName, changer.icon, ControlType.RadialPuppet, changer.parameterName))
+                    (changer.GetMenuParent(), InternalMenu.CreateSlider(changer.menuName, changer.icon, changer.parameterName))
                 };
             }
 
@@ -69,10 +54,10 @@ namespace jp.lilxyzw.lilycalinventory
 
                 if(changer.costumes.Count(c => !c.parentOverride && !c.parentOverrideMA) > 0)
                 {
-                    menus[changer] = VRChatHelper.CreateMenu(ctx, changer.menuName);
-                    controls[changer] = new List<(MenuBaseComponent, Control)>()
+                    menus[changer] = InternalMenu.CreateFolder(changer.menuName, changer.icon);
+                    controls[changer] = new List<(MenuBaseComponent, InternalMenu)>()
                     {
-                        (changer.GetMenuParent(), VRChatHelper.CreateControl(changer.menuName, changer.icon, menus[changer]))
+                        (changer.GetMenuParent(), menus[changer])
                     };
                 }
 
@@ -83,9 +68,9 @@ namespace jp.lilxyzw.lilycalinventory
                     var parent = costume.parentOverride ? costume.parentOverride : changer as MenuBaseComponent;
                     if(!controls.ContainsKey(changer))
                     {
-                        controls[changer] = new List<(MenuBaseComponent, Control)>();
+                        controls[changer] = new List<(MenuBaseComponent, InternalMenu)>();
                     }
-                    controls[changer].Add((parent, VRChatHelper.CreateControl(costume.menuName, costume.icon, ControlType.Toggle, changer.isLocalOnly ? changer.parameterName : changer.parameterNameLocal, i)));
+                    controls[changer].Add((parent, InternalMenu.CreateToggle(costume.menuName, costume.icon, changer.isLocalOnly ? changer.parameterName : changer.parameterNameLocal, i)));
                 }
             }
 
@@ -93,9 +78,9 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var preset in presets)
             {
                 if(preset.parentOverrideMA) continue;
-                controls[preset] = new List<(MenuBaseComponent, Control)>()
+                controls[preset] = new List<(MenuBaseComponent, InternalMenu)>()
                 {
-                    (preset.GetMenuParent(), VRChatHelper.CreateControl(preset.menuName, preset.icon, ControlType.Button, preset.menuName))
+                    (preset.GetMenuParent(), InternalMenu.CreateTrigger(preset.menuName, preset.icon, preset.parameterName))
                 };
             }
 
@@ -104,7 +89,7 @@ namespace jp.lilxyzw.lilycalinventory
                 .OrderBy(x => x.Key, Comparer<MenuBaseComponent>.Create((a, b) => Array.IndexOf(menuBaseComponents, a) - Array.IndexOf(menuBaseComponents, b)))
                 .SelectMany(x => x.Value))
             {
-                (parent != null ? menus[parent] : menu).controls.Add(control);
+                (parent ? menus[parent] : root).menus.Add(control);
             }
 
             // 循環参照を検出
@@ -143,7 +128,8 @@ namespace jp.lilxyzw.lilycalinventory
                     }
                 }
             }
-            #endif
+
+            return root;
         }
     }
 }

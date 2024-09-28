@@ -4,27 +4,21 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     internal class Optimizer
     {
-        internal static void OptimizeMaterials(Material[] materials, BuildContext ctx)
+        internal static void OptimizeMaterials(Material[] materials)
         {
             var propMap = materials.Select(m => m.shader).Distinct().Where(s => s).ToDictionary(s => s, s => new ShaderPropertyContainer(s));
 
             #if LIL_TOON_1_8_0
-            var clips = new HashSet<AnimationClip>();
-            clips.UnionWith(ctx.AvatarRootObject.GetComponentsInChildren<Animator>(true).Where(a => a.runtimeAnimatorController).SelectMany(a => a.runtimeAnimatorController.animationClips));
+            var controllers = new HashSet<RuntimeAnimatorController>();
+            controllers.UnionWith(Processor.ctx.AvatarRootObject.GetComponentsInChildren<Animator>(true).Where(a => a.runtimeAnimatorController).Select(a => a.runtimeAnimatorController));
             #if LIL_VRCSDK3A
-            var descriptor = ctx.AvatarDescriptor;
-            clips.UnionWith(descriptor.specialAnimationLayers.Where(l => l.animatorController).SelectMany(l => l.animatorController.animationClips));
-            if(descriptor.customizeAnimationLayers) clips.UnionWith(descriptor.baseAnimationLayers.Where(l => l.animatorController).SelectMany(l => l.animatorController.animationClips));
+            VRChatHelper.GetAnimatorControllers(Processor.ctx.AvatarDescriptor, controllers);
             #endif
-            var props = clips.SelectMany(c => AnimationUtility.GetCurveBindings(c)).Select(b => b.propertyName).Where(n => n.Contains("material."))
+            var props = controllers.SelectMany(c => c.animationClips).SelectMany(c => AnimationUtility.GetCurveBindings(c)).Select(b => b.propertyName).Where(n => n.Contains("material."))
             .Select(n => n=n.Substring("material.".Length))
             .Select(n => {if(n.Contains(".")) n=n.Substring(0, n.IndexOf(".")); return n;}).Distinct().ToArray();
             #endif

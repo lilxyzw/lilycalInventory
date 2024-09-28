@@ -1,13 +1,9 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 #if LIL_VRCSDK3A
-using VRC.SDK3.Avatars.ScriptableObjects;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDKBase;
 #endif
@@ -18,16 +14,12 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal partial class Modifier
     {
-        internal static void ApplyPreset(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, Preset[] presets
-        #if LIL_VRCSDK3A
-        , VRCExpressionParameters parameters
-        #endif
-        )
+        internal static void ApplyPreset(AnimatorController controller, bool hasWriteDefaultsState, Preset[] presets, List<InternalParameter> parameters)
         {
             #if LIL_VRCSDK3A
             if(presets.Length == 0) return;
             var emptyClip = new AnimationClip(){name = "Empty"};
-            AssetDatabase.AddObjectToAsset(emptyClip, ctx.AssetContainer);
+            AssetDatabase.AddObjectToAsset(emptyClip, Processor.ctx.AssetContainer);
             var stateDefault = new AnimatorState
             {
                 motion = emptyClip,
@@ -77,12 +69,12 @@ namespace jp.lilxyzw.lilycalinventory
                         value = item.value
                     });
                 }
-                AssetDatabase.AddObjectToAsset(driver, ctx.AssetContainer);
+                AssetDatabase.AddObjectToAsset(driver, Processor.ctx.AssetContainer);
 
                 controller.TryAddParameter(preset.parameterName, false);
 
                 // パラメーターを追加
-                parameters.AddParameterToggle(preset.parameterName, true, false, false);
+                parameters.Add(new InternalParameter(preset.parameterName, 0, true, false, InternalParameterType.Bool));
 
                 i++;
             }

@@ -14,6 +14,8 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static class Processor
     {
+        internal static BuildContext ctx;
+
         // lilycalInventoryの処理を行うか
         private static bool shouldModify;
 
@@ -40,8 +42,9 @@ namespace jp.lilxyzw.lilycalinventory
         // 強制アクティブにするオブジェクトとそのオブジェクトの元のアクティブ状態の配列
         private static (GameObject,bool)[] actives;
 
-        internal static void FindComponent(BuildContext ctx)
+        internal static void FindComponent(BuildContext context)
         {
+            ctx = context;
             Cloner.materialMap = new Dictionary<Material, Material>();
 
             // Commentコンポーネントを削除
@@ -154,20 +157,26 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // アニメーション系コンポーネントの処理
-        internal static void ModifyPreProcess(BuildContext ctx)
+        internal static void ModifyPreProcess(BuildContext context)
         {
+            ctx = context;
+
             if(!shouldModify) return;
             ObjHelper.pathInAvatars.Clear();
-            #if LIL_VRCSDK3A
             if(togglers.Length + costumeChangers.Length + smoothChangers.Length + presets.Length > 0)
             {
-                var controller = ctx.AvatarDescriptor.TryGetFXAnimatorController(ctx);
+                #if LIL_VRCSDK3A
+                var controller = VRChatHelper.TryGetFXAnimatorController();
+                #else
+                // 各SNSごとに処理を追加していく必要あり
+                var controller = new AnimatorController();
+                #endif
+
                 var hasWriteDefaultsState = controller.HasWriteDefaultsState();
-                var menu = VRChatHelper.CreateMenu(ctx);
-                var parameters = VRChatHelper.CreateParameters(ctx);
+                var parameters = new List<InternalParameter>();
 
                 // パラメーター名の重複回避
-                Modifier.ResolveParameterNames(ctx, controller, togglers, costumeChangers, smoothChangers, presets);
+                Modifier.ResolveParameterNames(controller, togglers, costumeChangers, smoothChangers, presets);
 
                 // DirectBlendTreeのルートを作成
                 BlendTree tree = null;
@@ -178,52 +187,59 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 // 各コンポーネントの処理
-                Modifier.ResolveMultiConditions(ctx, controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
-                Modifier.ApplyItemToggler(ctx, controller, hasWriteDefaultsState, togglers, tree, parameters);
-                Modifier.ApplyCostumeChanger(ctx, controller, hasWriteDefaultsState, costumeChangers, tree, parameters);
-                Modifier.ApplySmoothChanger(ctx, controller, hasWriteDefaultsState, smoothChangers, tree, parameters);
-                Modifier.ApplyPreset(ctx, controller, hasWriteDefaultsState, presets, parameters);
+                Modifier.ResolveMultiConditions(controller, hasWriteDefaultsState, togglers, costumeChangers, tree);
+                Modifier.ApplyItemToggler(controller, hasWriteDefaultsState, togglers, tree, parameters);
+                Modifier.ApplyCostumeChanger(controller, hasWriteDefaultsState, costumeChangers, tree, parameters);
+                Modifier.ApplySmoothChanger(controller, hasWriteDefaultsState, smoothChangers, tree, parameters);
+                Modifier.ApplyPreset(controller, hasWriteDefaultsState, presets, parameters);
 
                 // DirectBlendTreeの子のパラメーターを設定
                 if(ToolSettings.instance.useDirectBlendTree) AnimationHelper.SetParameter(tree);
 
                 // メニューを生成
-                MenuGenerator.Generate(ctx, folders, togglers, smoothChangers, costumeChangers, presets, menuBaseComponents, menu);
+                var menu = MenuGenerator.Generate(folders, togglers, smoothChangers, costumeChangers, presets, menuBaseComponents);
 
                 // 生成したメニュー・パラメーターをマージ
-                ctx.AvatarDescriptor.MergeParameters(menu, parameters, ctx);
+                #if LIL_VRCSDK3A
+                VRChatHelper.Apply(menu, parameters);
+                #else
+                // 各SNSごとに処理を追加していく必要あり
+                #endif
             }
-            #else
-            // 各SNSごとに処理を追加していく必要あり
-            #endif
         }
 
         // マテリアルの編集とメッシュ設定の統一
-        internal static void ModifyPostProcess(BuildContext ctx)
+        internal static void ModifyPostProcess(BuildContext context)
         {
+            ctx = context;
+
             if(!shouldModify) return;
             if(modifiers.Length > 0 || optimizers.Length > 0)
-                materials = Cloner.CloneAllMaterials(ctx);
+                materials = Cloner.CloneAllMaterials();
             Modifier.ApplyMaterialModifier(materials, modifiers);
             Modifier.ApplyMeshSettingsModifier(ctx.AvatarRootObject, meshSettings);
         }
 
         // 後の最適化ツールが正しく動作するようにコンポーネントをここで除去
-        internal static void RemoveComponent(BuildContext ctx)
+        internal static void RemoveComponent(BuildContext context)
         {
+            ctx = context;
+
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<AvatarTagComponent>(true))
                 Object.DestroyImmediate(component);
         }
 
         // マテリアルから不要なプロパティを除去
-        internal static void Optimize(BuildContext ctx)
+        internal static void Optimize(BuildContext context)
         {
+            ctx = context;
+
             if(!shouldModify || optimizers.Length == 0) return;
             #if LIL_NDMF
             // NDMF環境では動作タイミングが分かれているため再取得
-            materials = Cloner.CloneAllMaterials(ctx);
+            materials = Cloner.CloneAllMaterials();
             #endif
-            Optimizer.OptimizeMaterials(materials, ctx);
+            Optimizer.OptimizeMaterials(materials);
         }
     }
 }

@@ -4,24 +4,20 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     using runtime;
 
     internal partial class Modifier
     {
-        internal static void ResolveParameterNames(BuildContext ctx, AnimatorController controller, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers, Preset[] presets)
+        internal static void ResolveParameterNames(AnimatorController controller, ItemToggler[] togglers, CostumeChanger[] costumeChangers, SmoothChanger[] smoothChangers, Preset[] presets)
         {
             // AnimatorControllerとExpressionParametersから既存のパラメーター名を取得
             var duplicates = new Dictionary<string, HashSet<Object>>();
             var parameterNames = new HashSet<string>();
             if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
             #if LIL_VRCSDK3A
-            if(ctx.AvatarDescriptor.expressionParameters) ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
+            if(Processor.ctx.AvatarDescriptor.expressionParameters) Processor.ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name);
             #endif
 
             // 重複しない名前を決定しつつ既存のパラメーターのリストに追加
@@ -54,8 +50,8 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 if(controller.parameters.Any(p => p.name == kv.Key)) kv.Value.Add(controller);
                 #if LIL_VRCSDK3A
-                if(ctx.AvatarDescriptor.expressionParameters && ctx.AvatarDescriptor.expressionParameters.parameters.Any(p => p.name == kv.Key))
-                    kv.Value.Add(ctx.AvatarDescriptor.expressionParameters);
+                if(Processor.ctx.AvatarDescriptor.expressionParameters && Processor.ctx.AvatarDescriptor.expressionParameters.parameters.Any(p => p.name == kv.Key))
+                    kv.Value.Add(Processor.ctx.AvatarDescriptor.expressionParameters);
                 #endif
                 ErrorHelper.Report("dialog.error.parameterDuplication", kv.Value);
             }

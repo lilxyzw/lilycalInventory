@@ -1,15 +1,11 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 #if LIL_VRCSDK3A
 using VRC.SDKBase;
 using VRC.SDK3.Avatars.Components;
-using VRC.SDK3.Avatars.ScriptableObjects;
 #endif
 
 namespace jp.lilxyzw.lilycalinventory
@@ -18,11 +14,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal partial class Modifier
     {
-        internal static void ApplyCostumeChanger(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, CostumeChanger[] changers, BlendTree root
-        #if LIL_VRCSDK3A
-        , VRCExpressionParameters parameters
-        #endif
-        )
+        internal static void ApplyCostumeChanger(AnimatorController controller, bool hasWriteDefaultsState, CostumeChanger[] changers, BlendTree root, List<InternalParameter> parameters)
         {
             foreach(var changer in changers)
             {
@@ -37,7 +29,7 @@ namespace jp.lilxyzw.lilycalinventory
                     for(int i = 0; i < changer.costumes.Length; i++)
                     {
                         var costume = changer.costumes[i];
-                        (clipDefaults[i], clipChangeds[i]) = costume.parametersPerMenu.CreateClip(ctx, costume.menuName);
+                        (clipDefaults[i], clipChangeds[i]) = costume.parametersPerMenu.CreateClip(Processor.ctx.AvatarRootObject, costume.menuName);
                     }
 
                     // 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
@@ -56,7 +48,7 @@ namespace jp.lilxyzw.lilycalinventory
                         clipChangeds[i] = InternalClip.MergeAndCreate(clipChangeds[i], clipDefault);
                         clipChangeds[i].name = $"{changer.costumes[i].menuName}_Merged";
                         clips[i] = clipChangeds[i].ToClip();
-                        AssetDatabase.AddObjectToAsset(clips[i], ctx.AssetContainer);
+                        AssetDatabase.AddObjectToAsset(clips[i], Processor.ctx.AssetContainer);
                     }
 
                     // AnimatorControllerに追加
@@ -72,23 +64,23 @@ namespace jp.lilxyzw.lilycalinventory
                 // パラメーターを追加
                 if(changer.isLocalOnly)
                 {
-                    parameters.AddParameterInt(changer.parameterName, true, changer.isSave, changer.defaultValue);
+                    parameters.Add(new InternalParameter(changer.parameterName, changer.defaultValue, changer.isLocalOnly, changer.isSave, InternalParameterType.Int));
                 }
                 else
                 {
                     // Localでつかうintと同期されるboolを生成
                     controller.TryAddParameter(changer.parameterNameLocal, changer.defaultValue);
-                    parameters.AddParameterInt(changer.parameterNameLocal, true, changer.isSave, changer.defaultValue);
+                    parameters.Add(new InternalParameter(changer.parameterNameLocal, changer.defaultValue, true, changer.isSave, InternalParameterType.Int));
                     for(int bit = 0; bit < bits; bit++)
                     {
                         bool defaultValue = (changer.defaultValue & 1 << bit) != 0;
                         controller.TryAddParameter(changer.parameterNameBits[bit], defaultValue);
-                        parameters.AddParameterToggle(changer.parameterNameBits[bit], false, changer.isSave, defaultValue);
+                        parameters.Add(new InternalParameter(changer.parameterNameBits[bit], defaultValue ? 1 : 0, false, changer.isSave, InternalParameterType.Bool));
                     }
 
                     // 空のClip
                     var emptyClip = new AnimationClip(){name = "Empty"};
-                    AssetDatabase.AddObjectToAsset(emptyClip, ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(emptyClip, Processor.ctx.AssetContainer);
 
                     var stateMachineComp = new AnimatorStateMachine();
                     var stateMachineDecomp = new AnimatorStateMachine();
@@ -170,6 +162,8 @@ namespace jp.lilxyzw.lilycalinventory
                     };
                     controller.AddLayer(layerDecomp);
                 }
+                #else
+                parameters.Add(new InternalParameter(changer.parameterName, changer.defaultValue, changer.isLocalOnly, changer.isSave, InternalParameterType.Int));
                 #endif
             }
         }

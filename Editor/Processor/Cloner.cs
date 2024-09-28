@@ -16,37 +16,33 @@ namespace jp.lilxyzw.lilycalinventory
         internal static Dictionary<Material,Material> materialMap;
 
         // 汎用クローン
-        internal static Object CloneObject(Object obj, BuildContext context, Dictionary<Object,Object> map)
+        internal static Object CloneObject(Object obj, BuildContext ctx, Dictionary<Object,Object> map)
         {
-            if(!obj || context.IsTemporaryAsset(obj)) return obj;
+            if(!obj || ctx.IsTemporaryAsset(obj)) return obj;
             if(map.ContainsKey(obj)) return map[obj];
             var clone = Object.Instantiate(obj);
-            #if LIL_NDMF
-            ObjectRegistry.RegisterReplacedObject(obj, clone);
-            #endif
-            AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
+            RegisterReplacedObject(obj, clone);
+            AssetDatabase.AddObjectToAsset(clone, ctx.AssetContainer);
             return map[obj] = clone;
         }
 
         // Materialをクローン
-        internal static Material[] CloneAllMaterials(BuildContext context)
+        internal static Material[] CloneAllMaterials()
         {
             // クローンしつつAssetContainerに登録
             Material CloneMaterial(Material material)
             {
                 if(!material) return material;
                 if(materialMap.ContainsKey(material)) return materialMap[material];
-                if(context.IsTemporaryAsset(material)) return materialMap[material] = material;
+                if(Processor.ctx.IsTemporaryAsset(material)) return materialMap[material] = material;
                 var clone = Object.Instantiate(material); // new Material(material) is slow
-                #if LIL_NDMF
-                ObjectRegistry.RegisterReplacedObject(material, clone);
-                #endif
-                AssetDatabase.AddObjectToAsset(clone, context.AssetContainer);
+                RegisterReplacedObject(material, clone);
+                AssetDatabase.AddObjectToAsset(clone, Processor.ctx.AssetContainer);
                 return materialMap[material] = clone;
             }
 
             // Rendererのマテリアルスロット内をクローン
-            foreach(var renderer in context.AvatarRootObject.GetComponentsInChildren<Renderer>(true))
+            foreach(var renderer in Processor.ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true))
             {
                 var sharedMaterials = renderer.sharedMaterials;
                 for(int i = 0; i < sharedMaterials.Length; i++)
@@ -58,16 +54,16 @@ namespace jp.lilxyzw.lilycalinventory
             // Animatorをクローン
             var controllers = new HashSet<RuntimeAnimatorController>();
 
-            foreach(var animator in context.AvatarRootObject.GetComponentsInChildren<Animator>(true))
+            foreach(var animator in Processor.ctx.AvatarRootObject.GetComponentsInChildren<Animator>(true))
             {
                 if(ContainsMaterialReference(animator.runtimeAnimatorController))
                 {
-                    animator.runtimeAnimatorController = AnimatorCombiner.DeepCloneAnimator(context, animator.runtimeAnimatorController);
+                    animator.runtimeAnimatorController = AnimatorCombiner.DeepCloneAnimator(Processor.ctx, animator.runtimeAnimatorController);
                     controllers.Add(animator.runtimeAnimatorController);
                 }
             }
 
-            foreach(var component in context.AvatarRootObject.GetComponentsInChildren<MonoBehaviour>(true))
+            foreach(var component in Processor.ctx.AvatarRootObject.GetComponentsInChildren<MonoBehaviour>(true))
             {
                 if(NotContainsAnimatorController(component)) continue;
 
@@ -79,7 +75,7 @@ namespace jp.lilxyzw.lilycalinventory
                     enterChildren = iter.propertyType != SerializedPropertyType.String;
                     if(iter.propertyType == SerializedPropertyType.ObjectReference && iter.objectReferenceValue is RuntimeAnimatorController controller && ContainsMaterialReference(controller))
                     {
-                        iter.objectReferenceValue = AnimatorCombiner.DeepCloneAnimator(context, controller);
+                        iter.objectReferenceValue = AnimatorCombiner.DeepCloneAnimator(Processor.ctx, controller);
                         controllers.Add(iter.objectReferenceValue as RuntimeAnimatorController);
                     }
                 }
@@ -97,7 +93,7 @@ namespace jp.lilxyzw.lilycalinventory
                     frames[j] = AnimationUtility.GetObjectReferenceCurve(clip, bindings[j]);
 
                 if(!frames.SelectMany(f => f).Any(f => f.value is Material)) continue;
-                if(!context.IsTemporaryAsset(clip))
+                if(!Processor.ctx.IsTemporaryAsset(clip))
                 {
                     throw new Exception($"Can't Modify {clip.name}");
                 }
@@ -111,6 +107,22 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             return materialMap.Select(m => m.Value).Distinct().Where(m => m).ToArray();
+        }
+
+        internal static void RegisterReplacedObject(Object origin, Object clone)
+        {
+            #if LIL_NDMF
+            nadena.dev.ndmf.ObjectRegistry.RegisterReplacedObject(origin, clone);
+            #endif
+        }
+
+        internal static bool OriginEquals(Material origin, Material clone)
+        {
+            #if LIL_NDMF
+            return nadena.dev.ndmf.ObjectRegistry.GetReference(origin) == nadena.dev.ndmf.ObjectRegistry.GetReference(clone);
+            #else
+            return materialMap.ContainsKey(origin) && materialMap[origin] == clone;
+            #endif
         }
 
         private static bool NotContainsAnimatorController(MonoBehaviour component)

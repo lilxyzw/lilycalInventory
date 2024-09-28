@@ -1,13 +1,6 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Animations;
-
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
-#if LIL_VRCSDK3A
-using VRC.SDK3.Avatars.ScriptableObjects;
-#endif
 
 namespace jp.lilxyzw.lilycalinventory
 {
@@ -15,21 +8,17 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal partial class Modifier
     {
-        internal static void ApplyItemToggler(BuildContext ctx, AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, BlendTree root
-        #if LIL_VRCSDK3A
-        , VRCExpressionParameters parameters
-        #endif
-        )
+        internal static void ApplyItemToggler(AnimatorController controller, bool hasWriteDefaultsState, ItemToggler[] togglers, BlendTree root, List<InternalParameter> parameters)
         {
             foreach(var toggler in togglers)
             {
                 if(toggler.parameter.objects.Length + toggler.parameter.blendShapeModifiers.Length + toggler.parameter.materialReplacers.Length + toggler.parameter.materialPropertyModifiers.Length + toggler.parameter.clips.Length > 0)
                 {
                     // コンポーネントの設定値とprefab初期値を取得したAnimationClipを作成
-                    var clips = toggler.parameter.CreateClip(ctx, toggler.menuName);
+                    var clips = toggler.parameter.CreateClip(Processor.ctx.AvatarRootObject, toggler.menuName);
                     var (clipDefault, clipChanged) = (clips.clipDefault.ToClip(), clips.clipChanged.ToClip());
-                    AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
-                    AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(clipDefault, Processor.ctx.AssetContainer);
+                    AssetDatabase.AddObjectToAsset(clipChanged, Processor.ctx.AssetContainer);
 
                     // AnimatorControllerに追加
                     if(root) AnimationHelper.AddItemTogglerTree(controller, clipDefault, clipChanged, toggler.menuName, toggler.parameterName, toggler.defaultValue, root);
@@ -40,10 +29,7 @@ namespace jp.lilxyzw.lilycalinventory
                     controller.TryAddParameter(toggler.parameterName, toggler.defaultValue);
                 }
 
-                #if LIL_VRCSDK3A
-                // パラメーターを追加
-                parameters.AddParameterToggle(toggler.parameterName, toggler.isLocalOnly, toggler.isSave, toggler.defaultValue);
-                #endif
+                parameters.Add(new InternalParameter(toggler.parameterName, toggler.defaultValue ? 1 : 0, toggler.isLocalOnly, toggler.isSave, InternalParameterType.Bool));
             }
         }
     }
