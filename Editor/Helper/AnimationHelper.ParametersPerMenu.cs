@@ -134,9 +134,7 @@ namespace jp.lilxyzw.lilycalinventory
                     float value = 0;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material || !material.HasProperty(floatModifier.propertyName)) continue;
-                        value = material.GetFloat(floatModifier.propertyName);
-                        break;
+                        if(Processor.TryGetFloat(material, floatModifier.propertyName, out value)) break;
                     }
                     clip.Add(binding, value);
                 }
@@ -149,9 +147,7 @@ namespace jp.lilxyzw.lilycalinventory
                     Vector4 value = Vector4.zero;
                     foreach(var material in renderer.sharedMaterials)
                     {
-                        if(!material || !material.HasProperty(vectorModifier.propertyName)) continue;
-                        value = material.GetVector(vectorModifier.propertyName);
-                        break;
+                        if(Processor.TryGetVector(material, vectorModifier.propertyName, out value)) break;
                     }
                     clip.Add(bindingX, value.x);
                     clip.Add(bindingY, value.y);

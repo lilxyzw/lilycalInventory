@@ -5,17 +5,13 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-#if LIL_NDMF
-using nadena.dev.ndmf;
-#endif
-
 namespace jp.lilxyzw.lilycalinventory
 {
     internal static partial class Processor
     {
         private class Cloner
         {
-            internal static Dictionary<Material,Material> materialMap;
+            internal static readonly Dictionary<Material,Material> materialMap = new();
 
             // Materialをクローン
             internal static Material[] CloneAllMaterials()

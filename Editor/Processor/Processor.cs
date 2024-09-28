@@ -39,13 +39,19 @@ namespace jp.lilxyzw.lilycalinventory
         private static MenuBaseComponent[] menuBaseComponents;
         private static Material[] materials;
 
+        // マテリアルプロパティを1度取得したらその値を保存
+        private static readonly Dictionary<(Material material, string name), float> floatValues = new();
+        private static readonly Dictionary<(Material material, string name), Vector4> vectorValues = new();
+
         // 強制アクティブにするオブジェクトとそのオブジェクトの元のアクティブ状態の配列
         private static (GameObject,bool)[] actives;
 
         internal static void FindComponent(BuildContext context)
         {
             ctx = context;
-            Cloner.materialMap = new Dictionary<Material, Material>();
+            Cloner.materialMap.Clear();
+            floatValues.Clear();
+            vectorValues.Clear();
 
             // Commentコンポーネントを削除
             foreach(var component in ctx.AvatarRootObject.GetComponentsInChildren<Comment>(true))
@@ -149,6 +155,9 @@ namespace jp.lilxyzw.lilycalinventory
             menuBaseComponents.ResolveMenuName();
             costumeChangers.ResolveMenuName();
 
+            // MaterialModifierの値を取得
+            Modifier.GetModifierValues(modifiers);
+
             // 全メッシュに処理を適用するかを確認
             ObjHelper.CheckApplyToAll(togglers, costumeChangers, smoothChangers);
 
@@ -216,7 +225,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(!shouldModify) return;
             if(modifiers.Length > 0 || optimizers.Length > 0)
                 materials = Cloner.CloneAllMaterials();
-            Modifier.ApplyMaterialModifier(materials, modifiers);
+            Modifier.ApplyMaterialModifier(materials);
             Modifier.ApplyMeshSettingsModifier(ctx.AvatarRootObject, meshSettings);
         }
 
@@ -343,9 +352,44 @@ namespace jp.lilxyzw.lilycalinventory
             }
         }
 
-        internal static void PropToToggler(Prop[] props, Preset[] presets)
+        // 外部から使用する場合は新規オブジェクト作成を強制
+        internal static void PropToToggler(Prop[] props, Preset[] presets) => PropToToggler(props, presets, true);
+
+        // MaterialModifierも参照しつつマテリアルから値を取得
+        internal static bool TryGetFloat(Material material, string name, out float value)
         {
-            PropToToggler(props, presets, true);
+            if(!material || !material.HasProperty(name))
+            {
+                value = 0;
+                return false;
+            }
+
+            var tuple = (material,name);
+            if(floatValues.TryGetValue(tuple, out value)) return true; 
+
+            var mods = modifierValues.Where(kv => !kv.Key.ignoreMaterials.Any(i => OriginEquals(i,material)))
+                .Where(kv => kv.Value.floatOverride.ContainsKey(name));
+            if(!mods.Any()) floatValues[tuple] = value = material.GetFloat(name);
+            else floatValues[tuple] = value = mods.Last().Value.floatOverride[name];
+            return true;
+        }
+
+        internal static bool TryGetVector(Material material, string name, out Vector4 value)
+        {
+            if(!material || !material.HasProperty(name))
+            {
+                value = Vector4.zero;
+                return false;
+            }
+
+            var tuple = (material,name);
+            if(vectorValues.TryGetValue(tuple, out value)) return true;
+
+            var mods = modifierValues.Where(kv => !kv.Key.ignoreMaterials.Any(i => OriginEquals(i,material)))
+                .Where(kv => kv.Value.vectorOverride.ContainsKey(name));
+            if(!mods.Any()) vectorValues[tuple] = value = material.GetVector(name);
+            else vectorValues[tuple] = value = mods.Last().Value.vectorOverride[name];
+            return true;
         }
     }
 }
