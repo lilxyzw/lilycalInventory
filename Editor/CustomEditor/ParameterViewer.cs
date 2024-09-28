@@ -26,10 +26,10 @@ namespace jp.lilxyzw.lilycalinventory
         private static int costInt = VRChatHelper.costInt;
         private static int costFloat = VRChatHelper.costFloat;
         #else
-        private static int costMax = 256;
-        private static int costBool = 1;
-        private static int costInt = 8;
-        private static int costFloat = 8;
+        private const int costMax = 256;
+        //private const int costBool = 1;
+        //private const int costInt = 8;
+        //private const int costFloat = 8;
         #endif
 
         internal static void Draw(MenuBaseComponent component)

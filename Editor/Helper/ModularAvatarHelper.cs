@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-#if LIL_MODULAR_AVATAR
+#if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
 using nadena.dev.modular_avatar.core;
-#endif
-#if LIL_VRCSDK3A
 using Control = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control;
 using ControlType = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.ControlType;
 using Parameter = VRC.SDK3.Avatars.ScriptableObjects.VRCExpressionsMenu.Control.Parameter;
@@ -19,7 +17,7 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal static void Inspector(Object target, SerializedProperty iterator)
         {
-            #if LIL_MODULAR_AVATAR
+            #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
             // MAのメニューで制御されている場合はその旨を伝えるヘルプボックスを表示
             if(iterator.objectReferenceValue)
             {

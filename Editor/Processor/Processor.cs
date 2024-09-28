@@ -265,7 +265,7 @@ namespace jp.lilxyzw.lilycalinventory
             #if LIL_NDMF
             return ObjectRegistry.GetReference(origin) == ObjectRegistry.GetReference(clone);
             #else
-            return materialMap.ContainsKey(origin) && materialMap[origin] == clone;
+            return Cloner.materialMap.ContainsKey(origin) && Cloner.materialMap[origin] == clone;
             #endif
         }
 

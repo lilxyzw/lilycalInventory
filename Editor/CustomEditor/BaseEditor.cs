@@ -231,7 +231,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var rectIcon = EditorGUILayout.GetControlRect(GUILayout.Width(iconSize), GUILayout.Height(iconSize));
 
                 EditorGUILayout.BeginVertical();
-                #if LIL_MODULAR_AVATAR
+                #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
                 bool isOverridedByMA = so.GetObjectInProperty("parentOverrideMA");
                 #else
                 bool isOverridedByMA = false;
@@ -261,7 +261,7 @@ namespace jp.lilxyzw.lilycalinventory
 
                 //parentOverrideMA
                 iterator.NextVisible(false);
-                #if LIL_MODULAR_AVATAR
+                #if LIL_MODULAR_AVATAR && LIL_VRCSDK3A
                 GUIHelper.AutoField(iterator);
                 #endif
                 EditorGUILayout.EndVertical();
