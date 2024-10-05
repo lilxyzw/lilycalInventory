@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2024-10-05
+### Fixed
+- An error occurs when the operation target is EditorOnly and is operated from multiple components
+- Compilation error under certain conditions
+- The top version in the changelog is skipped
+- Active state of object not reflected when dragged to header
+
 ## [1.4.0] - 2024-09-29
 ### Added
 - Auto-avoiding duplicate parameter names
