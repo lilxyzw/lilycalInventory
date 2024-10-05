@@ -211,17 +211,17 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // D&D可能なリスト
-        internal static Rect DragAndDropList<T>(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction) where T : Component
+        internal static Rect DragAndDropList<T>(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction, Action<SerializedProperty, Object> actionPerObject = null) where T : Component
         {
-            return DragAndDropList(position, property, drawFoldout, childName, initializeFunction, o => (o is GameObject g) && g.GetComponent<T>());
+            return DragAndDropList(position, property, drawFoldout, childName, initializeFunction, o => (o is GameObject g) && g.GetComponent<T>(), actionPerObject);
         }
 
-        internal static Rect DragAndDropList(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction)
+        internal static Rect DragAndDropList(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction, Action<SerializedProperty, Object> actionPerObject = null)
         {
-            return DragAndDropList(position, property, drawFoldout, childName, initializeFunction, o => o is GameObject);
+            return DragAndDropList(position, property, drawFoldout, childName, initializeFunction, o => o is GameObject, actionPerObject);
         }
 
-        internal static Rect DragAndDropList(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction, Func<Object, bool> selectFunc)
+        internal static Rect DragAndDropList(Rect position, SerializedProperty property, bool drawFoldout, string childName, Action<SerializedProperty> initializeFunction, Func<Object, bool> selectFunc, Action<SerializedProperty, Object> actionPerObject = null)
         {
             var e = Event.current;
             int itemCount = 0;
@@ -281,6 +281,7 @@ namespace jp.lilxyzw.lilycalinventory
                                 child.objectReferenceValue = o;
                             }
                             else current.objectReferenceValue = o;
+                            actionPerObject?.Invoke(current, o);
                         }
                         e.Use();
                         break;

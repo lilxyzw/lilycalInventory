@@ -128,6 +128,9 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 prop.FPR("obj").objectReferenceValue = null;
                 prop.FPR("value").boolValue = true;
+            }, actionPerObject: (sp,o) => {
+                if(o is not GameObject go) return;
+                sp.FPR("value").boolValue = !go.activeSelf;
             });
             position = GUIHelper.DragAndDropList<SkinnedMeshRenderer>(position, blendShapeModifiers, true, "skinnedMeshRenderer", prop =>
             {
