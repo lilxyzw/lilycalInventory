@@ -38,14 +38,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             var sb = new StringBuilder();
             using var sr = new StringReader(md);
-            // Skip header
-            sr.ReadLine();
-            sr.ReadLine();
-            sr.ReadLine();
-            sr.ReadLine();
-            sr.ReadLine();
-            sr.ReadLine();
-
             bool isHeader = true;
             string line;
             while((line = sr.ReadLine()) != null)

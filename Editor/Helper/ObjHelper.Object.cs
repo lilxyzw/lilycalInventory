@@ -125,7 +125,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static float GetBlendShapeWeight(this SkinnedMeshRenderer obj, string name)
         {
-            if(!obj.sharedMesh) return 0;
+            if(!obj || !obj.sharedMesh) return 0;
             var index = obj.sharedMesh.GetBlendShapeIndex(name);
             if(index == -1) return 0;
             return obj.GetBlendShapeWeight(index);
