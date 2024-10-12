@@ -34,7 +34,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var component = (MenuBaseComponent)target;
                 if(component.gameObject.GetComponentInParentInAvatar<ModularAvatarMenuGroup>())
                 {
-                    var item = component.gameObject.AddComponent<ModularAvatarMenuItem>();
+                    var item = component.gameObject.GetComponent<ModularAvatarMenuItem>();
+                    if(!item) item = component.gameObject.AddComponent<ModularAvatarMenuItem>();
                     item.MenuSource = SubmenuSource.Children;
                     item.Control = new Control{icon = component.icon};
                     switch(component)
