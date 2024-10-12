@@ -318,7 +318,7 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     var lastPath = gameObject.GetPathInAvatar();
                     if(string.IsNullOrEmpty(lastPath)) continue;
-                    iter.objectReferenceValue = root.transform.Find(lastPath);
+                    iter.objectReferenceValue = root.transform.Find(lastPath).gameObject;
                 }
                 else if(iter.objectReferenceValue is Component c && c.gameObject.GetAvatarRoot() != root)
                 {
