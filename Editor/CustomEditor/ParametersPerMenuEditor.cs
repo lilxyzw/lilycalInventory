@@ -119,11 +119,11 @@ namespace jp.lilxyzw.lilycalinventory
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var objects = property.FPR("objects");
-            var blendShapeModifiers = property.FPR("blendShapeModifiers");
-            var materialReplacers = property.FPR("materialReplacers");
-            var materialPropertyModifiers = property.FPR("materialPropertyModifiers");
-            var clips = property.FPR("clips");
+            using var objects = property.FPR("objects");
+            using var blendShapeModifiers = property.FPR("blendShapeModifiers");
+            using var materialReplacers = property.FPR("materialReplacers");
+            using var materialPropertyModifiers = property.FPR("materialPropertyModifiers");
+            using var clips = property.FPR("clips");
             position = GUIHelper.DragAndDropList(position, objects, true, "obj", prop =>
             {
                 prop.FPR("obj").objectReferenceValue = null;
@@ -214,7 +214,7 @@ namespace jp.lilxyzw.lilycalinventory
             // Foldoutを表示
             if(!GUIHelper.FoldoutOnly(position, property)) return;
 
-            var blendShapeNameValues = property.FPR("blendShapeNameValues");
+            using var blendShapeNameValues = property.FPR("blendShapeNameValues");
             position = GUIHelper.List(position.NewLine(), blendShapeNameValues, false, prop =>
                 {
                     if(!mesh) return;

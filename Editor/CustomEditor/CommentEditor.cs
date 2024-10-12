@@ -25,7 +25,6 @@ namespace jp.lilxyzw.lilycalinventory
 
         void OnDisable()
         {
-            GUIHelper.ResetList();
             isEditing = false;
         }
 

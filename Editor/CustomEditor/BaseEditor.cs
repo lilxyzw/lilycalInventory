@@ -22,7 +22,6 @@ namespace jp.lilxyzw.lilycalinventory
 
         internal static void OnDisableInternal()
         {
-            GUIHelper.ResetList();
             PreviewHelper.instance.StopPreview();
             if(PreviewHelper.doPreview == 1) PreviewHelper.doPreview = 0;
             ParameterViewer.Reset();

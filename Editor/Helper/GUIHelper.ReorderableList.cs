@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditorInternal;
@@ -9,15 +8,6 @@ namespace jp.lilxyzw.lilycalinventory
 {
     internal static partial class GUIHelper
     {
-        // プロパティごとの固有IDとListを保存して再生成を防ぐ
-        private static readonly Dictionary<string, ReorderableList> reorderableLists = new();
-        internal static void ResetList()
-        {
-            foreach(var kv in reorderableLists)
-                kv.Value.serializedProperty.Dispose();
-            reorderableLists.Clear();
-        }
-
         internal static Rect List(Rect position, SerializedProperty property, bool drawFoldout, Action<SerializedProperty> initializeFunction = null)
         {
             return InternalList(position, property, drawFoldout, initializeFunction);
@@ -35,7 +25,7 @@ namespace jp.lilxyzw.lilycalinventory
             position.NewLine();
 
             // Listの表示
-            var reorderableList = TryGetReorderableList(property, initializeFunction);
+            var reorderableList = PropertyHandlerWrap.GetOrSet(property, initializeFunction);
             position.height = reorderableList.GetHeight();
             reorderableList.DoList(position);
             position.y = position.yMax;
@@ -55,32 +45,13 @@ namespace jp.lilxyzw.lilycalinventory
         private static void InternalList(SerializedProperty property, bool drawFoldout, Action<SerializedProperty> initializeFunction)
         {
             if(Foldout(property, drawFoldout))
-                TryGetReorderableList(property, initializeFunction).DoLayoutList();
-        }
-
-        private static ReorderableList Get(SerializedProperty property)
-        {
-            var name = property.GetUniqueName();
-            if(!reorderableLists.ContainsKey(name)) return null;
-            var list = reorderableLists[name];
-            list.serializedProperty = property;
-            return list;
-        }
-
-        private static ReorderableList TryGetReorderableList(SerializedProperty property, Action<SerializedProperty> initializeFunction)
-        {
-            var name = property.GetUniqueName();
-            if(!reorderableLists.ContainsKey(name))
-                return reorderableLists[name] = CreateReorderableList(property, initializeFunction);
-            var list = reorderableLists[name];
-            list.serializedProperty = property;
-            return list;
+                PropertyHandlerWrap.GetOrSet(property, initializeFunction).DoLayoutList();
         }
 
         internal static float GetListHeight(SerializedProperty property, bool drawFoldout = true)
         {
             if(drawFoldout && !property.isExpanded) return propertyHeight;
-            var list = Get(property);
+            var list = PropertyHandlerWrap.GetOrSet(property);
             if(list == null) return EditorGUI.GetPropertyHeight(property);
             return list.GetHeight() + propertyHeight;
         }
@@ -89,7 +60,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             using var property = parent.FPR(propertyName);
             if(drawFoldout && !property.isExpanded) return propertyHeight;
-            var list = Get(property);
+            var list = PropertyHandlerWrap.GetOrSet(property);
             if(list == null) return EditorGUI.GetPropertyHeight(property);
             return list.GetHeight() + propertyHeight;
         }
@@ -97,25 +68,25 @@ namespace jp.lilxyzw.lilycalinventory
         private static ReorderableList CreateReorderableList(SerializedProperty property, Action<SerializedProperty> initializeFunction = null)
         {
             Rect headerRect = default;
-            var list = new ReorderableList(property.serializedObject, property)
+            var list = new ReorderableList(property.serializedObject, property.Copy(), true, false, true, true)
             {
                 draggable = true,
                 headerHeight = 0,
                 //footerHeight = 0, // みやすさのためにあえて余白を残す
                 multiSelect = true,
-                elementHeightCallback = index => GetPropertyHeight(property, index),
-                onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction),
-                drawHeaderCallback = rect => headerRect = rect,
-                drawElementCallback = (rect, index, isActive, isFocused) =>
-                {
-                    rect.x += 8;
-                    rect.width -= 8;
-                    using var elementProperty = property.GetArrayElementAtIndex(index);
-                    rect.y += GUI_SPACE * 0.5f;
-                    rect.height -= GUI_SPACE;
-                    EditorGUI.PropertyField(rect, elementProperty);
-                }
+                drawHeaderCallback = rect => headerRect = rect
             };
+            list.elementHeightCallback = index => GetPropertyHeight(list.serializedProperty, index);
+            list.drawElementCallback = (rect, index, isActive, isFocused) =>
+            {
+                rect.x += 8;
+                rect.width -= 8;
+                rect.y += GUI_SPACE * 0.5f;
+                rect.height -= GUI_SPACE;
+                EditorGUI.PropertyField(rect, list.serializedProperty.GetArrayElementAtIndex(index));
+            };
+            if(initializeFunction != null)
+                list.onAddCallback = _ => list.serializedProperty.ResizeArray(list.serializedProperty.arraySize + 1, initializeFunction);
 
             // フッターはヘッダーの位置にずらして操作しやすく
             // ついでに表示もカスタマイズ
@@ -126,12 +97,6 @@ namespace jp.lilxyzw.lilycalinventory
                 DrawFooter(headerRect, list);
             };
             return list;
-        }
-
-        // プロパティごとに固有の名前を生成
-        private static string GetUniqueName(this SerializedProperty property)
-        {
-            return $"{property.serializedObject.targetObject.GetInstanceID()}.{property.propertyPath}";
         }
 
         private static MethodInfo InvalidateCacheRecursive;
@@ -204,6 +169,68 @@ namespace jp.lilxyzw.lilycalinventory
             }
 
             m_scheduleRemove?.SetValue(list, false);
+        }
+
+        private class ReorderableListWrapper
+        {
+            private static Type TYPE = typeof(ReorderableList).Assembly.GetType("UnityEditorInternal.ReorderableListWrapper");
+            private static ConstructorInfo CI = TYPE.GetConstructor(new Type[]{typeof(SerializedProperty), typeof(GUIContent), typeof(bool)});
+            private static MethodInfo MI_GetPropertyIdentifier = TYPE.GetMethod("GetPropertyIdentifier", BindingFlags.Public | BindingFlags.Static);
+            private static PropertyInfo PI_Property = TYPE.GetProperty("Property", BindingFlags.NonPublic | BindingFlags.Instance);
+            private static FieldInfo FI_m_ReorderableList = TYPE.GetField("m_ReorderableList", BindingFlags.NonPublic | BindingFlags.Instance);
+            internal object instance;
+
+            internal static string GetPropertyIdentifier(SerializedProperty serializedProperty)
+                => MI_GetPropertyIdentifier.Invoke(null, new object[]{serializedProperty}) as string;
+
+            internal ReorderableListWrapper(SerializedProperty property, GUIContent label, bool reorderable = true)
+                => instance = CI.Invoke(new object[]{property, label, reorderable});
+
+            internal ReorderableListWrapper(object instance)
+                => this.instance = instance;
+
+            internal SerializedProperty Property
+            {
+                get => PI_Property.GetValue(instance) as SerializedProperty;
+                set => PI_Property.SetValue(instance, value);
+            }
+
+            private ReorderableList m_ReorderableListBuf;
+            internal ReorderableList m_ReorderableList
+            {
+                get => m_ReorderableListBuf != null ? m_ReorderableListBuf : m_ReorderableListBuf = FI_m_ReorderableList.GetValue(instance) as ReorderableList;
+                set => FI_m_ReorderableList.SetValue(instance, m_ReorderableListBuf = value);
+            }
+        }
+
+        private class PropertyHandlerWrap
+        {
+            private static Type TYPE = typeof(Editor).Assembly.GetType("UnityEditor.PropertyHandler");
+            private static FieldInfo FI_s_reorderableLists = TYPE.GetField("s_reorderableLists", BindingFlags.NonPublic | BindingFlags.Static);
+            private static System.Collections.IDictionary s_reorderableLists;
+            internal static ReorderableList GetOrSet(SerializedProperty property, Action<SerializedProperty> initializeFunction = null)
+            {
+                s_reorderableLists ??= FI_s_reorderableLists.GetValue(null) as System.Collections.IDictionary;
+
+                var name = ReorderableListWrapper.GetPropertyIdentifier(property);
+                ReorderableListWrapper wrapper;
+                if(s_reorderableLists.Contains(name))
+                {
+                    wrapper = new(s_reorderableLists[name]);
+                }
+                else
+                {
+                    wrapper = new(property, GUIContent.none, true);
+                    wrapper.m_ReorderableList = CreateReorderableList(property, initializeFunction);
+                    s_reorderableLists[name] = wrapper.instance;
+                }
+                wrapper.Property = property.Copy();
+                var reorderableList = wrapper.m_ReorderableList;
+                if(initializeFunction != null && reorderableList.onAddCallback == null)
+                    reorderableList.onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction);
+
+                return reorderableList;
+            }
         }
     }
 }

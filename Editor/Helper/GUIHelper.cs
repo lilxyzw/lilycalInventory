@@ -170,7 +170,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                var copy = property.Copy();
+                using var copy = property.Copy();
                 List(copy, drawFoldout);
             }
             else
@@ -183,7 +183,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(property.isArray && property.propertyType != SerializedPropertyType.String)
             {
-                var copy = property.Copy();
+                using var copy = property.Copy();
                 return GetListHeight(copy, drawFoldout) + GetSpaceHeight();
             }
             else
