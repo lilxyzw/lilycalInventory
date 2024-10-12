@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2024-10-13
+### Changed
+- When attaching the lilycalInventory component, if the GameObject already has an MA Menu Item, it will be used
+- Changed the processing of ReorderableList in the component editor (may have fixed some bugs that were environment-dependent)
+
+### Fixed
+- A problem where the GameObject reference in the component was lost when copying and pasting a GameObject with a lilycalInventory component to another avatar
+
 ## [1.4.1] - 2024-10-05
 ### Fixed
 - An error occurs when the operation target is EditorOnly and is operated from multiple components

@@ -3,6 +3,14 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.4.2] - 2024-10-13
+### 変更
+- lilycalInventoryのコンポーネントを付けた際に既にそのGameObjectにMA Menu Itemがある場合はそれを使用するように
+- コンポーネントのエディタのReorderableList周りの処理を変更（環境依存で一部に発生していた不具合が修正された可能性あり）
+
+### 修正
+- lilycalInventoryのコンポーネントが付いたGameObjectを他アバターにコピー＆ペーストした際にコンポーネント内のGameObject参照が失われるのを修正
+
 ## [1.4.1] - 2024-10-05
 ### 修正
 - 操作対象がEditorOnlyかつ複数のコンポーネントから操作される場合にエラーになるのを修正
