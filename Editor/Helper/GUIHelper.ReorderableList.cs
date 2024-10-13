@@ -227,7 +227,7 @@ namespace jp.lilxyzw.lilycalinventory
                 wrapper.Property = property.Copy();
                 var reorderableList = wrapper.m_ReorderableList;
                 if(initializeFunction != null && reorderableList.onAddCallback == null)
-                    reorderableList.onAddCallback = _ => property.ResizeArray(property.arraySize + 1, initializeFunction);
+                    reorderableList.onAddCallback = _ => reorderableList.serializedProperty.ResizeArray(reorderableList.serializedProperty.arraySize + 1, initializeFunction);
 
                 return reorderableList;
             }

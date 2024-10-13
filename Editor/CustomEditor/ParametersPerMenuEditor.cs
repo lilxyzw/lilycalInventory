@@ -215,24 +215,26 @@ namespace jp.lilxyzw.lilycalinventory
             if(!GUIHelper.FoldoutOnly(position, property)) return;
 
             using var blendShapeNameValues = property.FPR("blendShapeNameValues");
+            var path = blendShapeNameValues.propertyPath;
             position = GUIHelper.List(position.NewLine(), blendShapeNameValues, false, prop =>
                 {
                     if(!mesh) return;
                     // 追加ボタンデフォルトで行われる追加は一旦削除
-                    blendShapeNameValues.arraySize--;
+                    var bsnvs = prop.serializedObject.FindProperty(path);
+                    bsnvs.arraySize--;
                     UpdateBlendShapes(mesh);
 
                     // BlendShapeのサジェストを表示
                     EditorUtility.DisplayCustomMenu(new Rect(Event.current.mousePosition, Vector2.one), GUIHelper.CreateContents(blendShapes[mesh]), -1, (userData, options, selected) =>
                     {
-                        var blendShapeNameValues2 = (((SerializedProperty,Mesh))userData).Item1;
+                        using var blendShapeNameValues2 = (((SerializedProperty,Mesh))userData).Item1;
                         var mesh2 = (((SerializedProperty,Mesh))userData).Item2;
                         blendShapeNameValues2.arraySize++;
                         using var p = blendShapeNameValues2.GetArrayElementAtIndex(blendShapeNameValues2.arraySize - 1);
                         using var name = p.FPR("name");
                         name.stringValue = blendShapes[mesh2][selected];
                         if(blendShapeNameValues2.serializedObject.ApplyModifiedProperties()) PreviewHelper.instance.StopPreview();
-                    }, (blendShapeNameValues,mesh));
+                    }, (bsnvs,mesh));
                 }
             );
         }
