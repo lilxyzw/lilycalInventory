@@ -3,6 +3,10 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.4.3] - 2024-10-13
+### 修正
+- 一部プロパティの追加時にエラーになっていたのを修正
+
 ## [1.4.2] - 2024-10-13
 ### 変更
 - lilycalInventoryのコンポーネントを付けた際に既にそのGameObjectにMA Menu Itemがある場合はそれを使用するように
