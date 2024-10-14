@@ -5,6 +5,7 @@
   "inspector.changelogLoadFailed": "更新日志加载失败。",
   "inspector.noProperty": "这个组件没有属性。",
   "inspector.componentDisabled": "该组件已禁用，并将在构建过程中被忽略。如果要启用该组件，请勾选检查框。",
+  "inspector.parentDisabled": "The parent folder is disabled and will be ignored during the build. Check the checkbox for the component if you want to enable it.",
   "inspector.componentDuplicate": "{0} and {1} cannot be attached to the same GameObject.",
   "inspector.targetEditorOnly": "The object to be operated or its parent object is EditorOnly, so it will be ignored during build. If you want to enable it, change the Tag.",
   "inspector.targetAnimationClip": "The object to be operated or its parent object is already being operated by the following AnimationClip.",

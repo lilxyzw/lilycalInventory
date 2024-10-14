@@ -79,6 +79,16 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(target is MenuBaseComponent comp)
             {
+                // コンポーネントの親フォルダがオフの場合にビルド時に無視される旨の警告を表示
+                var unenabled = ObjHelper.UnenabledParent(comp);
+                if(unenabled)
+                {
+                    EditorGUILayout.HelpBox(Localization.S("inspector.parentDisabled"), MessageType.Warning);
+                    EditorGUI.BeginDisabledGroup(true);
+                    EditorGUILayout.ObjectField(unenabled, typeof(Object), true);
+                    EditorGUI.EndDisabledGroup();
+                }
+
                 // ExpressionParameters
                 ParameterViewer.Draw(comp);
                 AvatarScanner.Update(comp);
