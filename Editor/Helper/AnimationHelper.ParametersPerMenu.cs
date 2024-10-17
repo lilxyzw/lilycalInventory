@@ -58,7 +58,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var modifier in parameter.materialPropertyModifiers)
             {
                 if(modifier.renderers.Length == 0)
-                    modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).ToArray();
+                    modifier.renderers = gameObject.GetComponentsInChildren<Renderer>(true).Where(r => r.sharedMaterials != null && r.sharedMaterials.Length > 0 && r.sharedMaterials.Any(m => m)).ToArray();
 
                 modifier.ToClipDefault(clipDefault);
                 modifier.ToClip(clipChanged, clipDefault);
