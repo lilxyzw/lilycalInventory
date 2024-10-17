@@ -3,6 +3,10 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.4.5] - 2024-10-17
+### 変更
+- マテリアルが空のRendererに対してアニメーションを生成しないように
+
 ## [1.4.4] - 2024-10-14
 ### 修正
 - 親フォルダのコンポーネントがオフのときにエラーになっていたのを修正
