@@ -146,5 +146,6 @@
   "dialog.error.menuCircularReference": "MenuFolderに循環参照があります。親フォルダを変更してください。",
   "dialog.error.autoFixMeshSettingsDuplication": "AutoFixMeshSettingsが複数存在します。1つだけを有効化してください。",
   "dialog.error.menuMADuplication": "MA Menu Itemが複数コンポーネントから参照されています。それぞれのコンポーネントにつき1つのMA Menu Itemを作成するようにしてください。",
-  "dialog.error.testInEditor": "PlayModeのときにアバターを選択してから実行してください。"
+  "dialog.error.testInEditor": "PlayModeのときにアバターを選択してから実行してください。",
+  "dialog.error.unusualError": "通常発生しないエラーです。何らかのツールでエラーが発生している可能性があります。"
 }

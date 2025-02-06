@@ -97,6 +97,7 @@ namespace jp.lilxyzw.lilycalinventory
                             };
 
                             var driverComp = stateComp.AddStateMachineBehaviour<VRCAvatarParameterDriver>();
+                            if(!driverComp) ErrorHelper.Report("dialog.error.unusualError");
                             driverComp.localOnly = true; // 圧縮はローカルでいい
 
                             stateMachineComp.AddState(stateComp, stateMachineComp.entryPosition + new Vector3(200,costumeCount*25-i*50,0));
