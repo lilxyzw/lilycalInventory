@@ -34,13 +34,16 @@ namespace jp.lilxyzw.lilycalinventory
         }
 
         // メニューの親がオフでないかチェック
-        internal static MenuFolder UnenabledParent(this MenuBaseComponent component)
+        internal static MenuFolder UnenabledParent(this MenuBaseComponent component) => UnenabledParent(component, new());
+
+        private static MenuFolder UnenabledParent(MenuBaseComponent component, HashSet<MenuBaseComponent> scanned)
         {
+            if(!scanned.Add(component)) return null;
             if(component.parentOverrideMA) return null;
             var parent = component.GetMenuParent();
             if(!parent) return null;
             if(!parent.enabled) return parent;
-            return UnenabledParent(parent);
+            return UnenabledParent(parent, scanned);
         }
 
         // メニュー名を解決しつう重複がないかをチェック
