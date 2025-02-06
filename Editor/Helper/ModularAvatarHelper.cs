@@ -146,6 +146,7 @@ namespace jp.lilxyzw.lilycalinventory
             if(!m.parentOverride) m.parentOverride = m.GetMenuParent();
             if(m.parentOverrideMA)
             {
+                if(!string.IsNullOrEmpty(m.parentOverrideMA.Control.parameter.name)) m.menuName = m.parentOverrideMA.Control.parameter.name;
                 m.parentOverrideMA.Set(type, m.menuName);
                 menus.TryAdd(m.parentOverrideMA, duplicates, m);
                 return;
@@ -160,6 +161,7 @@ namespace jp.lilxyzw.lilycalinventory
 
         private static void Resolve(this CostumeChanger m, Dictionary<ModularAvatarMenuItem, (Component,bool)> menus, List<Component> duplicates)
         {
+            if(m.parentOverrideMA && !string.IsNullOrEmpty(m.parentOverrideMA.Control.parameter.name)) m.menuName = m.parentOverrideMA.Control.parameter.name;
             var parameterName = m.menuName;
             if(!m.isLocalOnly) parameterName += "_Local";
             if(!m.parentOverride) m.parentOverride = m.GetMenuParent();
