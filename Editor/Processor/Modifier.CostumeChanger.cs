@@ -31,7 +31,7 @@ namespace jp.lilxyzw.lilycalinventory
                         for(int i = 0; i < changer.costumes.Length; i++)
                         {
                             var costume = changer.costumes[i];
-                            (clipDefaults[i], clipChangeds[i]) = costume.parametersPerMenu.CreateClip(ctx.AvatarRootObject, costume.menuName);
+                            (clipDefaults[i], clipChangeds[i]) = costume.parametersPerMenu.CreateClip(ctx.AvatarRootObject, costume.menuName, changer);
                         }
 
                         // 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる

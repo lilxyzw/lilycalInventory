@@ -9,7 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class AnimationHelper
     {
-        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name, Component component)
         {
             var clipDefault = new InternalClip();
             var clipChanged = new InternalClip();
@@ -67,7 +67,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var clip in parameter.clips)
             {
                 if(!clip) continue;
-                clipDefault.AddDefault(clip, gameObject);
+                clipDefault.AddDefault(clip, gameObject, component.gameObject);
                 clipChanged.Add(clip);
             }
             return (clipDefault, clipChanged);

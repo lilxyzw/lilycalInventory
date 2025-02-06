@@ -37,7 +37,7 @@ namespace jp.lilxyzw.lilycalinventory
                         {
                             var frame = changer.frames[i];
                             var frameValue = Mathf.Clamp01(frame.frameValue);
-                            var clip2 = frame.parametersPerMenu.CreateClip(ctx.AvatarRootObject, $"{changer.menuName}_{i}");
+                            var clip2 = frame.parametersPerMenu.CreateClip(ctx.AvatarRootObject, $"{changer.menuName}_{i}", changer);
                             clipDefaults[i] = clip2.Item1;
                             clipChangeds[i] = clip2.Item2;
                             frames[i] = frameValue;
