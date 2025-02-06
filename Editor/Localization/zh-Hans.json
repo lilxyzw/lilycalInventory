@@ -137,6 +137,7 @@
   "dialog.error.parameterover": "要同步的参数数量超过上限。请将参数设为仅限本地或合并参数，以减少参数数量。",
   "dialog.error.menuNameEmpty": "菜单名称为空。请设置名称。",
   "dialog.error.menuNameDuplication": "菜单名称重复。请更改名称。",
+  "dialog.error.emptyCostume": "Skipped empty costume slot.",
   "dialog.error.parameterDuplication": "参数名称重复。请更改名称。",
   "dialog.error.dresserSettingsDuplication": "有多个 AutoDresserSettings。请只启用一个。",
   "dialog.error.defaultDuplication": "多个带有 AutoDresser 组件的对象已打开。请只启用一个，以便工具设置初始值。",

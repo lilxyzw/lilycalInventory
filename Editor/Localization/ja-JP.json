@@ -137,6 +137,7 @@
   "dialog.error.parameterover": "同期するパラメーターが上限を超えています。ローカルでいいものをローカルのみにしたり、操作をまとめるなどで項目数を減らしたりしてください。",
   "dialog.error.menuNameEmpty": "メニュー名が空になっています。名前を設定してください。",
   "dialog.error.menuNameDuplication": "メニュー名が重複しています。名前を変更してください。",
+  "dialog.error.emptyCostume": "空のコスチュームスロットをスキップしました。",
   "dialog.error.parameterDuplication": "パラメーター名が重複しています。名前を変更してください。",
   "dialog.error.dresserSettingsDuplication": "AutoDresserSettingsが複数存在します。1つだけを有効化してください。",
   "dialog.error.defaultDuplication": "複数のAutoDresserが付いたオブジェクトがオンになっています。初期値を設定できるようにどれか1つだけオンにしてください。",

@@ -137,6 +137,7 @@
   "dialog.error.parameterover": "The number of parameters to synchronize exceeds the upper limit. Please reduce the number of parameters by making parameters local-only or consolidating operations.",
   "dialog.error.menuNameEmpty": "The menu name is empty. Please set a name.",
   "dialog.error.menuNameDuplication": "Duplicate menu name. Please change the name.",
+  "dialog.error.emptyCostume": "Skipped empty costume slot.",
   "dialog.error.parameterDuplication": "Duplicate parameter name. Please change the name.",
   "dialog.error.dresserSettingsDuplication": "There are multiple AutoDresserSettings. Please enable only one.",
   "dialog.error.defaultDuplication": "Multiple objects with AutoDresser are turned on. Please check only one so that the tool can set the initial value.",
