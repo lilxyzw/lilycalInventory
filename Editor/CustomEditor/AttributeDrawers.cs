@@ -189,6 +189,17 @@ namespace jp.lilxyzw.lilycalinventory
 
             if(string.IsNullOrEmpty(name))
             {
+                using var clips = copy.FPR("clips");
+                for(int i = 0; i < clips.arraySize; i++)
+                {
+                    using var c = clips.GetArrayElementAtIndex(i);
+                    if(c.objectReferenceValue) name = c.objectReferenceValue.name;
+                    if(!string.IsNullOrEmpty(name)) break;
+                }
+            }
+
+            if(string.IsNullOrEmpty(name))
+            {
                 name = Localization.S("inspector.menuNameEmpty");
             }
 
