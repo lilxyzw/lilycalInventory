@@ -91,6 +91,10 @@ namespace jp.lilxyzw.lilycalinventory
                     throw e;
                 }
             }
+            else
+            {
+                instance.latest = new SemVerParser("0.0.0");
+            }
         }
 
         private class PackageInfo
