@@ -20,7 +20,7 @@ namespace jp.lilxyzw.lilycalinventory
         {
             if(label == null)
             {
-                if(instance.latest > instance.current)
+                if (instance.latest != null && instance.current != null && instance.latest > instance.current)
                 {
                     // 更新がある場合は最新バージョンも合わせて表示、赤字で強調
                     label = new GUIContent($"{ConstantValues.TOOL_NAME} {instance.current} => {instance.latest}");
@@ -90,6 +90,10 @@ namespace jp.lilxyzw.lilycalinventory
                     instance.latest = new SemVerParser("0.0.0");
                     throw e;
                 }
+            }
+            else
+            {
+                instance.latest = new SemVerParser("0.0.0");
             }
         }
 
