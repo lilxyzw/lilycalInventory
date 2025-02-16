@@ -4,6 +4,10 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
+#if LIL_VRCSDK3A
+using VRC.SDK3.Avatars.ScriptableObjects;
+#endif
+
 #if LIL_NDMF
 using nadena.dev.ndmf;
 #endif
@@ -196,6 +200,11 @@ namespace jp.lilxyzw.lilycalinventory
                     controller = new AnimatorController();
                     AssetDatabase.AddObjectToAsset(controller, ctx.AssetContainer);
                 }
+                #endif
+                
+                #if LIL_VRCSDK3A
+                if (ctx.AvatarDescriptor.expressionParameters.parameters == null)
+                    ctx.AvatarDescriptor.expressionParameters.parameters = new VRCExpressionParameters.Parameter[0];
                 #endif
 
                 var hasWriteDefaultsState = controller.HasWriteDefaultsState();
