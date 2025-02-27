@@ -123,8 +123,12 @@ namespace jp.lilxyzw.lilycalinventory
                 ctx.AvatarDescriptor.expressionsMenu = CloneMenu(ctx.AvatarDescriptor.expressionsMenu, map, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
-                foreach(var menu in rootMenu.menus) descriptor.expressionsMenu = InternalToExpressions(menu, descriptor.expressionsMenu);
-                CombineSubMenu(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
+                var tempMenu = CreateMenu();
+                foreach(var menu in rootMenu.menus) tempMenu = InternalToExpressions(menu, tempMenu);
+                CombineSubMenu(tempMenu, new HashSet<VRCExpressionsMenu>());
+
+                // Merge Menu
+                descriptor.expressionsMenu.controls.AddRange(tempMenu.controls);
                 ResolveOver(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionParametetsも同様
