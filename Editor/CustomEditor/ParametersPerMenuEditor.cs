@@ -301,7 +301,7 @@ namespace jp.lilxyzw.lilycalinventory
 
             position.Indent();
             EditorGUI.LabelField(position.NewLine(), Localization.G("inspector.replaceTo"));
-            position = GUIHelper.SimpleList(replaceTo, position.NewLine(), materials.Select(m => m.TryGetName()).ToArray());
+            position = GUIHelper.SimpleList(replaceTo, position.NewLine(), materials);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
