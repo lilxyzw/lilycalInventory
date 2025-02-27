@@ -29,18 +29,23 @@ namespace jp.lilxyzw.lilycalinventory
             var nameF = costume.parametersPerMenu.materialPropertyModifiers.SelectMany(m => m.floatModifiers).Select(m => m.propertyName).FirstOrDefault(n => !string.IsNullOrEmpty(n));
             if(!string.IsNullOrEmpty(nameF)) return nameF;
             var nameV = costume.parametersPerMenu.materialPropertyModifiers.SelectMany(m => m.vectorModifiers).Select(m => m.propertyName).FirstOrDefault(n => !string.IsNullOrEmpty(n));
-            if(!string.IsNullOrEmpty(nameV)) return nameF;
+            if(!string.IsNullOrEmpty(nameV)) return nameV;
+            var clip = costume.parametersPerMenu.clips.Where(c => c).FirstOrDefault(c => c && !string.IsNullOrEmpty(c.name));
+            if(clip && !string.IsNullOrEmpty(clip.name)) return clip.name;
             return null;
         }
 
         // メニューの親がオフでないかチェック
-        internal static MenuFolder UnenabledParent(this MenuBaseComponent component)
+        internal static MenuFolder UnenabledParent(this MenuBaseComponent component) => UnenabledParent(component, new());
+
+        private static MenuFolder UnenabledParent(MenuBaseComponent component, HashSet<MenuBaseComponent> scanned)
         {
+            if(!scanned.Add(component)) return null;
             if(component.parentOverrideMA) return null;
             var parent = component.GetMenuParent();
             if(!parent) return null;
             if(!parent.enabled) return parent;
-            return UnenabledParent(parent);
+            return UnenabledParent(parent, scanned);
         }
 
         // メニュー名を解決しつう重複がないかをチェック
@@ -59,7 +64,10 @@ namespace jp.lilxyzw.lilycalinventory
                     costume.menuName = costume.GetMenuName(changer);
 
             var objs = changers.Where(c => c.costumes.Any(d => string.IsNullOrEmpty(d.menuName)));
-            if(objs.Count() > 0) ErrorHelper.Report("dialog.error.menuNameEmpty", objs.ToArray());
+            if(objs.Count() > 0) ErrorHelper.Warn("dialog.error.emptyCostume", objs.ToArray());
+            foreach(var changer in objs)
+                changer.costumes = changer.costumes.Where(d => !string.IsNullOrEmpty(d.menuName)).ToArray();
+
         }
 
         // 親フォルダを検索

@@ -9,7 +9,7 @@ namespace jp.lilxyzw.lilycalinventory
 
     internal static partial class AnimationHelper
     {
-        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name)
+        internal static (InternalClip clipDefault, InternalClip clipChanged) CreateClip(this ParametersPerMenu parameter, GameObject gameObject, string name, Component component)
         {
             var clipDefault = new InternalClip();
             var clipChanged = new InternalClip();
@@ -67,7 +67,7 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var clip in parameter.clips)
             {
                 if(!clip) continue;
-                clipDefault.AddDefault(clip, gameObject);
+                clipDefault.AddDefault(clip, gameObject, component.gameObject);
                 clipChanged.Add(clip);
             }
             return (clipDefault, clipChanged);
@@ -261,11 +261,13 @@ namespace jp.lilxyzw.lilycalinventory
             foreach(var itemToggler in itemTogglers)
             {
                 foreach(var toggler in itemToggler.parameter.objects)
-                    toggleBools.GetOrAdd(toggler.obj).Add((itemToggler.parameterName, toggler.value, itemToggler.defaultValue));
+                    if(toggler.obj)
+                        toggleBools.GetOrAdd(toggler.obj).Add((itemToggler.parameterName, toggler.value, itemToggler.defaultValue));
 
                 foreach(var bsModifier in itemToggler.parameter.blendShapeModifiers)
-                    foreach(var nv in bsModifier.blendShapeNameValues)
-                        shapeBools.GetOrAdd((bsModifier.skinnedMeshRenderer, nv.name)).Add((itemToggler.parameterName, nv.value == 100f, itemToggler.defaultValue));
+                    if(bsModifier.skinnedMeshRenderer)
+                        foreach(var nv in bsModifier.blendShapeNameValues)
+                            shapeBools.GetOrAdd((bsModifier.skinnedMeshRenderer, nv.name)).Add((itemToggler.parameterName, nv.value == 100f, itemToggler.defaultValue));
             }
         }
 
@@ -303,7 +305,7 @@ namespace jp.lilxyzw.lilycalinventory
                 foreach(var obj in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.objects).Select(o => o.obj).Where(o => o).Distinct())
                     toggleInts.GetOrAdd(obj).Add((costumeChanger.parameterName, costumeChanger.costumes.Select(c => Cond(costumeChanger, obj, c)).ToArray(), costumeChanger.defaultValue));
 
-                foreach(var kv in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.blendShapeModifiers).SelectMany(o => o.blendShapeNameValues.Select(nv => (o.skinnedMeshRenderer,nv.name))).Distinct())
+                foreach(var kv in costumeChanger.costumes.SelectMany(c => c.parametersPerMenu.blendShapeModifiers).Where(b => b.skinnedMeshRenderer).SelectMany(o => o.blendShapeNameValues.Select(nv => (o.skinnedMeshRenderer,nv.name))).Distinct())
                     shapeInts.GetOrAdd(kv).Add((costumeChanger.parameterName, costumeChanger.costumes.Select(c => CondShape(costumeChanger, kv.skinnedMeshRenderer, kv.name, c)).ToArray(), costumeChanger.defaultValue));
             }
         }

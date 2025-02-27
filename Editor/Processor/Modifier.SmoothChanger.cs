@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -17,6 +19,15 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(changer.frames.Length != 0)
                     {
+                        // 0フレーム目がなければ追加
+                        if(changer.frames.All(f => f.frameValue != 0))
+                        {
+                            Array.Resize(ref changer.frames, changer.frames.Length + 1);
+                            changer.frames[^1] = new();
+                        }
+
+                        changer.frames = changer.frames.OrderBy(f => f.frameValue).ToArray();
+
                         var clipDefaults = new InternalClip[changer.frames.Length];
                         var clipChangeds = new InternalClip[changer.frames.Length];
                         var frames = new float[changer.frames.Length];
@@ -26,7 +37,7 @@ namespace jp.lilxyzw.lilycalinventory
                         {
                             var frame = changer.frames[i];
                             var frameValue = Mathf.Clamp01(frame.frameValue);
-                            var clip2 = frame.parametersPerMenu.CreateClip(ctx.AvatarRootObject, $"{changer.menuName}_{i}");
+                            var clip2 = frame.parametersPerMenu.CreateClip(ctx.AvatarRootObject, $"{changer.menuName}_{i}", changer);
                             clipDefaults[i] = clip2.Item1;
                             clipChangeds[i] = clip2.Item2;
                             frames[i] = frameValue;

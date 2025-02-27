@@ -21,6 +21,17 @@ namespace jp.lilxyzw.lilycalinventory
             #endif
         }
 
+        internal static void Warn(string key, params object[] args)
+        {
+            #if LIL_NDMF
+            var list = Localization.GetCodes().Select(code => (code, LocalizationFunction(code))).ToList();
+            var localizer = new Localizer("en-us", () => list);
+            ErrorReport.ReportError(localizer, ErrorSeverity.NonFatal, key, args);
+            #else
+            UnityEngine.Debug.LogWarning(Localization.S(key));
+            #endif
+        }
+
         private static Func<string, string> LocalizationFunction(string code)
         {
             return key => Localization.S(key, code);

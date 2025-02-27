@@ -100,11 +100,10 @@ namespace jp.lilxyzw.lilycalinventory
             {
                 return !component || component is runtime.AvatarTagComponent
                 #if LIL_VRCSDK3A
-                    || component is VRC.Dynamics.VRCPhysBoneBase
-                    || component is VRC.Dynamics.VRCPhysBoneColliderBase
-                    || component is VRC.Dynamics.VRCConstraintBase
-                    || component is VRC.Dynamics.ContactBase
-                    || component is VRC.Core.PipelineManager
+                    or VRC.Dynamics.VRCPhysBoneBase
+                    or VRC.Dynamics.VRCPhysBoneColliderBase
+                    or VRC.Dynamics.ContactBase
+                    or VRC.Core.PipelineManager
                 #endif
                 ;
             }

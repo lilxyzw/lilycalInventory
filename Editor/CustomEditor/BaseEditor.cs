@@ -310,9 +310,7 @@ namespace jp.lilxyzw.lilycalinventory
         private static void FixObjectReferences(AvatarTagComponent component)
         {
             if(!component || !component.gameObject ||
-                component is Comment ||
-                component is MaterialModifier ||
-                component is MaterialOptimizer
+                component is Comment or MaterialModifier or MaterialOptimizer or AutoFixMeshSettings
             ) return;
             var root = component.gameObject.GetAvatarRoot();
             if(!root) return;
@@ -322,7 +320,7 @@ namespace jp.lilxyzw.lilycalinventory
             while(iter.Next(enterChildren))
             {
                 enterChildren = iter.propertyType != SerializedPropertyType.String;
-                if(iter.propertyType != SerializedPropertyType.ObjectReference) continue;
+                if(iter.propertyType != SerializedPropertyType.ObjectReference || iter.name == "m_CorrespondingSourceObject") continue;
                 if(iter.objectReferenceValue is GameObject gameObject && gameObject.GetAvatarRoot() != root)
                 {
                     var lastPath = gameObject.GetPathInAvatar();

@@ -17,7 +17,7 @@ namespace jp.lilxyzw.lilycalinventory
                     if(toggler.parameter.objects.Length + toggler.parameter.blendShapeModifiers.Length + toggler.parameter.materialReplacers.Length + toggler.parameter.materialPropertyModifiers.Length + toggler.parameter.clips.Length > 0)
                     {
                         // コンポーネントの設定値とprefab初期値を取得したAnimationClipを作成
-                        var clips = toggler.parameter.CreateClip(ctx.AvatarRootObject, toggler.menuName);
+                        var clips = toggler.parameter.CreateClip(ctx.AvatarRootObject, toggler.menuName, toggler);
                         var (clipDefault, clipChanged) = (clips.clipDefault.ToClip(), clips.clipChanged.ToClip());
                         AssetDatabase.AddObjectToAsset(clipDefault, ctx.AssetContainer);
                         AssetDatabase.AddObjectToAsset(clipChanged, ctx.AssetContainer);

@@ -68,10 +68,26 @@ namespace jp.lilxyzw.lilycalinventory
         private void StartPreview(AutoDresser dresser)
         {
             var gameObject = target.gameObject.GetAvatarRoot().gameObject;
-
             var dressers = gameObject.GetComponentsInChildren<AutoDresser>(true).Where(c => c.enabled).ToArray();
-            var parameters = dressers.DresserToCostumes(out Transform avatarRoot, null, new Preset[]{}, dresser).Select(c => c.parametersPerMenu).ToArray();
-
+            
+            // create a parameter list to disable other dressers
+            var disableParameters = new ParametersPerMenu();
+            disableParameters.objects = dressers.Where(d => d != dresser)  
+                .Select(d => d.gameObject)  
+                .Select(go => new ObjectToggler { obj = go, value = false })  
+                .ToArray();
+            
+            // get the parameters of the current dresser
+            var parameters = new[] { dresser }.DresserToCostumes(out Transform avatarRoot, null, new Preset[]{}, dresser)
+                .Select(c => c.parametersPerMenu)
+                .ToArray();
+            
+            // merge parameters: disable other dressers first, then apply the current dresser's effect
+            if(parameters.Length > 0)
+            {
+                parameters[0].objects = parameters[0].objects.Union(disableParameters.objects).ToArray();
+            }
+            
             StartPreview(parameters, 0);
         }
 

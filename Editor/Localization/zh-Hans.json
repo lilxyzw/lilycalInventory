@@ -137,6 +137,7 @@
   "dialog.error.parameterover": "要同步的参数数量超过上限。请将参数设为仅限本地或合并参数，以减少参数数量。",
   "dialog.error.menuNameEmpty": "菜单名称为空。请设置名称。",
   "dialog.error.menuNameDuplication": "菜单名称重复。请更改名称。",
+  "dialog.error.emptyCostume": "Skipped empty costume slot.",
   "dialog.error.parameterDuplication": "参数名称重复。请更改名称。",
   "dialog.error.dresserSettingsDuplication": "有多个 AutoDresserSettings。请只启用一个。",
   "dialog.error.defaultDuplication": "多个带有 AutoDresser 组件的对象已打开。请只启用一个，以便工具设置初始值。",
@@ -145,5 +146,6 @@
   "dialog.error.menuCircularReference": "MenuFolder 具有循环引用。请更改父文件夹。",
   "dialog.error.autoFixMeshSettingsDuplication": "There are multiple AutoFixMeshSettings. Please enable only one.",
   "dialog.error.menuMADuplication": "MA 菜单项被多个组件引用。确保为每个组件创建一个 MA 菜单项。",
-  "dialog.error.testInEditor": "Please select an avatar in PlayMode before executing this."
+  "dialog.error.testInEditor": "Please select an avatar in PlayMode before executing this.",
+  "dialog.error.unusualError": "This is an error that does not normally occur. There may be an error in some tool."
 }

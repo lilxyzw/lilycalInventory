@@ -62,35 +62,34 @@ namespace jp.lilxyzw.lilycalinventory
                 }
 
                 // Layerのカスタマイズが無効の場合は有効化
-                if(!descriptor.customizeAnimationLayers)
-                {
-                    descriptor.customizeAnimationLayers = true;
-                }
+                descriptor.customizeAnimationLayers = true;
 
                 // FXレイヤーを見つける
                 for(int i = 0; i < descriptor.baseAnimationLayers.Length; i++)
                 {
                     if(descriptor.baseAnimationLayers[i].type != VRCAvatarDescriptor.AnimLayerType.FX) continue;
                     var layer = descriptor.baseAnimationLayers[i];
+                    AnimatorController ac;
                     if(layer.isDefault)
                     {
                         layer.isDefault = false;
                         layer.animatorController = null;
                     }
 
-                    // AnimatorControllerがセットされている場合はそれをクローンして返す
                     if(layer.animatorController)
                     {
-                        var ac = AnimatorCombiner.DeepCloneAnimator(ctx, layer.animatorController);
-                        layer.animatorController = ac;
-                        return ac;
+                        // AnimatorControllerがセットされている場合はそれをクローンして返す
+                        ac = AnimatorCombiner.DeepCloneAnimator(ctx, layer.animatorController);
+                    }
+                    else
+                    {
+                        // 空の場合は新規に作ったものをセットしつつ返す
+                        ac = CreateFXController();
                     }
 
-                    // 空の場合は新規に作ったものをセットしつつ返す
-                    var controllerI = CreateFXController();
-                    layer.animatorController = controllerI;
+                    layer.animatorController = ac;
                     descriptor.baseAnimationLayers[i] = layer;
-                    return controllerI;
+                    return ac;
                 }
 
                 // FXレイヤーがない場合は追加
