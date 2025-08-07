@@ -1,0 +1,3 @@
+# LIICON(LI_Script_MaterialOptimizer.png) LI MaterialOptimizer
+
+このコンポーネントが含まれるアバターの全マテリアルから不要なプロパティが除去され最適化されます。

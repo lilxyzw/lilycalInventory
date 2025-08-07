@@ -1,9 +1,9 @@
 import { defineConfig } from 'vitepress'
 
-const langName = '/ja';
+const langName = '/zh';
 
-export const ja = defineConfig({
-  lang: 'ja_JP',
+export const zh = defineConfig({
+  lang: 'zh_CN',
   description: "lilycalInventoryはコンポーネントを作れるだけで手軽にメニューを作れる魔法のインベントリーシステムです。",
   themeConfig: {
     logo: '/images/logo.svg',
