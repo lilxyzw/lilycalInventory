@@ -1,13 +1,13 @@
 # LIICON(LI_Script_AutoDresserSettings.png) LI AutoDresserSettings
 
-`LI AutoDresser`で生成されるメニューをカスタマイズする際に使用するコンポーネントです。
+此组件用于自定义通过`LI AutoDresser`生成的菜单。
 
-## 仕様
+## 功能描述
 
-ビルド時に`LI AutoDresser`を`LI CostumeChanger`に変換する際にここの設定がコピーされます。
+在构建时将`LI AutoDresser`转换为`LI CostumeChanger`时，此处的设置将被复制。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_settings_table.md"
+#include "docs/zh/docs/components/_menu_settings_table.md"

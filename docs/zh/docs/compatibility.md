@@ -1,11 +1,11 @@
-# NDMFや他ツールとの互換性
+# 与NDMF及其他工具的兼容性
 
-lilycalInventoryは単体でも動作しますが、プロジェクトにNDMFがある場合はNDMFプラグインとして動作します。NDMFプラグインとして動作する場合は動作順が設定済みであるため、既知の他NDMFプラグインと同時に使用することができます。
+lilycalInventory可以独立运行，但如果项目中存在NDMF(Non-Destructive Modifier Framework)，它将作为NDMF插件运行。作为NDMF插件运行时，由于其运行顺序已预先设置，因此可以与其他已知的NDMF插件同时使用。
 
 ## Modular Avatar
 
-lilycalInventoryの各コンポーネントに`MA Menu Item`を設定することでメニューの生成をModular Avatar側で行わせることができます。
+通过为lilycalInventory的组件设置`菜单覆盖(Modular Avatar)`，指定Modular Avatar的菜单项，则菜单将使用Modular Avatar生成，而不是本工具。
 
 ## lilToon
 
-付属のprefabによる距離フェードやライティング設定の統一、LightChangerによる明るさ調整メニュー生成に対応しています。
+支持使用附带的预制件（prefab）来统一距离淡出和光照设置，以及使用LightChanger来生成亮度调整菜单。

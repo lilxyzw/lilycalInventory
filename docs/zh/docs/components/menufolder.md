@@ -1,13 +1,13 @@
 # LIICON(LI_Script_MenuFolder.png) LI MenuFolder
 
-lilycalInventoryの各コンポーネントで生成されるメニューを整理する際に使用することを想定したコンポーネントです。
+此组件主要用于整理lilycalInventory的各组件所生成的菜单。
 
-## 仕様
+## 功能描述
 
-`LI MenuFolder`の子のオブジェクトから生成されるメニューは全てこのコンポーネントによって生成されるSubMenuの配下になります。子のオブジェクトのコンポーネントで`メニューの親フォルダ`が指定されている場合はそちらが優先されます。
+`LI MenuFolder`的子对象所生成的菜单，都会被置于此组件生成的子菜单（SubMenu）下。如果子对象的组件中指定了`菜单的父文件夹`，则该设置优先。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_folder_settings_table.md"
+#include "docs/zh/docs/components/_menu_folder_settings_table.md"

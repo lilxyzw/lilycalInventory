@@ -1,19 +1,19 @@
 # LIICON(LI_Script_Prop.png) LI Prop
 
-小物を切り替える際に使用することを想定したコンポーネントです。小物の切り替え方法については[チュートリアル](../../tutorial/toggle)で確認してください。
+此组件主要用于切换小件物品。有关小件物品切换的方法，请参阅[教程](../../tutorial/toggle)。
 
-## 仕様
+## 功能描述
 
-実態はオブジェクトのオンオフに自分自身を追加した[LI ItemToggler](itemtoggler)です。ビルド時に`LI ItemToggler`に変換されています。
+实质上，这是一个添加了自身开关的[LI ItemToggler](itemtoggler)。在构建时，它会被转换为`LI ItemToggler`。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_settings_table.md"
+#include "docs/zh/docs/components/_menu_settings_table.md"
 
-### 一緒に操作するパラメーター (拡張設定)
+### 一起操作的参数（扩展设置）
 
-このオブジェクトを切り替える際に、他のオブジェクトも一緒に操作することができます。
+在切换此对象时，您可以同时操作其他对象。
 
-#include "docs/ja/docs/components/_additional_settings_table.md"
+#include "docs/zh/docs/components/_additional_settings_table.md"

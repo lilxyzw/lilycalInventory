@@ -1,14 +1,14 @@
 # LIICON(LI_Script_AutoFixMeshSettings.png) LI AutoFixMeshSettings
 
-アバター内の全メッシュ（Renderer）の設定を統一することを想定したコンポーネントです。
+此组件旨在统一Avatar中所有网格（Renderer）的设置。
 
-## 仕様
+## 功能描述
 
-ビルド時にアバター内のRenderer（Mesh Renderer、Skinned Mesh Renderer、Particle System Renderer）をスキャンし、設定内容をこのコンポーネントに合わせます。`Update When Offscreen`、`Skinned Motion Vectors`、`Root Bone`、`Bounds`についてはSkinned Mesh Rendererのみ変更されます。
+在构建时，它会扫描Avatar中的所有Renderer（Mesh Renderer、Skinned Mesh Renderer、Particle System Renderer），并使其设置与此组件保持一致。`Update When Offscreen`、`Skinned Motion Vectors`、`Root Bone`和`Bounds`只对Skinned Mesh Renderer进行修改。
 
-## 設定項目
+## 设置项
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|除外するレンダラー (複数指定可)|設定統一の対象に含めないレンダラーを指定することができます。|
-|メッシュの設定（上級者向け）|設定統一内容をカスタマイズできます。通常はここを変更する必要はありません。この項目の内容はUnity標準のRendererに準拠しています。|
+|排除的渲染器（可多选）|您可以指定不包含在统一设置目标中的渲染器。|
+|网格设置（高级）|您可以自定义统一的设置内容。通常无需修改此处。此项目的内容与Unity的标准Renderer保持一致。|

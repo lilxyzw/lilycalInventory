@@ -1,34 +1,34 @@
 # LIICON(LI_Script_ItemToggler.png) LI ItemToggler
 
-小物を切り替える際に使用することを想定したコンポーネントです。
+此组件主要用于切换小件物品。
 
-## 仕様
+## 功能描述
 
-Bool型で制御しています。設定内容はビルド時にAnimationClipとAnimatorControllerのStateに変換されます。パラメーターの値に応じてStateが遷移し、アニメーションが再生される仕組みになっています。
+由Bool类型控制。设置内容在构建时会被转换为AnimationClip和AnimatorController的State。State会根据参数值进行转换，从而播放动画。
 
-通常、このコンポーネントがアタッチされたオブジェクト自身の切り替えは行いません、コンポーネントのアタッチされたオブジェクト自身の切り替えを行う場合、[LI Prop](prop)を用いるのが便利です。
+通常，此组件不会切换其所附加的对象本身。如果您需要切换附加了此组件的对象本身，使用[LI Prop](prop)会更方便。
 
-ビルド時には具体的に以下の処理が行われます。
+构建时具体会执行以下处理：
 
-- コンポーネントの設定値とprefab初期値を取得したAnimationClipをそれぞれ作成
-- 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
-- AnimatorControllerとExpressionParametersに`メニュー・パラメーター名`に設定した名前のBoolパラメーターを追加
-- ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
-- AnimatorControllerにレイヤーを追加し、State・AnimationClip・Transitionを登録
-- ToggleでBool値を設定するメニューを生成
+- 分别创建包含组件设置值和预制件（prefab）初始值的AnimationClip。
+- 为了防止同步错误，将对象的开关状态与组件设置保持一致。
+- 在AnimatorController和ExpressionParameters中添加名为“菜单·参数名”的Bool参数。
+- 将“保存有效状态”和“仅限本地”的设置复制到ExpressionParameters中。
+- 在AnimatorController中添加一个图层，并注册State、AnimationClip和Transition。
+- 生成一个使用Toggle来设置Bool值的菜单。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_settings_table.md"
+#include "docs/zh/docs/components/_menu_settings_table.md"
 
-### アニメーション設定
+### 动画设置
 
-#include "docs/ja/docs/components/_additional_settings_table.md"
+#include "docs/zh/docs/components/_additional_settings_table.md"
 
-### 詳細設定
+### 详细设置
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|デフォルト状態のパラメーターの値|作成されるメニューで使用するパラメーターの初期値(Bool値)を指定することができます。|
+|默认状态的参数值|您可以指定所创建菜单使用的参数初始值（Bool值）。|

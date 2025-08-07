@@ -1,25 +1,25 @@
 # LIICON(LI_Script_Preset.png) LI Preset
 
-lilycalInventoryのメニュー系コンポーネントを一括で操作し、複数オブジェクトを同時に切り替えることを想定したコンポーネントです。
+此组件旨在批量操作lilycalInventory的菜单系统组件，实现同时切换多个对象。
 
-## 仕様
+## 功能描述
 
-設定内容はビルド時にStateとParameterDriverに変換されます。Stateの遷移に使用されるパラメーターはすべて非Syncedのため、パラメーターメモリの増加はありません。またAnimatorControllerに追加されるレイヤー数はLI Presetの数にかかわらず1つです（LI Presetが存在しない場合は0）。
+设置内容在构建时会被转换为State和ParameterDriver。所有用于State转换的参数都是非同步的（Non-Synced），因此不会增加参数内存。此外，无论存在多少个LI Preset，AnimatorController中添加的图层数量都为1（如果不存在LI Preset则为0）。
 
-ビルド時には具体的に以下の処理が行われます。
+构建时具体会执行以下处理：
 
-- AnimatorControllerとExpressionParametersに`メニュー・パラメーター名`に設定した名前のBoolパラメーター（非Synced）を追加
-- AnimatorControllerにレイヤーを追加し、DefaultStateと空のAnimationClipを追加
-- LI PresetごとにTransitionとState・空のAnimationClipを追加
-- 生成したStateにVRC Avatar Parameter Driverを追加しLI Presetの設定に応じてパラメーター名と値をセット
-- ToggleでBool値を設定するメニューを生成
+- 在AnimatorController和ExpressionParameters中添加名为“菜单·参数名”的Bool参数（非同步）。
+- 在AnimatorController中添加一个图层，并添加DefaultState和空的AnimationClip。
+- 为每个LI Preset添加Transition、State和空的AnimationClip。
+- 在生成的State中添加VRC Avatar Parameter Driver，并根据LI Preset的设置来设置参数名和值。
+- 生成一个使用Toggle来设置Bool值的菜单。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_folder_settings_table.md"
+#include "docs/zh/docs/components/_menu_folder_settings_table.md"
 
-### 操作項目
+### 操作项
 
-操作対象のコンポーネントとセットする値を指定することができます。AutoDresserの場合は値を入力する必要はなく、セットした衣装に着替えるようになります。
+您可以指定要操作的组件和要设置的值。对于AutoDresser，无需输入值，它将切换到所设置的衣装。

@@ -1,37 +1,37 @@
 # LIICON(LI_Script_SmoothChanger.png) LI SmoothChanger
 
-BlendShapeなど無段階で制御するものに使用することを想定したコンポーネントです。
+此组件主要用于控制BlendShape等无级调节的物品。
 
-## 仕様
+## 功能描述
 
-Float型で制御しています。登録したフレームはビルド時にAnimationClipとAnimatorControllerのBlendTreeに変換されます。パラメーターの値に応じて登録したフレームのアニメーションがブレンドされる仕組みになっています。
+由Float类型控制。注册的帧在构建时会被转换为AnimationClip和AnimatorController的BlendTree。动画会根据参数值进行混合，从而播放注册帧的动画。
 
-ビルド時には具体的に以下の処理が行われます。
+构建时具体会执行以下处理：
 
-- 各フレームの設定値とprefab初期値を取得したAnimationClipを作成
-- 同期事故防止のためにオブジェクトのオンオフ状況をコンポーネントの設定に合わせる
-- 各フレームの未設定値をprefab初期値で埋める
-- AnimatorControllerとExpressionParametersに`メニュー・パラメーター名`に設定した名前のFloatパラメーターを追加
-- ExpressionParametersに`有効状態を保存`と`ローカルのみにする`設定がコピーされる
-- AnimatorControllerにレイヤーを追加し、State・BlendTree・AnimationClipを登録
-- RadialPuppetでFloat値を制御するメニューを生成
+- 创建AnimationClip，其中包含每个帧的设置值和预制件（prefab）的初始值。
+- 为了防止同步错误，将对象的开关状态与组件设置保持一致。
+- 使用预制件的初始值填充每个帧的未设置值。
+- 在AnimatorController和ExpressionParameters中添加名为“菜单·参数名”的Float参数。
+- 将“保存有效状态”和“仅限本地”的设置复制到ExpressionParameters中。
+- 在AnimatorController中添加一个图层，并注册State、BlendTree和AnimationClip。
+- 生成一个使用RadialPuppet来控制Float值的菜单。
 
-## 設定項目
+## 设置项
 
-### メニュー設定
+### 菜单设置
 
-#include "docs/ja/docs/components/_menu_settings_table.md"
+#include "docs/zh/docs/components/_menu_settings_table.md"
 
-### アニメーション設定
+### 动画设置
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|パペット初期値(%)|作成されるメニューで使用するパラメーターの初期値を指定することができます。|
+|Puppet初始值(%)|您可以指定所创建菜单使用的参数初始值。|
 
-#### フレーム (複数指定可)
+#### 帧（可多选）
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|パペット設定値(%)|フレームに割り当てるパラメーターの値を指定します。|
+|Puppet设置值(%)|指定分配给帧的参数值。|
 
-#include "docs/ja/docs/components/_additional_settings_table.md"
+#include "docs/zh/docs/components/_additional_settings_table.md"

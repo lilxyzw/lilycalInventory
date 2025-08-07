@@ -1,23 +1,23 @@
-# コンポーネント一覧
+# 组件列表
 
-## メニュー生成コンポーネント
+## 菜单生成组件
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|LIICON(LI_Script_MenuFolder.png) LI MenuFolder|メニューのフォルダとなるコンポーネントです。各コンポーネントを整理したい場合に使います。パラメーターは生成されません。|
-|LIICON(LI_Script_Prop.png) LI Prop|付けたオブジェクトをオンオフできるシンプルなコンポーネントです。オブジェクトが初期状態でオフの場合はオンになるアニメーションが、初期状態でオンの場合はオフになるアニメーションが生成されます。|
-|LIICON(LI_Script_ItemToggler.png) LI ItemToggler|オブジェクトのオンオフ、BlendShapeの切り替え、マテリアルの置き換え・プロパティ操作を行うコンポーネントです。Boolパラメーターが生成されます。|
-|LIICON(LI_Script_CostumeChanger.png) LI CostumeChanger|複数衣装の着替えを想定したコンポーネントで、排他的に動作します。各衣装でItemTogglerと同じような操作ができます。Intパラメーターが生成されます。|
-|LIICON(LI_Script_SmoothChanger.png) LI SmoothChanger|アバターの明るさ調整や体型調整を想定したコンポーネントです。無段階でオブジェクトの操作ができます。Floatパラメーターが生成されます。|
-|LIICON(LI_Script_AutoDresser.png) LI AutoDresser|複数衣装の着替えを想定したコンポーネントです。`LI CostumeChanger`同様に動作しますが、こちらは各衣装のルートにつけるだけで動作します。Intパラメーターが生成されます。|
-|LIICON(LI_Script_AutoDresserSettings.png) LI AutoDresserSettings|AutoDresserに関する設定を行うコンポーネントです。現在は生成されるメニューの位置と名前の変更だけ行うことができます。1アバターにつき0または1つだけ設定してください。|
-|LIICON(LI_Script_Preset.png) LI Preset|lilycalInventoryのメニュー系コンポーネントを一括で操作し、複数オブジェクトを同時に切り替えることを想定したコンポーネントです。|
+|LIICON(LI_Script_MenuFolder.png) LI MenuFolder|这是一个用于创建菜单文件夹的组件。用于整理各个组件。不生成参数。|
+|LIICON(LI_Script_Prop.png) LI Prop|一个可以开关附加对象的简单组件。如果对象初始为关闭，则会生成一个开启的动画；如果初始为开启，则会生成一个关闭的动画。|
+|LIICON(LI_Script_ItemToggler.png) LI ItemToggler|一个可以开关对象、切换BlendShape、替换或操作材质球属性的组件。会生成Bool参数。|
+|LIICON(LI_Script_CostumeChanger.png) LI CostumeChanger|此组件用于切换多套衣装，并以排他方式运行。每套衣装都可以进行与ItemToggler相同的操作。会生成Int参数。|
+|LIICON(LI_Script_SmoothChanger.png) LI SmoothChanger|此组件用于无级调节Avatar的亮度或体型等。可以无级操作对象。会生成Float参数。|
+|LIICON(LI_Script_AutoDresser.png) LI AutoDresser|此组件用于切换多套衣装。与`LI CostumeChanger`功能类似，但只需将其附加到每个衣装的根部即可工作。会生成Int参数。|
+|LIICON(LI_Script_AutoDresserSettings.png) LI AutoDresserSettings|此组件用于设置AutoDresser。目前仅支持更改生成的菜单位置和名称。每个Avatar只设置0个或1个此组件。|
+|LIICON(LI_Script_Preset.png) LI Preset|此组件旨在批量操作lilycalInventory的菜单系统组件，实现同时切换多个对象。|
 
-## その他コンポーネント
+## 其他组件
 
-|名前|説明|
+|名称|说明|
 |-|-|
-|LIICON(LI_Script_Material.png) LI MaterialModifier|アバターのライティングの統一などを想定した、マテリアルの設定を指定したマテリアルに統一するコンポーネントです。|
-|LIICON(LI_Script_MaterialOptimizer.png) LI MaterialOptimizer|マテリアルから自動的に不要なプロパティを削除するコンポーネントです。|
-|LIICON(LI_Script_Comment.png) LI Comment|GameObjectにコメントを表示するだけのコンポーネントでこれ自体に機能はありません。prefabの説明を残す用途を想定しています。|
-|LIICON(LI_Script_AutoFixMeshSettings.png) LI AutoFixMeshSettings|アバター内の全メッシュ（Renderer）の設定を統一することを想定したコンポーネントです。|
+|LIICON(LI_Script_Material.png) LI MaterialModifier|此组件用于统一材质球设置，例如统一Avatar的光照接收方式，将材质球设置与指定材质球保持一致。|
+|LIICON(LI_Script_MaterialOptimizer.png) LI MaterialOptimizer|此组件会自动移除材质球中不必要的属性，从而进行优化。|
+|LIICON(LI_Script_Comment.png) LI Comment|这只是一个在GameObject上显示注释的组件，本身没有功能。主要用于为预制件（prefab）留下说明。|
+|LIICON(LI_Script_AutoFixMeshSettings.png) LI AutoFixMeshSettings|此组件旨在统一Avatar中所有网格（Renderer）的设置。|
