@@ -1,29 +1,29 @@
-# アバターの明るさ調整
+# Avatar亮度调整
 
-ここでは明るさ調整メニューを追加する方法を紹介しています。
+在这里，我们将介绍如何添加亮度调整菜单。
 
-## やり方
+## 方法
 
-lilToonの場合はPrefabsフォルダ内のLightChangerをアバターにドラッグ&ドロップするだけで完了です。
+对于lilToon，只需将Prefabs文件夹中的LightChanger拖放到Avatar中即可。
 
-1. Packagesを開く
-2. lilycalInventoryフォルダを開く
+1. 打开Packages
+2. 打开lilycalInventory文件夹
 
-![Packagesディレクトリ内のlilycalInventoryを選択](/images/ja/tutorial/lightchanger_1.png "Packagesディレクトリ内のlilycalInventoryを選択")
+![在Packages目录中选择lilycalInventory](/images/zh/tutorial/lightchanger_1.png "在Packages目录中选择lilycalInventory")
 
-3. Prefabsフォルダを開く
+3. 打开Prefabs文件夹
 
-![Prefabsフォルダを開く](/images/ja/tutorial/lightchanger_2.png "Prefabsフォルダを開く")
+![打开Prefabs文件夹](/images/zh/tutorial/lightchanger_2.png "打开Prefabs文件夹")
 
-4. LightChangerをアバターにドラッグ&ドロップ
+4. 将LightChanger拖放到Avatar中
 
-![LightChangerをアバターにドラッグ&ドロップ](/images/ja/tutorial/lightchanger_3.png "LightChangerをアバターにドラッグ&ドロップ")
+![将LightChanger拖放到Avatar中](/images/zh/tutorial/lightchanger_3.png "将LightChanger拖放到Avatar中")
 
-## 手動で設定する場合
+## 手动设置
 
-他シェーダーの場合は手動でプロパティを設定する必要があります。
+对于其他着色器，需要手动设置属性。
 
-1. Hierarchyで右クリックし`Create Empty`でアバター内に新しいオブジェクトを作成
-2. そのオブジェクトに`LI SmoothChanger`コンポーネントを追加
-3. フレームの+ボタンを押し、フレーム値を0に設定し`マテリアルのプロパティ操作`に操作するメッシュとプロパティを指定（メッシュが未指定であれば全メッシュを操作）
-4. フレームの+ボタンを押し、フレーム値を1に設定し3の手順同様に設定
+1. 在Hierarchy中右键点击，选择`Create Empty`在Avatar中创建一个新对象。
+2. 在该对象上添加`LI SmoothChanger`组件。
+3. 点击帧的`+`按钮，将帧值设置为0，并在`材质球属性操作`中指定要操作的网格和属性（如果未指定网格，则操作所有网格）。
+4. 点击帧的`+`按钮，将帧值设置为1，并按照步骤3进行设置。

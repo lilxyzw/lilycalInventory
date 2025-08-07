@@ -1,12 +1,12 @@
-# アバターの体型調整
+# Avatar体型调整
 
-ここではアバターに体型調整メニューを追加する方法を紹介しています。体型以外にも他のBlendShapeの操作などいろいろ応用可能です。
+在这里，我们将介绍如何为Avatar添加体型调整菜单。除了体型，此方法还可以应用于其他BlendShape操作。
 
-## やり方
+## 方法
 
-1. Hierarchyで右クリックし`Create Empty`でアバター内に新しいオブジェクトを作成
-2. そのオブジェクトに`LI SmoothChanger`コンポーネントを追加
-3. フレームの+ボタンを押し、フレーム値を0に設定し`BlendShapeの切り替え`に操作するメッシュとBlendShapeを指定（メッシュが未指定であれば全メッシュを操作）
-4. フレームの+ボタンを押し、フレーム値を1に設定し3の手順同様に設定
+1. 在Hierarchy中右键点击，选择`Create Empty`在Avatar中创建一个新对象。
+2. 在该对象上添加`LI SmoothChanger`组件。
+3. 点击帧的`+`按钮，将帧值设置为0，并在`BlendShape的切换`中指定要操作的网格和BlendShape（如果未指定网格，则操作所有网格）。
+4. 点击帧的`+`按钮，将帧值设置为1，并按照步骤3进行设置。
 
-<video controls="controls" src="/images/ja/tutorial/morph.webm" />
+<video controls="controls" src="/images/zh/tutorial/morph.webm" />

@@ -1,39 +1,39 @@
-# インストールの方法
+# 安装方法
 
-インストール方法にはいくつか種類がありますが、以下の4種類のうちどれか1つだけやればOKです。個人的にはVCCでのインストールがオススメです！
+有几种安装方法，但只需选择其中一种即可。个人推荐使用VCC进行安装！
 
 [[toc]]
 
-## 【オススメ！】VCCでのインストール
+## 【推荐！】通过VCC安装
 
-一見すると複雑に見えますが、こちらの手順を1度でも済ませてしまえばVRCSDKと同じようにVCCから1クリックでアップデートできるようになります！
+这看起来可能很复杂，但只要完成一次这些步骤，以后就可以像VRCSDK一样通过VCC一键更新了！
 
-1. [こちらをクリック](vcc://vpm/addRepo?url=https://lilxyzw.github.io/vpm-repos/vpm.json)するとVCCが開かれるので、`I Understand, Add Repository`をクリックしてください。VCCにlilycalInventoryが追加されます。
-2. インストールが完了したら`Projects`を押してプロジェクト選択画面に戻りましょう。
+1. [点击此处](vcc://vpm/addRepo?url=https://lilxyzw.github.io/vpm-repos/vpm.json)，VCC将会打开，然后点击`I Understand, Add Repository`。lilycalInventory将被添加到VCC中。
+2. 安装完成后，点击`Projects`返回项目选择界面。
 
-![VCCのパッケージインストール画面](/images/ja/tutorial/vcc_packages.png "VCCのパッケージインストール画面")
+![VCC的软件包安装界面](/images/zh/tutorial/vcc_packages.png "VCC的软件包安装界面")
 
-3. プロジェクト選択画面で`Manage Project`をクリックして管理画面を開きましょう。
+3. 在项目选择界面，点击`Manage Project`打开管理界面。
 
-![VCCのProjects画面](/images/ja/tutorial/vcc_projects.png "VCCのProjects画面")
+![VCC的项目界面](/images/zh/tutorial/vcc_projects.png "VCC的项目界面")
 
-4. 最後にlilycalInventoryの右端の`+`ボタンをクリックするとインストール完了です！
+4. 最后，点击lilycalInventory右侧的`+`按钮即可完成安装！
 
-![VCCのManage画面](/images/ja/tutorial/vcc_manage.png "VCCのManage画面")
+![VCC的管理界面](/images/zh/tutorial/vcc_manage.png "VCC的管理界面")
 
-## Unitypackageでのインストール
+## 通过Unitypackage安装
 
-[こちら](https://github.com/lilxyzw/lilycalInventory/releases)からunitypackageをダウンロードしてください。unitypackageをUnityのウィンドウにドラッグ&ドロップすることでインポートできます。
+请从[此处](https://github.com/lilxyzw/lilycalInventory/releases)下载unitypackage。将其拖放到Unity窗口中即可导入。
 
 ::: warning
-こちらの方法ではアップデートのたびにダウンロードページからダウンロードする必要があります。
+使用此方法，每次更新都需要从下载页面重新下载。
 :::
 
-![GitHubのダウンロードページ](/images/ja/tutorial/github_unitypackage.png "GitHubのダウンロードページ")
+![GitHub的下载页面](/images/zh/tutorial/github_unitypackage.png "GitHub的下载页面")
 
-## VPMCLIでのインストール
+## 通过VPMCLI安装
 
-VPMCLIを使う場合は以下のコマンドでインストールできます。
+如果使用VPMCLI，可以使用以下命令进行安装：
 
 ```
 vpm add repo https://lilxyzw.github.io/vpm-repos/vpm.json
@@ -42,9 +42,9 @@ cd /path/to/your-unity-project
 vpm add package jp.lilxyzw.lilycalinventory
 ```
 
-## vrc-getでのインストール
+## 通过vrc-get安装
 
-vrc-getを使う場合は以下のコマンドでインストールできます。
+如果使用vrc-get，可以使用以下命令进行安装：
 
 ```
 vrc-get repo add https://lilxyzw.github.io/vpm-repos/vpm.json

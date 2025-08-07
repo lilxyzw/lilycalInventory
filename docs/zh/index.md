@@ -14,10 +14,10 @@ hero:
       link: vcc://vpm/addRepo?url=https://lilxyzw.github.io/vpm-repos/vpm.json
     - theme: alt
       text: 通过 unitypackage 添加
-      link: /ja/tutorial/install.html#unitypackageでのインストール
+      link: /zh/tutorial/install.html#unitypackageでのインストール
     - theme: alt
       text: 教程
-      link: /ja/tutorial/
+      link: /zh/tutorial/
 
 features:
   - title: <img class="emoji" draggable="false" alt="🪄" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/1fa84.png"> 非破坏性
