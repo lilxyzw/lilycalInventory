@@ -17,9 +17,6 @@ export const shared = defineConfig({
     ['link', {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: ''}],
     ['link', {href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+Mono:wght@500&display=swap', rel: 'stylesheet'}],
   ],
-  build: {
-    emptyOutDir: false
-  },
   themeConfig: {
     logo: '/images/logo.svg',
     socialLinks: [

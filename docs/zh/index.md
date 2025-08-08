@@ -14,7 +14,7 @@ hero:
       link: vcc://vpm/addRepo?url=https://lilxyzw.github.io/vpm-repos/vpm.json
     - theme: alt
       text: 通过 unitypackage 添加
-      link: /zh/tutorial/install.html#unitypackageでのインストール
+      link: /zh/tutorial/install.html#通过unitypackage安装
     - theme: alt
       text: 教程
       link: /zh/tutorial/
