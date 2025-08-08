@@ -1,10 +1,10 @@
-# ドキュメント一覧
+# 文档列表
 
-lilycalInventoryのドキュメントページです。ここでは中・上級者向けにツールの詳細について説明しています。
+这是lilycalInventory的文档页面。在这里，我们为中高级用户详细解释了该工具的详细信息。
 
 <div class="table-of-contents">
     <ul>
-    <li><a href="./components">コンポーネント一覧</a>
+    <li><a href="./components">组件列表</a>
         <ul>
             <li><a href="./components/autodresser">LIICON(LI_Script_AutoDresser.png) LI AutoDresser</a></li>
             <li><a href="./components/autodressersettings">LIICON(LI_Script_AutoDresserSettings.png) LI AutoDresserSettings</a></li>
@@ -20,8 +20,8 @@ lilycalInventoryのドキュメントページです。ここでは中・上級�
             <li><a href="./components/smoothchanger">LIICON(LI_Script_SmoothChanger.png) LI SmoothChanger</a></li>
         </ul>
     </li>
-    <li><a href="./directblendtree">Direct Blend Treeを使用した最適化</a></li>
-    <li><a href="./compatibility">NDMFや他ツールとの互換性</a></li>
-    <li><a href="./prefabs">付属Prefabの説明</a></li>
+    <li><a href="./directblendtree">使用Direct Blend Tree进行优化</a></li>
+    <li><a href="./compatibility">与NDMF及其他工具的兼容性</a></li>
+    <li><a href="./prefabs">附带的预制件（Prefab）说明</a></li>
     </ul>
 </div>

@@ -24,7 +24,7 @@ export const shared = defineConfig({
     ],
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright @ 2024-present lilxyzw'
+      copyright: 'Copyright @ 2025-present lilxyzw'
     },
     editLink: {
       pattern: 'https://github.com/lilxyzw/lilycalInventory/edit/docs/docs/:path',

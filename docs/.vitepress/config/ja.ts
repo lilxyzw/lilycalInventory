@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 const langName = '/ja';
 
 export const ja = defineConfig({
-  lang: 'ja-JP',
+  lang: 'ja_JP',
   description: "lilycalInventoryはコンポーネントを作れるだけで手軽にメニューを作れる魔法のインベントリーシステムです。",
   themeConfig: {
     logo: '/images/logo.svg',
