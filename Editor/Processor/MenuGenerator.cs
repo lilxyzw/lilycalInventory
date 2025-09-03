@@ -91,7 +91,11 @@ namespace jp.lilxyzw.lilycalinventory
                     .OrderBy(x => x.Key, Comparer<MenuBaseComponent>.Create((a, b) => Array.IndexOf(menuBaseComponents, a) - Array.IndexOf(menuBaseComponents, b)))
                     .SelectMany(x => x.Value))
                 {
-                    (parent ? menus[parent] : root).menus.Add(control);
+                    var foundMenu = parent != null ? (menus.TryGetValue(parent, out var value) ? value : null) : root;
+                    if (foundMenu != null)
+                    {
+                        foundMenu.menus.Add(control);
+                    }
                 }
 
                 // 循環参照を検出
