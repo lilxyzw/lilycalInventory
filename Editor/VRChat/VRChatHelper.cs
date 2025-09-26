@@ -127,12 +127,8 @@ namespace jp.lilxyzw.lilycalinventory
                 descriptor.expressionsMenu = CloneMenu(descriptor.expressionsMenu, map, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
-                var tempMenu = CreateMenu();
-                foreach(var menu in rootMenu.menus) tempMenu = InternalToExpressions(menu, tempMenu);
-                CombineSubMenu(tempMenu, new HashSet<VRCExpressionsMenu>());
-
-                // Merge Menu
-                descriptor.expressionsMenu.controls.AddRange(tempMenu.controls);
+                foreach(var menu in rootMenu.menus) descriptor.expressionsMenu = InternalToExpressions(menu, descriptor.expressionsMenu);
+                CombineSubMenu(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
                 ResolveOver(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionParametetsも同様
