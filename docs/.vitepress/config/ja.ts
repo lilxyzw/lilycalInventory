@@ -5,8 +5,10 @@ const langName = '/ja';
 export const ja = defineConfig({
   lang: 'ja_JP',
   description: "lilycalInventoryはコンポーネントを作れるだけで手軽にメニューを作れる魔法のインベントリーシステムです。",
+  head: [
+    ['link', {rel: 'stylesheet', href: '/lilycalInventory/styles/ja.css'}],
+  ],
   themeConfig: {
-    logo: '/images/logo.svg',
     nav: [
       { text: 'ホーム', link: langName + '/' },
       { text: 'チュートリアル', link: langName + '/tutorial/', activeMatch: '/tutorial/' },

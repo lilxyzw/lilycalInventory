@@ -5,8 +5,10 @@ const langName = '/zh';
 export const zh = defineConfig({
   lang: 'zh_CN',
   description: "lilycalInventory是一款只需添加组件即可轻松创建菜单的魔法物品栏系统。",
+  head: [
+    ['link', {rel: 'stylesheet', href: '/lilycalInventory/styles/zh.css'}],
+  ],
   themeConfig: {
-    logo: '/images/logo.svg',
     nav: [
       {text: '主页', link: langName + '/'},
       {text: '教程', link: langName + '/tutorial/', activeMatch: '/tutorial/'},
