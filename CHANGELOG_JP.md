@@ -3,6 +3,10 @@
 
 フォーマットは[Keep a Changelog](https://keepachangelog.com/en/1.0.0/)に基づいており、バージョンは[Semantic Versioning](https://semver.org/spec/v2.0.0.html)に準拠しています。
 
+## [1.5.2] - 2025-09-26
+### 修正
+- メニューが空のときにエラー
+
 ## [1.5.1] - 2025-09-26
 ### 修正
 - パラメーターが空の場合の処理
