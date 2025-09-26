@@ -127,8 +127,9 @@ namespace jp.lilxyzw.lilycalinventory
                 descriptor.expressionsMenu = CloneMenu(descriptor.expressionsMenu, map, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
-                foreach(var menu in rootMenu.menus) descriptor.expressionsMenu = InternalToExpressions(menu, descriptor.expressionsMenu);
-                CombineSubMenu(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
+                var generatedControls = new HashSet<Control>();
+                foreach (var menu in rootMenu.menus) descriptor.expressionsMenu = InternalToExpressions(menu, descriptor.expressionsMenu, generatedControls);
+                CombineSubMenu(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>(), generatedControls);
                 ResolveOver(descriptor.expressionsMenu, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionParametetsも同様
@@ -148,7 +149,7 @@ namespace jp.lilxyzw.lilycalinventory
                 return menu;
             }
 
-            private static void CombineSubMenu(VRCExpressionsMenu menu, HashSet<VRCExpressionsMenu> visited)
+            private static void CombineSubMenu(VRCExpressionsMenu menu, HashSet<VRCExpressionsMenu> visited, HashSet<Control> generatedControls)
             {
                 // 同名のSubMenuを統合
                 if(!menu || visited.Contains(menu)) return;
@@ -163,13 +164,14 @@ namespace jp.lilxyzw.lilycalinventory
                         firsts[control.name] = control.subMenu;
                         continue;
                     }
+                    if (!generatedControls.Contains(control)) continue;
                     firsts[control.name].controls.AddRange(control.subMenu.controls);
                     menu.controls.RemoveAt(i);
                     i--;
                 }
 
                 foreach(var child in menu.controls)
-                    if(child.subMenu) CombineSubMenu(child.subMenu, visited);
+                    if(child.subMenu) CombineSubMenu(child.subMenu, visited, generatedControls);
             }
 
             private static void ResolveOver(VRCExpressionsMenu menu, HashSet<VRCExpressionsMenu> visited)
@@ -204,14 +206,15 @@ namespace jp.lilxyzw.lilycalinventory
                 }
             }
 
-            private static VRCExpressionsMenu InternalToExpressions(InternalMenu internalMenu, VRCExpressionsMenu parent)
+            private static VRCExpressionsMenu InternalToExpressions(InternalMenu internalMenu, VRCExpressionsMenu parent, HashSet<Control> generatedControls)
             {
                 var control = new Control{icon = internalMenu.icon, name = internalMenu.name, value = internalMenu.value, type = ToControlType(internalMenu.type)};
+                generatedControls.Add(control);
                 switch(internalMenu.type)
                 {
                     case InternalMenuType.Folder:
                         control.subMenu = CreateMenu(internalMenu.name);
-                        foreach(var menu in internalMenu.menus) InternalToExpressions(menu, control.subMenu);
+                        foreach (var menu in internalMenu.menus) InternalToExpressions(menu, control.subMenu, generatedControls);
                         break;
                     case InternalMenuType.Toggle:
                     case InternalMenuType.Trigger:
