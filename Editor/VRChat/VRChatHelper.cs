@@ -51,9 +51,14 @@ namespace jp.lilxyzw.lilycalinventory
             private static Texture2D m_IconNext;
             private static Texture2D iconNext => m_IconNext ? m_IconNext : m_IconNext = ObjHelper.LoadAssetByGUID<Texture2D>(ConstantValues.GUID_ICON_NEXT);
 
+            internal static VRCAvatarDescriptor GetDescriptor()
+            {
+                return ctx.AvatarRootObject.GetComponent<VRCAvatarDescriptor>();
+            }
+
             internal static AnimatorController TryGetFXAnimatorController()
             {
-                var descriptor = ctx.AvatarDescriptor;
+                var descriptor = GetDescriptor();
                 AnimatorController CreateFXController()
                 {
                     var controller = new AnimatorController{name = "FX"};
@@ -107,7 +112,7 @@ namespace jp.lilxyzw.lilycalinventory
 
             internal static void Apply(InternalMenu rootMenu, List<InternalParameter> parameters)
             {
-                var descriptor = ctx.AvatarDescriptor;
+                var descriptor = GetDescriptor();
                 // Expression未設定の場合は新規に設定
                 if(!descriptor.customExpressions)
                 {
@@ -118,8 +123,8 @@ namespace jp.lilxyzw.lilycalinventory
 
                 // クローン
                 var map = new Dictionary<Object,Object>();
-                ctx.AvatarDescriptor.expressionParameters = CloneObject(ctx.AvatarDescriptor.expressionParameters, ctx, map) as VRCExpressionParameters;
-                ctx.AvatarDescriptor.expressionsMenu = CloneMenu(ctx.AvatarDescriptor.expressionsMenu, map, new HashSet<VRCExpressionsMenu>());
+                descriptor.expressionParameters = CloneObject(descriptor.expressionParameters, ctx, map) as VRCExpressionParameters;
+                descriptor.expressionsMenu = CloneMenu(descriptor.expressionsMenu, map, new HashSet<VRCExpressionsMenu>());
 
                 // ExpressionsMenuが存在する場合はlilycalInventoryで生成したものとマージ
                 var tempMenu = CreateMenu();

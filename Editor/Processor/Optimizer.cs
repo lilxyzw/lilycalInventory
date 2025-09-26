@@ -18,7 +18,7 @@ namespace jp.lilxyzw.lilycalinventory
                 var controllers = new HashSet<RuntimeAnimatorController>();
                 controllers.UnionWith(ctx.AvatarRootObject.GetComponentsInChildren<Animator>(true).Where(a => a.runtimeAnimatorController).Select(a => a.runtimeAnimatorController));
                 #if LIL_VRCSDK3A
-                VRChatHelper.GetAnimatorControllers(ctx.AvatarDescriptor, controllers);
+                VRChatHelper.GetAnimatorControllers(VRChatUtils.GetDescriptor(), controllers);
                 #endif
                 var props = controllers.SelectMany(c => c.animationClips).SelectMany(c => AnimationUtility.GetCurveBindings(c)).Select(b => b.propertyName).Where(n => n.Contains("material."))
                 .Select(n => n=n.Substring("material.".Length))

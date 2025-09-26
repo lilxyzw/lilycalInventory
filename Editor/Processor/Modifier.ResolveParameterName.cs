@@ -19,7 +19,8 @@ namespace jp.lilxyzw.lilycalinventory
                 var parameterNames = new HashSet<string>();
                 if(controller.parameters != null) parameterNames.UnionWith(controller.parameters.Select(p => p.name));
                 #if LIL_VRCSDK3A
-                if(ctx.AvatarDescriptor.expressionParameters && ctx.AvatarDescriptor.expressionParameters.parameters != null) parameterNames.UnionWith(ctx.AvatarDescriptor.expressionParameters.parameters.Select(p => p.name));
+                var descriptor = VRChatUtils.GetDescriptor();
+                if(descriptor.expressionParameters && descriptor.expressionParameters.parameters != null) parameterNames.UnionWith(descriptor.expressionParameters.parameters.Select(p => p.name));
                 #endif
 
                 // 重複しない名前を決定しつつ既存のパラメーターのリストに追加
@@ -52,8 +53,8 @@ namespace jp.lilxyzw.lilycalinventory
                 {
                     if(controller.parameters.Any(p => p.name == kv.Key)) kv.Value.Add(controller);
                     #if LIL_VRCSDK3A
-                    if(ctx.AvatarDescriptor.expressionParameters && ctx.AvatarDescriptor.expressionParameters.parameters != null && ctx.AvatarDescriptor.expressionParameters.parameters.Any(p => p.name == kv.Key))
-                        kv.Value.Add(ctx.AvatarDescriptor.expressionParameters);
+                    if(descriptor.expressionParameters && descriptor.expressionParameters.parameters != null && descriptor.expressionParameters.parameters.Any(p => p.name == kv.Key))
+                        kv.Value.Add(descriptor.expressionParameters);
                     #endif
                     ErrorHelper.Report("dialog.error.parameterDuplication", kv.Value);
                 }

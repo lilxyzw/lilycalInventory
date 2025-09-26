@@ -12,9 +12,6 @@ namespace jp.lilxyzw.lilycalinventory
     {
         internal GameObject AvatarRootObject;
         internal Object AssetContainer;
-        #if LIL_VRCSDK3A
-        internal VRC.SDK3.Avatars.Components.VRCAvatarDescriptor AvatarDescriptor;
-        #endif
 
         private const string PATH_ROOT = "Assets";
         private const string PATH_GEN = "__Generated_" + ConstantValues.TOOL_NAME;
@@ -23,10 +20,6 @@ namespace jp.lilxyzw.lilycalinventory
         {
             AvatarRootObject = gameObject;
             AssetContainer = ScriptableObject.CreateInstance<AssetContainer>();
-
-            #if LIL_VRCSDK3A
-            AvatarDescriptor = gameObject.GetComponent<VRC.SDK3.Avatars.Components.VRCAvatarDescriptor>();
-            #endif
 
             if(!Directory.Exists($"{PATH_ROOT}/{PATH_GEN}"))
                 AssetDatabase.CreateFolder(PATH_ROOT, PATH_GEN);
