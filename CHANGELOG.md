@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-09-26
+### Added
+- Make original materials clickable in Material Replacer 
+
+### Changed
+- Only combine generated submenus
+- Parameter names are now taken from MA
+- Only newly generated menus are merged
+
+### Fixed
+- Error with old VRCSDK
+- Error if the processing target is empty
+- Circular folder reference error
+- AnimatorController cloning process when Modular Avatar is not installed
+- Generate frame 0 of SmoothChanger animation if it does not exist
+- Reference AnimationClip in the menu name placeholder
+- Version check failure handling
+- Handling of empty parameters
+- Error when a referenced folder component is off
+
 ## [1.4.5] - 2024-10-17
 ### Changed
 - Changed to not generate animations for Renderers that do not have materials

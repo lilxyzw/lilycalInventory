@@ -203,6 +203,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Ramp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionColorTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -362,6 +366,8 @@ Material:
     - _EmissionMap_UVMode: 0
     - _EmissionParallaxDepth: 0
     - _EmissionUseGrad: 0
+    - _EnvRimBlur: 0.35
+    - _EnvRimBorder: 3
     - _FlipNormal: 0
     - _GSAAStrength: 0
     - _GlitterAngleRandomize: 0
@@ -636,7 +642,7 @@ Material:
     - _egci: 2
     - _lilDirectionalLightStrength: 1
     - _lilShadowCasterBias: 0
-    - _lilToonVersion: 44
+    - _lilToonVersion: 45
     m_Colors:
     - _AudioLinkDefaultValue: {r: 0, g: 0, b: 2, a: 0.75}
     - _AudioLinkLocalMapParams: {r: 120, g: 1, b: 0, a: 0}
