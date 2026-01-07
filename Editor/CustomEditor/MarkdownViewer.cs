@@ -191,7 +191,8 @@ namespace jp.lilxyzw.lilycalinventory
         // 描画
         internal static VisualElement Draw(string markdown)
         {
-            var root = new VisualElement();
+            var outerRoot = new VisualElement();
+            var root = outerRoot;
             var mds = Get(markdown); // Markdownを要素ごとに分解
             var prevtype = MDType.p; // 直前の要素の種類
             int prevDepth = 0; // 多重引用の深さ
@@ -259,7 +260,7 @@ namespace jp.lilxyzw.lilycalinventory
                 prevtype = mdpart.Item1;
                 prevDepth = mdpart.Item3;
             }
-            return root;
+            return outerRoot;
         }
 
         // Markdownを要素で分解する関数
