@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace jp.lilxyzw.lilycalinventory
 {
@@ -49,53 +50,55 @@ namespace jp.lilxyzw.lilycalinventory
 
             internal static void GatherProperties(MaterialModifier modifier, Dictionary<string,Object> textureOverride, Dictionary<string,float> floatOverride, Dictionary<string,Vector4> vectorOverride)
             {
-                using var so = new SerializedObject(modifier.referenceMaterial);
-                using var savedProps = so.FindProperty("m_SavedProperties");
+                var refMaterial = modifier.referenceMaterial;
+                var shader = refMaterial.shader;
+                var propertyCount = shader.GetPropertyCount();
 
-                savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(modifier.properties.Contains(name))
-                        textureOverride[name] = p.FindPropertyRelative("second.m_Texture").objectReferenceValue;
-                });
+                for(int i = 0; i < propertyCount; i++)
+                {
+                    var name = shader.GetPropertyName(i);
+                    if(!modifier.properties.Contains(name)) continue;
 
-                savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(modifier.properties.Contains(name))
-                        floatOverride[name] = p.FindPropertyRelative("second").floatValue;
-                });
-
-                savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(modifier.properties.Contains(name))
-                        vectorOverride[name] = p.FindPropertyRelative("second").colorValue;
-                });
+                    var type = shader.GetPropertyType(i);
+                    switch(type)
+                    {
+                        case ShaderPropertyType.Range:
+                            // Fall through to Float case
+                        case ShaderPropertyType.Float:
+                            floatOverride[name] = refMaterial.GetFloat(name);
+                            break;
+                        case ShaderPropertyType.Texture:
+                            textureOverride[name] = refMaterial.GetTexture(name);
+                            break;
+                        case ShaderPropertyType.Color:
+                            vectorOverride[name] = refMaterial.GetColor(name);
+                            break;
+                        case ShaderPropertyType.Vector:
+                            vectorOverride[name] = refMaterial.GetVector(name);
+                            break;
+                    }
+                }
             }
 
             private static void ModifyProperties(Material material, Dictionary<string,Object> textureOverride, Dictionary<string,float> floatOverride, Dictionary<string,Vector4> vectorOverride)
             {
-                using var so = new SerializedObject(material);
-                so.Update();
-                var savedProps = so.FindProperty("m_SavedProperties");
+                foreach(var kv in textureOverride)
+                {
+                    if(material.HasProperty(kv.Key))
+                        material.SetTexture(kv.Key, kv.Value as Texture);
+                }
 
-                savedProps.FindPropertyRelative("m_TexEnvs").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(textureOverride.ContainsKey(name))
-                        p.FindPropertyRelative("second.m_Texture").objectReferenceValue = textureOverride[name];
-                });
+                foreach(var kv in floatOverride)
+                {
+                    if(material.HasProperty(kv.Key))
+                        material.SetFloat(kv.Key, kv.Value);
+                }
 
-                savedProps.FindPropertyRelative("m_Floats").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(floatOverride.ContainsKey(name))
-                        p.FindPropertyRelative("second").floatValue = floatOverride[name];
-                });
-
-                savedProps.FindPropertyRelative("m_Colors").DoAllElements((p,i) => {
-                    var name = p.GetStringInProperty("first");
-                    if(vectorOverride.ContainsKey(name))
-                        p.FindPropertyRelative("second").colorValue = vectorOverride[name];
-                });
-
-                so.ApplyModifiedPropertiesWithoutUndo();
+                foreach(var kv in vectorOverride)
+                {
+                    if(material.HasProperty(kv.Key))
+                        material.SetVector(kv.Key, kv.Value);
+                }
             }
         }
     }
