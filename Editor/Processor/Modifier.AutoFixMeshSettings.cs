@@ -42,7 +42,10 @@ namespace jp.lilxyzw.lilycalinventory
                         s.skinnedMotionVectors = settings.meshSettings.skinnedMotionVectors;
                         if(!s.gameObject.GetComponent<Cloth>())
                         {
-                            s.rootBone = rootBone;
+                            if(s.rootBone != null)
+                            {
+                                s.rootBone = rootBone;
+                            }
                             s.localBounds = bounds;
                         }
                     }
