@@ -55,13 +55,23 @@ namespace jp.lilxyzw.lilycalinventory
             {
                      if(AnimationUtility.GetFloatValue(root, binding, out var data)) Add(binding, data);
                 else if(AnimationUtility.GetFloatValue(compObj, binding, out var dataC)) Add(binding, dataC);
-                else Add(binding, AnimationUtility.GetEditorCurve(clip, binding).keys[0].value);
+                else
+                {
+                    // The source AnimationClip represents the changed value, not the default value.
+                    // If the original value cannot be resolved, leave this binding out of the default clip.
+                    continue;
+                }
             }
             foreach(var binding in AnimationUtility.GetObjectReferenceCurveBindings(clip))
             {
                      if(AnimationUtility.GetObjectReferenceValue(root, binding, out var data)) Add(binding, data);
                 else if(AnimationUtility.GetObjectReferenceValue(compObj, binding, out var dataC)) Add(binding, dataC);
-                else Add(binding, AnimationUtility.GetObjectReferenceCurve(clip, binding)[0].value);
+                else
+                {
+                    // The source AnimationClip represents the changed value, not the default value.
+                    // If the original value cannot be resolved, leave this binding out of the default clip.
+                    continue;
+                }
             }
         }
 
