@@ -368,12 +368,18 @@ namespace jp.lilxyzw.lilycalinventory
             // マークダウン構文をHTML構文に置換
             s = s.Replace("<br>", System.Environment.NewLine);
             s = s.Replace("``", string.Empty);
+
+            // \u30A4\u30F3\u30E9\u30A4\u30F3\u30B3\u30FC\u30C9\u5185\u306E\u8A18\u53F7\u306F\u69CB\u6587\u3068\u3057\u3066\u89E3\u91C8\u3057\u306A\u3044\u3088\u3046\u306B\u4E00\u6642\u7684\u306B\u9000\u907F
+            var codes = new List<string>();
+            s = Regex.Replace(s, "`([^`]+)`", m => { codes.Add(m.Groups[1].Value); return $"\u0001{codes.Count - 1}\u0002"; });
+
             ReplaceSyntax(ref s, "**", "<b>", "</b>");
             ReplaceSyntax(ref s, "__", "<b>", "</b>");
             ReplaceSyntax(ref s, "*", "<i>", "</i>");
             ReplaceSyntax(ref s, "_", "<i>", "</i>");
-            if(hasMultiByte) ReplaceSyntax(ref s, "`", "\u00A0<color=#2d9c63ff>", "</color>\u00A0");
-            else ReplaceSyntax(ref s, "`", " <color=#2d9c63ff>", "</color> ");
+            var codeStart = hasMultiByte ? "\u00A0<color=#2d9c63ff>" : " <color=#2d9c63ff>";
+            var codeEnd = hasMultiByte ? "</color>\u00A0" : "</color> ";
+            s = Regex.Replace(s, "\u0001(\\d+)\u0002", m => codeStart + codes[int.Parse(m.Groups[1].Value)] + codeEnd);
             ReplaceMDLinks(ref s);
             ReplaceLinks(ref s);
 
