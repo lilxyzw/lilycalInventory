@@ -48,6 +48,8 @@ namespace jp.lilxyzw.lilycalinventory
             var tmpNames = new List<string>();
             foreach(var path in paths)
             {
+                // macOSが作成するAppleDoubleファイル (._*.json) は言語ファイルではないので除外
+                if(Path.GetFileName(path).StartsWith("._")) continue;
                 var langData = File.ReadAllText(path);
                 var lang = JsonDictionaryParser.Deserialize<string>(langData);
                 if(lang == null) continue;
